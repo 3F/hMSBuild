@@ -1,5 +1,7 @@
 @echo off
 
+call submodules "GetNuTool/gnt.sln" || goto err
+
 setlocal
     cd GetNuTool
     call build || goto err
