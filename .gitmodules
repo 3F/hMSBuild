@@ -1,0 +1,3 @@
+[submodule "GetNuTool"]
+	path = GetNuTool
+	url = https://github.com/3F/GetNuTool.git
