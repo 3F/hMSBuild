@@ -6,7 +6,9 @@
 
 setlocal enableDelayedExpansion
 
-:::: Settings by default
+
+::::
+::   Settings by default
 
 set vswhereVersion=1.0.58
 set vswhereCache=%temp%\hMSBuild_vswhere
@@ -16,13 +18,18 @@ set novs=0
 set nonet=0
 set novswhere=0
 set nocachevswhere=0
+set hMSBuildDebug=0
+
+set ERROR_SUCCESS=0
+set ERROR_FILE_NOT_FOUND=2
+set ERROR_PATH_NOT_FOUND=3
+
+:: leave for this at least 1 trailing whitespace -v
 set args=%* 
 
-::
 
-
-:::
-:: Help command
+::::
+::   Help command
 
 set cargs=%args%
 
@@ -37,6 +44,8 @@ goto mainCommands
 :printhelp
 
 echo.
+echo :: hMSBuild - v1.0
+echo.
 echo   https://github.com/3F/hMSBuild
 echo   Based on GetNuTool - https://github.com/3F/GetNuTool
 echo   [ entry.reg@gmail.com :: github.com/3F ]
@@ -50,11 +59,13 @@ echo ----------
 echo hMSBuild -novswhere            - Do not search via vswhere.
 echo hMSBuild -novs                 - Disable searching from Visual Studio.
 echo hMSBuild -nonet                - Disable searching from .NET Framework.
-echo hMSBuild -vswhereVersion {num} - To use special version of vswhere. Use `latest` keyword to get latest version.
+echo hMSBuild -vswhereVersion {num} - To use special version of vswhere. Use `latest` keyword to get newer.
 echo hMSBuild -nocachevswhere       - Do not cache vswhere. Use this also for reset cache.
-echo hMSBuild -notamd64             - To use x32 bit version of found msbuild.exe if it's possible.
+echo hMSBuild -notamd64             - To use 32bit version of found msbuild.exe if it's possible.
 echo hMSBuild -eng                  - Try to use english language for all build messages.
 echo hMSBuild -GetNuTool {args}     - Access to GetNuTool core.
+echo hMSBuild -debug                - To show additional information from hMSBuild.
+::echo hMSBuild -version              - To show version of hMSBuild.
 echo hMSBuild -help                 - Shows this help. Aliases: -help -h -?
 echo.
 echo. 
@@ -74,18 +85,18 @@ echo.
 echo "hMSBuild -novs "DllExport.sln" || goto err"
 echo.
 echo ---------------------
-echo Possible Error Codes: ERROR_FILE_NOT_FOUND (0x2), ERROR_PATH_NOT_FOUND 3 (0x3), ERROR_SUCCESS (0x0)
+echo Possible Error Codes: ERROR_FILE_NOT_FOUND (0x2), ERROR_PATH_NOT_FOUND (0x3), ERROR_SUCCESS (0x0)
 echo ---------------------
 echo.
 
 exit /B 0
 
-:::
-:: Main commands for user
+::::
+::   Main commands for user
 
 :mainCommands
 
-set /a idx=1 & set cmdMax=8
+set /a idx=1 & set cmdMax=9
 :loopargs
 
     if "!args:~0,11!"=="-GetNuTool " (
@@ -130,6 +141,11 @@ set /a idx=1 & set cmdMax=8
         chcp 437 >nul
     )
     
+    if "!args:~0,7!"=="-debug " (
+        call :popars %1 & shift
+        set hMSBuildDebug=1
+    )
+    
 set /a "idx=idx+1"
 if !idx! LSS %cmdMax% goto loopargs
 
@@ -141,9 +157,11 @@ exit /B 0
 
 
 :action
-:: Start of logic for searching
+::::
+::   Main logic of searching
 
 if "!nocachevswhere!"=="1" (
+    call :dbgprint "resetting cache of vswhere"
     rmdir /S/Q "%vswhereCache%"
 )
 
@@ -162,22 +180,33 @@ if not "!nonet!"=="1" (
     if "!ERRORLEVEL!"=="0" goto runmsbuild
 )
 
-echo MSBuild tools was not found.
-exit /B 2
+echo MSBuild tools was not found. Try to use other settings. Use key `-help` for details.
+exit /B %ERROR_FILE_NOT_FOUND%
 
+:dbgprint
+if "!hMSBuildDebug!"=="1" (
+    set msgfmt=%1
+    set msgfmt=!msgfmt:~0,-1! 
+    set msgfmt=!msgfmt:~1!
+    echo.[%TIME% ] !msgfmt!
+)
+exit /B 0
 
 :runmsbuild
 
 set selmsbuild="!msbuildPath!"
 echo MSBuild Tools: !selmsbuild! 
-echo arguments: !args!
+call :dbgprint "Arguments: !args!"
 
 !selmsbuild! !args!
 
 exit /B 0
 
 :vswhere
-:: MSBuild tools from new Visual Studio - VS2017+
+::::
+::   MSBuild tools from new Visual Studio - VS2017+
+
+call :dbgprint "trying via vswhere..."
 
 if "!nocachevswhere!"=="1" (
     set tvswhere=%temp%\%random%%random%vswhere
@@ -185,13 +214,21 @@ if "!nocachevswhere!"=="1" (
     set tvswhere=%vswhereCache%
 )
 
+call :dbgprint "tvswhere: %tvswhere%"
+
 if "!vswhereVersion!"=="latest" (
     set vswpkg=vswhere
 ) else (
     set vswpkg=vswhere/!vswhereVersion!
 )
 
-call :gntpoint /p:ngpackages="%vswpkg%:vswhere" /p:ngpath="%tvswhere%" >nul    
+call :dbgprint "vswpkg: %vswpkg%"
+
+if "!hMSBuildDebug!"=="1" (
+    call :gntpoint /p:ngpackages="%vswpkg%:vswhere" /p:ngpath="%tvswhere%"
+) else (
+    call :gntpoint /p:ngpackages="%vswpkg%:vswhere" /p:ngpath="%tvswhere%" >nul
+)
 set vswbin="%tvswhere%\vswhere\tools\vswhere"
 
 for /f "usebackq tokens=1* delims=: " %%a in (`%vswbin% -latest -requires Microsoft.Component.MSBuild`) do (
@@ -199,13 +236,17 @@ for /f "usebackq tokens=1* delims=: " %%a in (`%vswbin% -latest -requires Micros
     if /i "%%a"=="installationVersion" set vsver=%%b
 )
 
+call :dbgprint "vspath: !vspath!"
+call :dbgprint "vsver: !vsver!"
+
 if "!nocachevswhere!"=="1" (
+    call :dbgprint "reset vswhere"
     rmdir /S/Q "%tvswhere%"
 )
 
 if [%vsver%]==[] (
-    echo VS2017+ was not found via vswhere
-    exit /B 3
+    call :dbgprint "VS2017+ was not found via vswhere"
+    exit /B %ERROR_PATH_NOT_FOUND%
 )
 
 for /f "tokens=1,2 delims=." %%a in ("%vsver%") do (
@@ -213,19 +254,29 @@ for /f "tokens=1,2 delims=." %%a in ("%vsver%") do (
 )
 set msbuildPath=!vspath!\MSBuild\!vsver!\Bin
 
+call :dbgprint "found path to msbuild: !msbuildPath!"
+
 if exist "!msbuildPath!\amd64" (
+    call :dbgprint "found /amd64"
     set msbuildPath=!msbuildPath!\amd64
 )
 call :msbuildfind 
 exit /B 0
 
 :msbvsold
-:: MSBuild tools from Visual Studio - 2015, 2013, ...
+::::
+::   MSBuild tools from Visual Studio - 2015, 2013, ...
+
+call :dbgprint "trying via MSBuild tools from Visual Studio - 2015, 2013, ..."
 
 for %%v in (14.0, 12.0) do (
+    call :dbgprint "checking of version: %%v"
+    
     for /F "usebackq tokens=2* skip=2" %%a in (
         `reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSBuild\ToolsVersions\%%v" /v MSBuildToolsPath 2^> nul`
     ) do if exist %%b (
+        call :dbgprint "found: %%b"
+        
         set msbuildPath=%%b
         call :msbuildfind
         ::call :msbuildfind "%%b"
@@ -233,15 +284,23 @@ for %%v in (14.0, 12.0) do (
     )
 )
 
-exit /B 2
+call :dbgprint "msbvsold: unfortenally we didn't find anything."
+exit /B %ERROR_FILE_NOT_FOUND%
 
 :msbnetf
-:: MSBuild tools from .NET Framework - .net 4.0, ...
+::::
+::   MSBuild tools from .NET Framework - .net 4.0, ...
+
+call :dbgprint "trying via MSBuild tools from .NET Framework - .net 4.0, ..."
 
 for %%v in (4.0, 3.5, 2.0) do (
+    call :dbgprint "checking of version: %%v"
+    
     for /F "usebackq tokens=2* skip=2" %%a in (
         `reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSBuild\ToolsVersions\%%v" /v MSBuildToolsPath 2^> nul`
     ) do if exist %%b (
+        call :dbgprint "found: %%b"
+        
         set msbuildPath=%%b
         call :msbuildfind
         ::call :msbuildfind "%%b"
@@ -249,10 +308,12 @@ for %%v in (4.0, 3.5, 2.0) do (
     )
 )
 
-exit /B 2
+call :dbgprint "msbnetf: unfortenally we didn't find anything."
+exit /B %ERROR_FILE_NOT_FOUND%
 
 
 :gntcall
+call :dbgprint "direct access to GetNuTool..."
 call :gntpoint !args!
 exit /B 0
 
@@ -266,8 +327,10 @@ if not "!notamd64!" == "1" (
 :: 7z & amd64\msbuild - https://github.com/3F/vsSolutionBuildEvent/issues/38
 set _amd=..\MSBuild.exe
 if exist "!msbuildPath!/!_amd!" (
+    call :dbgprint "Found 32bit version of MSBuild.exe because you wanted this via -notamd64"
     set msbuildPath=!msbuildPath!\!_amd!
 ) else ( 
+    call :dbgprint "We know that 32bit version of MSBuild.exe is important for you, but we found only this."
     set msbuildPath=!msbuildPath!\MSBuild.exe
 )
 
