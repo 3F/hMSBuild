@@ -8,7 +8,7 @@ setlocal enableDelayedExpansion
 
 :::: Settings by default
 
-set vswhereVersion=1.0.50
+set vswhereVersion=1.0.58
 set vswhereCache=%temp%\hMSBuild_vswhere
 
 set notamd64=0
@@ -29,7 +29,6 @@ set cargs=%args%
 set cargs=%cargs:-help =%
 set cargs=%cargs:-h =%
 set cargs=%cargs:-? =%
-set cargs=%cargs:/? =%
 
 if not "%args%"=="%cargs%" goto printhelp
 goto mainCommands
@@ -56,7 +55,7 @@ echo hMSBuild -nocachevswhere       - Do not cache vswhere. Use this also for re
 echo hMSBuild -notamd64             - To use x32 bit version of found msbuild.exe if it's possible.
 echo hMSBuild -eng                  - Try to use english language for all build messages.
 echo hMSBuild -GetNuTool {args}     - Access to GetNuTool core.
-echo hMSBuild -help                 - Shows this help. Aliases: -help -h /? -?
+echo hMSBuild -help                 - Shows this help. Aliases: -help -h -?
 echo.
 echo. 
 echo -------- 
@@ -99,7 +98,7 @@ set /a idx=1 & set cmdMax=8
         set novswhere=1
     )
     
-    if "!args:~0,14!"=="-nocachevswhere " (
+    if "!args:~0,16!"=="-nocachevswhere " (
         call :popars %1 & shift
         set nocachevswhere=1
     )
