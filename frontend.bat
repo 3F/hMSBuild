@@ -279,7 +279,6 @@ for %%v in (14.0, 12.0) do (
         
         set msbuildPath=%%b
         call :msbuildfind
-        ::call :msbuildfind "%%b"
         exit /B 0
     )
 )
@@ -303,7 +302,6 @@ for %%v in (4.0, 3.5, 2.0) do (
         
         set msbuildPath=%%b
         call :msbuildfind
-        ::call :msbuildfind "%%b"
         exit /B 0
     )
 )
@@ -319,21 +317,23 @@ exit /B 0
 
 :msbuildfind
 
+set msbuildPath=!msbuildPath!\MSBuild.exe
+
 if not "!notamd64!" == "1" (
-    set msbuildPath=!msbuildPath!\MSBuild.exe
     exit /B 0
 )
 
 :: 7z & amd64\msbuild - https://github.com/3F/vsSolutionBuildEvent/issues/38
-set _amd=..\MSBuild.exe
-if exist "!msbuildPath!/!_amd!" (
-    call :dbgprint "Found 32bit version of MSBuild.exe because you wanted this via -notamd64"
-    set msbuildPath=!msbuildPath!\!_amd!
-) else ( 
-    call :dbgprint "We know that 32bit version of MSBuild.exe is important for you, but we found only this."
-    set msbuildPath=!msbuildPath!\MSBuild.exe
+set _amd=!msbuildPath:Framework64=Framework!
+set _amd=!_amd:amd64=!
+
+if exist "!_amd!" (
+    call :dbgprint "Return 32bit version of MSBuild.exe because you wanted this via -notamd64"
+    set msbuildPath=!_amd!
+    exit /B 0
 )
 
+call :dbgprint "We know that 32bit version of MSBuild.exe is important for you, but we found only this."
 exit /B 0
 
 :gntpoint
