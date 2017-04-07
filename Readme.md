@@ -1,21 +1,24 @@
 # [hMSBuild](https://github.com/3F/hMSBuild)
 
-A lightweight tool (a single compiled batch file ~19 Kb that can be embedded inside any scripts or other batch files) - an easy helper for searching of available MSBuild tools. Supports tools from VS2017+ (does not requires additional vswhere.exe), VS2015 or less, other versions from .NET Framework.
+A lightweight tool (compiled batch file ~19 Kb that can be embedded inside any scripts or other batch files) - an easy helper for searching of available MSBuild tools. Supports tools from VS2017+ (does not requires additional vswhere.exe), VS2015 or less, other versions from .NET Framework.
 
 
-[![Build status](https://ci.appveyor.com/api/projects/status/tusiutft7a0ei109/branch/master?svg=true)](https://ci.appveyor.com/project/3Fs/hmsbuild/branch/master) [![License](https://img.shields.io/badge/License-MIT-74A5C2.svg)](https://github.com/3F/hMSBuild/blob/master/License.txt)
+[![Build status](https://ci.appveyor.com/api/projects/status/tusiutft7a0ei109/branch/master?svg=true)](https://ci.appveyor.com/project/3Fs/hmsbuild/branch/master) [![release-src](https://img.shields.io/github/release/3F/hMSBuild.svg)](https://github.com/3F/hMSBuild/releases/latest) [![License](https://img.shields.io/badge/License-MIT-74A5C2.svg)](https://github.com/3F/hMSBuild/blob/master/License.txt)
+
+**Download:** [/releases](https://github.com/3F/hMSBuild/releases) [ **[latest](https://github.com/3F/hMSBuild/releases/latest)** ]
+* [nightly builds](https://ci.appveyor.com/project/3Fs/hmsbuild/history) (see `/artifacts` page) - *it can be unstable or not work at all. Use this for tests of latest changes.*
 
 
 ## Why hMSBuild ?
 
 *because you need access to msbuild tools...* 
 
-It based on **GetNuTool core** https://github.com/3F/GetNuTool, and initially a more simplified msbuild-helper was as a part of this tool. But with latest changes from MS -_- we extracted this into new project for more support of all this.
+It based on **GetNuTool core** https://github.com/3F/GetNuTool, and initially it was a more simplified msbuild-helper as part of this tool. But with latest changes from MS -_- we extracted this into new project for more support of all this.
 
 ### What supports ?
 
 * Versions from VS2017+ 
-    * https://github.com/Microsoft/vswhere/issues/41 - Currently it solves our problem **only** for online machines. That is, you should have internet connection if you want to use msbuild from VS2017+. Otherwise you should manualy provide `vswhere.exe`. But we also have **[a good news](https://github.com/Microsoft/vswhere/issues/41#issuecomment-291943221)**: finaly the `vswhere.exe` will be provided with updates of VS in future.
+    * https://github.com/Microsoft/vswhere/issues/41 - Currently it solves our problem **only** for online machines. That is, you should have internet connection if you want to use msbuild from VS2017+. Otherwise you should manualy provide `vswhere.exe`. But we also have **[a good news](https://github.com/Microsoft/vswhere/issues/41#issuecomment-291943221)**: finally the `vswhere.exe` will be provided with updates of VS in future.
     
 * Versions from VS2015, VS2013, .NET Framework
     * Still easy to find even for offline.
