@@ -5,7 +5,7 @@ echo Checking submodules ...
 set _dep=%1
 
 if "%_dep%"=="" (
-    echo Incorrect command.
+    echo Incorrect command. Please use `build.bat` instead of this.
     exit /B 0
 )
 
@@ -22,11 +22,18 @@ echo.
 echo. Please wait...
 echo.
 
-git submodule update --init --recursive 2>nul || goto gitNotFound
+git submodule update --init --recursive || goto gitNotFound
 
 exit /B 0
 
 :gitNotFound
+
+if not exist ".git" (
+    echo.  1>&2
+    echo To restore submodules via Git scm you should have a `.git` folder, but we can't find this. 1>&2
+    echo Unfortenally you should get this manually, or try to clone initially with recursive option: `git clone --recursive ...` 1>&2
+    exit /B 3
+)
 
 echo.  1>&2
 echo. `git` was not found or something went wrong. Check your connection and env. variable `PATH`. Or get submodules manually: 1>&2

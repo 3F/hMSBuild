@@ -31,7 +31,6 @@ Usage is same as it would be same for msbuild. But you also have additional keys
 Usage: hMSBuild [args to hMSBuild] [args to msbuild.exe or GetNuTool core]
 ------
 
-----------
 Arguments:
 ----------
 hMSBuild -novswhere            - Do not search via vswhere.
@@ -41,8 +40,9 @@ hMSBuild -vswhereVersion {num} - To use special version of vswhere. Use `latest`
 hMSBuild -nocachevswhere       - Do not cache vswhere. Use this also for reset cache.
 hMSBuild -notamd64             - To use 32bit version of found msbuild.exe if it's possible.
 hMSBuild -eng                  - Try to use english language for all build messages.
-hMSBuild -GetNuTool {args}     - Access to GetNuTool core.
+hMSBuild -GetNuTool {args}     - Access to GetNuTool core. https://github.com/3F/GetNuTool
 hMSBuild -debug                - To show additional information from hMSBuild.
+hMSBuild -version              - To show version of hMSBuild.
 hMSBuild -help                 - Shows this help. Aliases: -help -h -?
 
 

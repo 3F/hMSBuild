@@ -1,5 +1,8 @@
 @echo off
 
+set cimdll=GetNuTool\packages\vsSBE.CI.MSBuild\bin\CI.MSBuild.dll
+set netmsb=GetNuTool\netmsb
+
 call submodules "GetNuTool/gnt.sln" || goto err
 
 setlocal
@@ -7,7 +10,7 @@ setlocal
     call build || goto err
 endlocal
 
-copy /Y/B frontend.bat+"GetNuTool\bin\Release\raw\versions\01. executable\gnt.bat" bin\hMSBuild.bat || goto err
+call %netmsb% "hMSBuild.sln" /l:"%cimdll%" /v:m /m:4 || goto err
 
 exit /B 0
 

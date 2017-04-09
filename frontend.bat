@@ -1,7 +1,9 @@
 @echo off
 
-:: hMSBuild
+:: hMSBuild - $-version-$
 :: Copyright (c) 2017  Denis Kuzmin [ entry.reg@gmail.com ]
+:: -
+:: Distributed under the MIT license
 :: https://github.com/3F/hMSBuild
 
 setlocal enableDelayedExpansion
@@ -44,16 +46,15 @@ goto mainCommands
 :printhelp
 
 echo.
-echo :: hMSBuild - v1.0
+echo :: hMSBuild - $-version-$
+echo Copyright (c) 2017  Denis Kuzmin [ entry.reg@gmail.com :: github.com/3F ]
+echo Distributed under the MIT license
+echo https://github.com/3F/hMSBuild 
 echo.
-echo   https://github.com/3F/hMSBuild
-echo   Based on GetNuTool - https://github.com/3F/GetNuTool
-echo   [ entry.reg@gmail.com :: github.com/3F ]
 echo.
 echo Usage: hMSBuild [args to hMSBuild] [args to msbuild.exe or GetNuTool core]
 echo ------
 echo.
-echo ----------
 echo Arguments:
 echo ----------
 echo hMSBuild -novswhere            - Do not search via vswhere.
@@ -63,9 +64,9 @@ echo hMSBuild -vswhereVersion {num} - To use special version of vswhere. Use `la
 echo hMSBuild -nocachevswhere       - Do not cache vswhere. Use this also for reset cache.
 echo hMSBuild -notamd64             - To use 32bit version of found msbuild.exe if it's possible.
 echo hMSBuild -eng                  - Try to use english language for all build messages.
-echo hMSBuild -GetNuTool {args}     - Access to GetNuTool core.
+echo hMSBuild -GetNuTool {args}     - Access to GetNuTool core. https://github.com/3F/GetNuTool
 echo hMSBuild -debug                - To show additional information from hMSBuild.
-::echo hMSBuild -version              - To show version of hMSBuild.
+echo hMSBuild -version              - To show version of hMSBuild.
 echo hMSBuild -help                 - Shows this help. Aliases: -help -h -?
 echo.
 echo. 
@@ -96,7 +97,7 @@ exit /B 0
 
 :mainCommands
 
-set /a idx=1 & set cmdMax=9
+set /a idx=1 & set cmdMax=10
 :loopargs
 
     if "!args:~0,11!"=="-GetNuTool " (
@@ -144,6 +145,11 @@ set /a idx=1 & set cmdMax=9
     if "!args:~0,7!"=="-debug " (
         call :popars %1 & shift
         set hMSBuildDebug=1
+    )
+    
+    if "!args:~0,9!"=="-version " (
+        echo hMSBuild - $-version-$
+        exit /B 0
     )
     
 set /a "idx=idx+1"
