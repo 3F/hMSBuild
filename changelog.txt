@@ -1,8 +1,13 @@
 hMSBuild :: https://github.com/3F/hMSBuild
 - - - - -
 
+[v1.1] 2017.04.10
 
-[v1.0]
+    * FIXED: Fixed problem with finding of 32bit version from .NET Framework.
+    * CHANGED: Changed logic of `-notamd64` command to find 32bit version from Visual Studio.
+    * NEW: Implemented `-version` command.
+
+[v1.0] 2017.04.06
 
     * The first point - A lightweight tool (compiled batch file ~19 Kb that can be embedded inside any scripts or other batch files) - an easy helper for searching of available MSBuild tools. 
                         Supports tools from VS2017+ (does not require additional vswhere.exe), VS2015 or less, other versions from .NET Framework.  

@@ -15,6 +15,12 @@ A lightweight tool (compiled batch file ~19 Kb that can be embedded inside any s
 
 It based on **GetNuTool core** https://github.com/3F/GetNuTool, and initially it was a more simplified msbuild-helper as part of this tool. But with latest changes from MS -_- we extracted this into new project for more support of all this.
 
+### Features
+
+1 batch file and no anything else for your happy build. 
+
+Combine with your other available scripts or just type `hMSBuild <args to msbuild.exe>` and have fun. Start with `hMSBuild -?`
+
 ### What supports ?
 
 * Versions from VS2017+ 
