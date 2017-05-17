@@ -1,6 +1,6 @@
 # [hMSBuild](https://github.com/3F/hMSBuild)
 
-A lightweight tool (compiled batch file ~19 Kb that can be embedded inside any scripts or other batch files) - an easy helper for searching of available MSBuild tools. Supports tools from VS2017+ (does not requires additional vswhere.exe), VS2015 or less, other versions from .NET Framework.
+A lightweight tool (compiled batch file ~19 Kb that can be embedded inside any scripts or other batch files) - an easy helper for searching of available MSBuild tools. Supports tools from VS2017+ (does not require additional vswhere.exe), VS2015 or less, other versions from .NET Framework.
 
 
 [![Build status](https://ci.appveyor.com/api/projects/status/tusiutft7a0ei109/branch/master?svg=true)](https://ci.appveyor.com/project/3Fs/hmsbuild/branch/master) [![release-src](https://img.shields.io/github/release/3F/hMSBuild.svg)](https://github.com/3F/hMSBuild/releases/latest) [![License](https://img.shields.io/badge/License-MIT-74A5C2.svg)](https://github.com/3F/hMSBuild/blob/master/License.txt)
@@ -39,17 +39,17 @@ Usage: hMSBuild [args to hMSBuild] [args to msbuild.exe or GetNuTool core]
 
 Arguments:
 ----------
-hMSBuild -novswhere            - Do not search via vswhere.
-hMSBuild -novs                 - Disable searching from Visual Studio.
-hMSBuild -nonet                - Disable searching from .NET Framework.
-hMSBuild -vswhereVersion {num} - To use special version of vswhere. Use `latest` keyword to get newer.
-hMSBuild -nocachevswhere       - Do not cache vswhere. Use this also for reset cache.
-hMSBuild -notamd64             - To use 32bit version of found msbuild.exe if it's possible.
-hMSBuild -eng                  - Try to use english language for all build messages.
-hMSBuild -GetNuTool {args}     - Access to GetNuTool core. https://github.com/3F/GetNuTool
-hMSBuild -debug                - To show additional information from hMSBuild.
-hMSBuild -version              - To show version of hMSBuild.
-hMSBuild -help                 - Shows this help. Aliases: -help -h -?
+ -novswhere            - Do not search via vswhere.
+ -novs                 - Disable searching from Visual Studio.
+ -nonet                - Disable searching from .NET Framework.
+ -vswhereVersion {num} - To use special version of vswhere. Use `latest` keyword to get newer.
+ -nocachevswhere       - Do not cache vswhere. Use this also for reset cache.
+ -notamd64             - To use 32bit version of found msbuild.exe if it's possible.
+ -eng                  - Try to use english language for all build messages.
+ -GetNuTool {args}     - Access to GetNuTool core. https://github.com/3F/GetNuTool
+ -debug                - To show additional information from hMSBuild.
+ -version              - To show version of hMSBuild.
+ -help                 - Shows this help. Aliases: -help -h -?
 
 
 --------

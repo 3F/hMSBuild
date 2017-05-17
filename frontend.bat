@@ -1,4 +1,4 @@
-@echo off
+@echo off & echo Incomplete script. Compile it first via 'build.bat' - github.com/3F/hMSBuild 1>&2 & exit /B 1
 
 :: hMSBuild - $-version-$
 :: Copyright (c) 2017  Denis Kuzmin [ entry.reg@gmail.com ]
@@ -12,7 +12,7 @@ setlocal enableDelayedExpansion
 ::::
 ::   Settings by default
 
-set vswhereVersion=1.0.58
+set vswhereVersion=1.0.62
 set vswhereCache=%temp%\hMSBuild_vswhere
 
 set notamd64=0
@@ -57,24 +57,24 @@ echo ------
 echo.
 echo Arguments:
 echo ----------
-echo hMSBuild -novswhere            - Do not search via vswhere.
-echo hMSBuild -novs                 - Disable searching from Visual Studio.
-echo hMSBuild -nonet                - Disable searching from .NET Framework.
-echo hMSBuild -vswhereVersion {num} - To use special version of vswhere. Use `latest` keyword to get newer.
-echo hMSBuild -nocachevswhere       - Do not cache vswhere. Use this also for reset cache.
-echo hMSBuild -notamd64             - To use 32bit version of found msbuild.exe if it's possible.
-echo hMSBuild -eng                  - Try to use english language for all build messages.
-echo hMSBuild -GetNuTool {args}     - Access to GetNuTool core. https://github.com/3F/GetNuTool
-echo hMSBuild -debug                - To show additional information from hMSBuild.
-echo hMSBuild -version              - To show version of hMSBuild.
-echo hMSBuild -help                 - Shows this help. Aliases: -help -h -?
+echo  -novswhere             - Do not search via vswhere.
+echo  -novs                  - Disable searching from Visual Studio.
+echo  -nonet                 - Disable searching from .NET Framework.
+echo  -vswhere-version {num} - To use special version of vswhere. Use `latest` keyword to get newer.
+echo  -nocachevswhere        - Do not cache vswhere. Use this also for reset cache.
+echo  -notamd64              - To use 32bit version of found msbuild.exe if it's possible.
+echo  -eng                   - Try to use english language for all build messages.
+echo  -GetNuTool {args}      - Access to GetNuTool core. https://github.com/3F/GetNuTool
+echo  -debug                 - To show additional information from hMSBuild.
+echo  -version               - To show version of hMSBuild.
+echo  -help                  - Display this help. Aliases: -help -h -?
 echo.
 echo. 
 echo -------- 
 echo Samples:
 echo -------- 
-echo hMSBuild -vswhereVersion 1.0.50 -notamd64 "Conari.sln" /t:Rebuild
-echo hMSBuild -vswhereVersion latest "Conari.sln"
+echo hMSBuild -vswhere-version 1.0.50 -notamd64 "Conari.sln" /t:Rebuild
+echo hMSBuild -vswhere-version latest "Conari.sln"
 echo.
 echo hMSBuild -novswhere -novs -notamd64 "Conari.sln"
 echo hMSBuild -novs "DllExport.sln"
@@ -97,7 +97,7 @@ exit /B 0
 
 :mainCommands
 
-set /a idx=1 & set cmdMax=10
+set /a idx=1 & set cmdMax=11
 :loopargs
 
     if "!args:~0,11!"=="-GetNuTool " (
@@ -124,14 +124,18 @@ set /a idx=1 & set cmdMax=10
         call :popars %1 & shift
         set nonet=1
     )
-    
-    if "!args:~0,16!"=="-vswhereVersion " (
+
+    :: backward compatibility - version 1.1
+    if "!args:~0,16!"=="-vswhereVersion " set _OrConditionVSWVer=1
+    if "!args:~0,17!"=="-vswhere-version " set _OrConditionVSWVer=1
+    if defined _OrConditionVSWVer (
+        set _OrConditionVSWVer=
         call :popars %1 & shift
         set vswhereVersion=%2
         echo selected new vswhere version: !vswhereVersion!
         call :popars %2 & shift
     )
-    
+
     if "!args:~0,10!"=="-notamd64 " (
         call :popars %1 & shift
         set notamd64=1
@@ -200,11 +204,11 @@ exit /B 0
 
 :runmsbuild
 
-set selmsbuild="!msbuildPath!"
-echo MSBuild Tools: !selmsbuild! 
+set xMSBuild="!msbuildPath!"
+echo MSBuild Tools ('xMSBuild'): !xMSBuild! 
 call :dbgprint "Arguments: !args!"
 
-!selmsbuild! !args!
+!xMSBuild! !args!
 
 exit /B 0
 

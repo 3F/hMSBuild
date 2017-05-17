@@ -1,11 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.4
-MinimumVisualStudioVersion = 10.0.30319.1
+VisualStudioVersion = 15.0.26430.6
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "hMSBuild", "hMSBuild", "{D221D332-2A57-44F9-B866-F7C00C29032D}"
 	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		.version = .version
+		build.bat = build.bat
+		changelog.txt = changelog.txt
 		frontend.bat = frontend.bat
+		License.txt = License.txt
+		Readme.md = Readme.md
+		submodules.bat = submodules.bat
 	EndProjectSection
 EndProject
 Global
