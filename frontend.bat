@@ -28,7 +28,7 @@ set ERROR_PATH_NOT_FOUND=3
 
 :: leave for this at least 1 trailing whitespace -v
 set args=%* 
-
+for /f "tokens=* delims=-" %%a in ('echo %args%') do set args=-%%a
 
 ::::
 ::   Help command
