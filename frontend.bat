@@ -21,14 +21,15 @@ set nonet=0
 set novswhere=0
 set nocachevswhere=0
 set hMSBuildDebug=0
-set vswVersion=
+set "displayOnlyPath="
+set "vswVersion="
 
 set ERROR_SUCCESS=0
 set ERROR_FILE_NOT_FOUND=2
 set ERROR_PATH_NOT_FOUND=3
 
 :: leave for this at least 1 trailing whitespace -v
-set args=%* 
+set "args=%* "
 
 
 ::::
@@ -61,17 +62,19 @@ echo  -novswhere             - Do not search via vswhere.
 echo  -novs                  - Disable searching from Visual Studio.
 echo  -nonet                 - Disable searching from .NET Framework.
 echo  -vswhere-version {num} - Specific version of vswhere. Where {num}:
-echo                           * Versions: 1.0.50
+echo                           * Versions: 1.0.50 ...
 echo                           * Keywords: 
-echo                              `latest` to get latest available version; 
-echo                              `local` to use only local version (+15.2.26418.1 VS-build);
+echo                             `latest` to get latest available version; 
+echo                             `local`  to use only local versions: 
+echo                                      (.bat;.exe /or from +15.2.26418.1 VS-build);
 echo.
 echo  -nocachevswhere        - Do not cache vswhere. Use this also for reset cache.
 echo  -notamd64              - To use 32bit version of found msbuild.exe if it's possible.
 echo  -eng                   - Try to use english language for all build messages.
 echo  -GetNuTool {args}      - Access to GetNuTool core. https://github.com/3F/GetNuTool
+echo  -only-path             - Only display fullpath to found MSBuild.
 echo  -debug                 - To show additional information from hMSBuild.
-echo  -version               - To show version of hMSBuild.
+echo  -version               - Display version of hMSBuild.
 echo  -help                  - Display this help. Aliases: -help -h -?
 echo.
 echo. 
@@ -110,7 +113,7 @@ if "%args: =%"=="" (
     if "!_args:~0,1!"=="-" set args=-!args!
 )
 
-set /a idx=1 & set cmdMax=11
+set /a idx=1 & set cmdMax=12
 :loopargs
 
     if "!args:~0,11!"=="-GetNuTool " (
@@ -158,7 +161,12 @@ set /a idx=1 & set cmdMax=11
         call :popars %1 & shift
         chcp 437 >nul
     )
-    
+
+    if "!args:~0,11!"=="-only-path " (
+        call :popars %1 & shift
+        set displayOnlyPath=1
+    )
+
     if "!args:~0,7!"=="-debug " (
         call :popars %1 & shift
         set hMSBuildDebug=1
@@ -185,7 +193,7 @@ exit /B 0
 
 if "!nocachevswhere!"=="1" (
     call :dbgprint "resetting cache of vswhere"
-    rmdir /S/Q "%vswhereCache%"
+    rmdir /S/Q "%vswhereCache%" 2>nul
 )
 
 if not "!novswhere!"=="1" if not "!novs!"=="1" (
@@ -216,13 +224,16 @@ if "!hMSBuildDebug!"=="1" (
 exit /B 0
 
 :runmsbuild
-
+if defined displayOnlyPath (
+    echo !msbuildPath!
+    exit /B 0
+)
 set xMSBuild="!msbuildPath!"
-echo MSBuild Tools ('xMSBuild'): !xMSBuild! 
+
+echo hMSBuild: !xMSBuild! 
 call :dbgprint "Arguments: !args!"
 
 !xMSBuild! !args!
-
 exit /B 0
 
 :vswhere
@@ -348,7 +359,7 @@ for %%v in (14.0, 12.0) do (
     )
 )
 
-call :dbgprint "msbvsold: unfortenally we didn't find anything."
+call :dbgprint "msbvsold: unfortunately we didn't find anything."
 exit /B %ERROR_FILE_NOT_FOUND%
 
 :msbnetf
@@ -371,7 +382,7 @@ for %%v in (4.0, 3.5, 2.0) do (
     )
 )
 
-call :dbgprint "msbnetf: unfortenally we didn't find anything."
+call :dbgprint "msbnetf: unfortunately we didn't find anything."
 exit /B %ERROR_FILE_NOT_FOUND%
 
 
