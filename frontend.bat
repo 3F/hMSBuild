@@ -12,7 +12,7 @@ setlocal enableDelayedExpansion
 ::::
 ::   Settings by default
 
-set vswhereVersion=1.0.62
+set vswhereByDefault=1.0.62
 set vswhereCache=%temp%\hMSBuild_vswhere
 
 set notamd64=0
@@ -21,6 +21,7 @@ set nonet=0
 set novswhere=0
 set nocachevswhere=0
 set hMSBuildDebug=0
+set vswVersion=
 
 set ERROR_SUCCESS=0
 set ERROR_FILE_NOT_FOUND=2
@@ -60,7 +61,12 @@ echo ----------
 echo  -novswhere             - Do not search via vswhere.
 echo  -novs                  - Disable searching from Visual Studio.
 echo  -nonet                 - Disable searching from .NET Framework.
-echo  -vswhere-version {num} - To use special version of vswhere. Use `latest` keyword to get newer.
+echo  -vswhere-version {num} - Specific version of vswhere. Where {num}:
+echo                           * Versions: 1.0.50
+echo                           * Keywords: 
+echo                              `latest` to get latest available version; 
+echo                              `local` to use only local version (+15.2.26418.1 VS-build);
+echo.
 echo  -nocachevswhere        - Do not cache vswhere. Use this also for reset cache.
 echo  -notamd64              - To use 32bit version of found msbuild.exe if it's possible.
 echo  -eng                   - Try to use english language for all build messages.
@@ -75,6 +81,7 @@ echo Samples:
 echo -------- 
 echo hMSBuild -vswhere-version 1.0.50 -notamd64 "Conari.sln" /t:Rebuild
 echo hMSBuild -vswhere-version latest "Conari.sln"
+echo hMSBuild -vswhere-version local "Conari.sln"
 echo.
 echo hMSBuild -novswhere -novs -notamd64 "Conari.sln"
 echo hMSBuild -novs "DllExport.sln"
@@ -131,8 +138,8 @@ set /a idx=1 & set cmdMax=11
     if defined _OrConditionVSWVer (
         set _OrConditionVSWVer=
         call :popars %1 & shift
-        set vswhereVersion=%2
-        echo selected new vswhere version: !vswhereVersion!
+        set vswVersion=%2
+        echo selected new vswhere version: !vswVersion!
         call :popars %2 & shift
     )
 
@@ -218,30 +225,71 @@ exit /B 0
 
 call :dbgprint "trying via vswhere..."
 
+if defined vswVersion (
+    if not "!vswVersion!"=="local" (
+        call :vswhereRemote
+        call :vswhereBin
+        exit /B 0
+    )
+)
+
+call :vswhereLocal
+if "!ERRORLEVEL!"=="%ERROR_PATH_NOT_FOUND%" (
+    if "!vswVersion!"=="local" (
+        exit /B %ERROR_PATH_NOT_FOUND%
+    )
+    call :vswhereRemote
+)
+call :vswhereBin
+exit /B 0
+
+:vswhereLocal
+
+:: Only with +15.2.26418.1 VS-build
+:: https://github.com/3F/hMSBuild/issues/1
+
+if exist "%~dp0vswhere.bat" set vswbin="%~dp0vswhere" & exit /B 0
+if exist "%~dp0vswhere.exe" set vswbin="%~dp0vswhere" & exit /B 0
+
+set rlocalp=Microsoft Visual Studio\Installer
+
+if exist "%ProgramFiles(x86)%\!rlocalp!" set vswbin="%ProgramFiles(x86)%\!rlocalp!\vswhere" & exit /B 0
+if exist "%ProgramFiles%\!rlocalp!" set vswbin="%ProgramFiles%\!rlocalp!\vswhere" & exit /B 0
+
+call :dbgprint "local vswhere is not found."
+exit /B %ERROR_PATH_NOT_FOUND%
+
+:vswhereRemote
+
 if "!nocachevswhere!"=="1" (
     set tvswhere=%temp%\%random%%random%vswhere
 ) else (
     set tvswhere=%vswhereCache%
 )
 
-call :dbgprint "tvswhere: %tvswhere%"
+call :dbgprint "tvswhere: !tvswhere!"
 
-if "!vswhereVersion!"=="latest" (
+if "!vswVersion!"=="latest" (
     set vswpkg=vswhere
 ) else (
-    set vswpkg=vswhere/!vswhereVersion!
+    set vswpkg=vswhere/!vswVersion!
 )
 
-call :dbgprint "vswpkg: %vswpkg%"
+call :dbgprint "vswpkg: !vswpkg!"
 
 if "!hMSBuildDebug!"=="1" (
-    call :gntpoint /p:ngpackages="%vswpkg%:vswhere" /p:ngpath="%tvswhere%"
+    call :gntpoint /p:ngpackages="!vswpkg!:vswhere" /p:ngpath="!tvswhere!"
 ) else (
-    call :gntpoint /p:ngpackages="%vswpkg%:vswhere" /p:ngpath="%tvswhere%" >nul
+    call :gntpoint /p:ngpackages="!vswpkg!:vswhere" /p:ngpath="!tvswhere!" >nul
 )
-set vswbin="%tvswhere%\vswhere\tools\vswhere"
+set vswbin="!tvswhere!\vswhere\tools\vswhere"
 
-for /f "usebackq tokens=1* delims=: " %%a in (`%vswbin% -latest -requires Microsoft.Component.MSBuild`) do (
+exit /B 0
+
+:vswhereBin
+call :dbgprint "vswbin: "!vswbin!""
+
+for /f "usebackq tokens=1* delims=: " %%a in (`!vswbin! -latest -requires Microsoft.Component.MSBuild`) do (
     if /i "%%a"=="installationPath" set vspath=%%b
     if /i "%%a"=="installationVersion" set vsver=%%b
 )
@@ -249,17 +297,19 @@ for /f "usebackq tokens=1* delims=: " %%a in (`%vswbin% -latest -requires Micros
 call :dbgprint "vspath: !vspath!"
 call :dbgprint "vsver: !vsver!"
 
-if "!nocachevswhere!"=="1" (
-    call :dbgprint "reset vswhere"
-    rmdir /S/Q "%tvswhere%"
+if defined tvswhere (
+    if "!nocachevswhere!"=="1" (
+        call :dbgprint "reset vswhere"
+        rmdir /S/Q "!tvswhere!"
+    )
 )
 
-if [%vsver%]==[] (
+if [!vsver!]==[] (
     call :dbgprint "VS2017+ was not found via vswhere"
     exit /B %ERROR_PATH_NOT_FOUND%
 )
 
-for /f "tokens=1,2 delims=." %%a in ("%vsver%") do (
+for /f "tokens=1,2 delims=." %%a in ("!vsver!") do (
     set vsver=%%a.%%b
 )
 set msbuildPath=!vspath!\MSBuild\!vsver!\Bin
