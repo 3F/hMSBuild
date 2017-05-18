@@ -29,7 +29,7 @@ set ERROR_PATH_NOT_FOUND=3
 
 :: leave for this at least 1 trailing whitespace -v
 set args=%* 
-for /f "tokens=* delims=-" %%a in ('echo %args%') do set args=-%%a
+
 
 ::::
 ::   Help command
@@ -40,11 +40,10 @@ set cargs=%cargs:-help =%
 set cargs=%cargs:-h =%
 set cargs=%cargs:-? =%
 
-if not "%args%"=="%cargs%" goto printhelp
-goto mainCommands
+if not "%args%"=="%cargs%" goto usage
+goto commands
 
-
-:printhelp
+:usage
 
 echo.
 echo :: hMSBuild - $-version-$
@@ -81,7 +80,6 @@ echo Samples:
 echo -------- 
 echo hMSBuild -vswhere-version 1.0.50 -notamd64 "Conari.sln" /t:Rebuild
 echo hMSBuild -vswhere-version latest "Conari.sln"
-echo hMSBuild -vswhere-version local "Conari.sln"
 echo.
 echo hMSBuild -novswhere -novs -notamd64 "Conari.sln"
 echo hMSBuild -novs "DllExport.sln"
@@ -102,7 +100,15 @@ exit /B 0
 ::::
 ::   Main commands for user
 
-:mainCommands
+:commands
+
+if "%args: =%"=="" (
+    goto action
+) else (
+    set _args=%args%
+    for /f "tokens=* delims=-" %%a in ('echo %args%') do set args=%%a 
+    if "!_args:~0,1!"=="-" set args=-!args!
+)
 
 set /a idx=1 & set cmdMax=11
 :loopargs
@@ -252,7 +258,6 @@ if exist "%~dp0vswhere.bat" set vswbin="%~dp0vswhere" & exit /B 0
 if exist "%~dp0vswhere.exe" set vswbin="%~dp0vswhere" & exit /B 0
 
 set rlocalp=Microsoft Visual Studio\Installer
-
 if exist "%ProgramFiles(x86)%\!rlocalp!" set vswbin="%ProgramFiles(x86)%\!rlocalp!\vswhere" & exit /B 0
 if exist "%ProgramFiles%\!rlocalp!" set vswbin="%ProgramFiles%\!rlocalp!\vswhere" & exit /B 0
 
