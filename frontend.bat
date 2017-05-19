@@ -28,7 +28,6 @@ set ERROR_SUCCESS=0
 set ERROR_FILE_NOT_FOUND=2
 set ERROR_PATH_NOT_FOUND=3
 
-:: leave for this at least 1 trailing whitespace -v
 set "args=%* "
 
 
@@ -107,10 +106,6 @@ exit /B 0
 
 if "%args: =%"=="" (
     goto action
-) else (
-    set _args=%args%
-    for /f "tokens=* delims=-" %%a in ('echo %args%') do set args=%%a 
-    if "!_args:~0,1!"=="-" set args=-!args!
 )
 
 set /a idx=1 & set cmdMax=12
@@ -184,8 +179,17 @@ goto action
 
 :popars
 set args=!!args:%1 ^=!!
+call :trim args
+set "args=!args! "
 exit /B 0
 
+:trim
+call :_v %%%1%%
+set %1=%_trimv%
+exit /B 0
+:_v
+set "_trimv=%*"
+exit /B 0
 
 :action
 ::::
