@@ -1,6 +1,26 @@
 hMSBuild :: https://github.com/3F/hMSBuild
 - - - - -
 
+[v1.2] 2017.05.19
+    
+    * FIXED: Fixed problem of sensitivity to whitespaces between arguments.
+    * NEW: Added `local` keyword for `-vswhere-version` command to use only local versions - Issue #1
+            ```
+            -vswhere-version {num} - Specific version of vswhere. Where {num}:
+                                     * Versions: 1.0.50 ...
+                                     * Keywords: 
+                                       `latest` to get latest available version; 
+                                       `local`  to use only local versions: 
+                                                (.bat;.exe /or from +15.2.26418.1 VS-build);
+            ```
+            
+    * NEW: Added searching of vswhere.bat/exe where placed hMSBuild.bat before VS Installer folder.
+    * NEW: Added `-only-path` key to display only fullpath to found MSBuild.
+    * CHANGED: `-vswhereVersion` command has been renamed to `-vswhere-version`.
+                The old command still available for backward compatibility with version 1.1, but it's marked as obsolete and not recommended to use anymore.
+                
+    * CHANGED: vswhere version by default now is 1.0.62
+
 [v1.1] 2017.04.10
 
     * FIXED: Fixed problem with finding of 32bit version from .NET Framework.

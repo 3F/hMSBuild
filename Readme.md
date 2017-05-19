@@ -1,6 +1,6 @@
 # [hMSBuild](https://github.com/3F/hMSBuild)
 
-A lightweight tool (compiled batch file ~19 Kb that can be embedded inside any scripts or other batch files) - an easy helper for searching of available MSBuild tools. Supports tools from VS2017+ (does not require additional vswhere.exe), VS2015 or less, other versions from .NET Framework.
+A lightweight tool (compiled batch file ~20 Kb that can be embedded inside any scripts or other batch files) - an easy helper for searching of available MSBuild tools. Supports tools from VS2017+ (does not require additional vswhere.exe), VS2015 or less, other versions from .NET Framework.
 
 
 [![Build status](https://ci.appveyor.com/api/projects/status/tusiutft7a0ei109/branch/master?svg=true)](https://ci.appveyor.com/project/3Fs/hmsbuild/branch/master) [![release-src](https://img.shields.io/github/release/3F/hMSBuild.svg)](https://github.com/3F/hMSBuild/releases/latest) [![License](https://img.shields.io/badge/License-MIT-74A5C2.svg)](https://github.com/3F/hMSBuild/blob/master/License.txt)
@@ -11,23 +11,22 @@ A lightweight tool (compiled batch file ~19 Kb that can be embedded inside any s
 
 ## Why hMSBuild ?
 
-*because you need access to msbuild tools...* 
+*because you need simple access to msbuild tools and more...* 
 
-It based on **GetNuTool core** https://github.com/3F/GetNuTool, and initially it was a more simplified msbuild-helper as part of this tool. But with latest changes from MS -_- we extracted this into new project for more support of all this.
+It based on **GetNuTool core** https://github.com/3F/GetNuTool, and initially it was a more simplified msbuild-helper as part of this tool. But with latest changes from MS we extracted this into new project for more support of all this.
 
 ### Features
 
-1 batch file and no anything else for your happy build. 
+**1 batch file and no anything else** for your happy build. 
 
 Combine with your other available scripts or just type `hMSBuild <args to msbuild.exe>` and have fun. Start with `hMSBuild -?`
 
 ### What supports ?
 
 * Versions from VS2017+ 
-    * https://github.com/Microsoft/vswhere/issues/41 - Currently it solves our problem **only** for online machines. That is, you should have internet connection if you want to use msbuild from VS2017+. Otherwise you should manualy provide `vswhere.exe`. But we also have **[a good news](https://github.com/Microsoft/vswhere/issues/41#issuecomment-291943221)**: finally the `vswhere.exe` will be provided with updates of VS in future.
+    * Full support even if you still have no any [local `vswhere.exe`](https://github.com/Microsoft/vswhere/issues/41) [[?](https://github.com/Microsoft/vswhere/issues/41)]
     
 * Versions from VS2015, VS2013, .NET Framework
-    * Still easy to find even for offline.
     
 ## Usage
 
@@ -39,24 +38,31 @@ Usage: hMSBuild [args to hMSBuild] [args to msbuild.exe or GetNuTool core]
 
 Arguments:
 ----------
- -novswhere            - Do not search via vswhere.
- -novs                 - Disable searching from Visual Studio.
- -nonet                - Disable searching from .NET Framework.
- -vswhereVersion {num} - To use special version of vswhere. Use `latest` keyword to get newer.
- -nocachevswhere       - Do not cache vswhere. Use this also for reset cache.
- -notamd64             - To use 32bit version of found msbuild.exe if it's possible.
- -eng                  - Try to use english language for all build messages.
- -GetNuTool {args}     - Access to GetNuTool core. https://github.com/3F/GetNuTool
- -debug                - To show additional information from hMSBuild.
- -version              - To show version of hMSBuild.
- -help                 - Shows this help. Aliases: -help -h -?
+ -novswhere             - Do not search via vswhere.
+ -novs                  - Disable searching from Visual Studio.
+ -nonet                 - Disable searching from .NET Framework.
+ -vswhere-version {num} - Specific version of vswhere. Where {num}:
+                          * Versions: 1.0.50 ...
+                          * Keywords:
+                            `latest` to get latest available version;
+                            `local`  to use only local versions:
+                                     (.bat;.exe /or from +15.2.26418.1 VS-build);
+
+ -nocachevswhere        - Do not cache vswhere. Use this also for reset cache.
+ -notamd64              - To use 32bit version of found msbuild.exe if it's possible.
+ -eng                   - Try to use english language for all build messages.
+ -GetNuTool {args}      - Access to GetNuTool core. https://github.com/3F/GetNuTool
+ -only-path             - Only display fullpath to found MSBuild.
+ -debug                 - To show additional information from hMSBuild.
+ -version               - Display version of hMSBuild.
+ -help                  - Display this help. Aliases: -help -h -?
 
 
 --------
 Samples:
 --------
-hMSBuild -vswhereVersion 1.0.50 -notamd64 "Conari.sln" /t:Rebuild
-hMSBuild -vswhereVersion latest "Conari.sln"
+hMSBuild -vswhere-version 1.0.50 -notamd64 "Conari.sln" /t:Rebuild
+hMSBuild -vswhere-version latest "Conari.sln"
 
 hMSBuild -novswhere -novs -notamd64 "Conari.sln"
 hMSBuild -novs "DllExport.sln"
@@ -77,7 +83,7 @@ Possible Error Codes: ERROR_FILE_NOT_FOUND (0x2), ERROR_PATH_NOT_FOUND (0x3), ER
 The [MIT License (MIT)](https://github.com/3F/hMSBuild/blob/master/License.txt)
 
 ```
-Copyright (c) 2017 Denis Kuzmin <entry.reg@gmail.com>
+Copyright (c) 2017  Denis Kuzmin <entry.reg@gmail.com> :: github.com/3F
 ```
 
 [![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=entry%2ereg%40gmail%2ecom&lc=US&item_name=3F%2dOpenSource%20%5b%20github%2ecom%2f3F&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted)
