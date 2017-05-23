@@ -9,8 +9,8 @@
 setlocal enableDelayedExpansion
 
 
-::::
-::   Settings by default
+:: - - -
+:: Settings by default
 
 set vswhereByDefault=1.0.62
 set vswhereCache=%temp%\hMSBuild_vswhere
@@ -31,8 +31,8 @@ set ERROR_PATH_NOT_FOUND=3
 set "args=%* "
 
 
-::::
-::   Help command
+:: - - -
+:: Help command
 
 set cargs=%args%
 
@@ -99,12 +99,12 @@ echo.
 
 exit /B 0
 
-::::
-::   Main commands for user
+:: - - -
+:: Handler of user commands
 
 :commands
 
-if "%args: =%"=="" (
+if [%args: =%] == [] (
     goto action
 )
 
@@ -191,9 +191,9 @@ exit /B 0
 set "_trimv=%*"
 exit /B 0
 
+:: - - -
+:: Main logic of searching
 :action
-::::
-::   Main logic of searching
 
 if "!nocachevswhere!"=="1" (
     call :dbgprint "resetting cache of vswhere"
@@ -240,9 +240,9 @@ call :dbgprint "Arguments: !args!"
 !xMSBuild! !args!
 exit /B 0
 
+:: - - -
+:: Tools from VS2017+
 :vswhere
-::::
-::   MSBuild tools from new Visual Studio - VS2017+
 
 call :dbgprint "trying via vswhere..."
 
@@ -250,7 +250,7 @@ if defined vswVersion (
     if not "!vswVersion!"=="local" (
         call :vswhereRemote
         call :vswhereBin
-        exit /B 0
+        exit /B !ERRORLEVEL!
     )
 )
 
@@ -262,7 +262,7 @@ if "!ERRORLEVEL!"=="%ERROR_PATH_NOT_FOUND%" (
     call :vswhereRemote
 )
 call :vswhereBin
-exit /B 0
+exit /B !ERRORLEVEL!
 
 :vswhereLocal
 
@@ -343,9 +343,9 @@ if exist "!msbuildPath!\amd64" (
 call :msbuildfind 
 exit /B 0
 
+:: - - -
+:: Tools from Visual Studio - 2015, 2013, ...
 :msbvsold
-::::
-::   MSBuild tools from Visual Studio - 2015, 2013, ...
 
 call :dbgprint "trying via MSBuild tools from Visual Studio - 2015, 2013, ..."
 
@@ -366,9 +366,9 @@ for %%v in (14.0, 12.0) do (
 call :dbgprint "msbvsold: unfortunately we didn't find anything."
 exit /B %ERROR_FILE_NOT_FOUND%
 
+:: - - -
+:: Tools from .NET Framework - .net 4.0, ...
 :msbnetf
-::::
-::   MSBuild tools from .NET Framework - .net 4.0, ...
 
 call :dbgprint "trying via MSBuild tools from .NET Framework - .net 4.0, ..."
 
