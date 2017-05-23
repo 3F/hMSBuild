@@ -15,12 +15,12 @@ setlocal enableDelayedExpansion
 set vswhereByDefault=1.0.62
 set vswhereCache=%temp%\hMSBuild_vswhere
 
-set notamd64=0
-set novs=0
-set nonet=0
-set novswhere=0
-set nocachevswhere=0
-set hMSBuildDebug=0
+set /a notamd64=0
+set /a novs=0
+set /a nonet=0
+set /a novswhere=0
+set /a nocachevswhere=0
+set /a hMSBuildDebug=0
 set "displayOnlyPath="
 set "vswVersion="
 
@@ -34,13 +34,14 @@ set "args=%* "
 :: - - -
 :: Help command
 
-set cargs=%args%
+set _hl=%args:"=%
+set _hr=%_hl%
 
-set cargs=%cargs:-help =%
-set cargs=%cargs:-h =%
-set cargs=%cargs:-? =%
+set _hr=%_hr:-help =%
+set _hr=%_hr:-h =%
+set _hr=%_hr:-? =%
 
-if not "%args%"=="%cargs%" goto usage
+if not "%_hl%"=="%_hr%" goto usage
 goto commands
 
 :usage
@@ -104,9 +105,8 @@ exit /B 0
 
 :commands
 
-if [%args: =%] == [] (
-    goto action
-)
+call :isEmptyOrWhitespace args _isEmpty
+if [%_isEmpty%]==[1] goto action
 
 set /a idx=1 & set cmdMax=12
 :loopargs
@@ -183,14 +183,6 @@ call :trim args
 set "args=!args! "
 exit /B 0
 
-:trim
-call :_v %%%1%%
-set %1=%_trimv%
-exit /B 0
-:_v
-set "_trimv=%*"
-exit /B 0
-
 :: - - -
 :: Main logic of searching
 :action
@@ -218,16 +210,14 @@ if not "!nonet!"=="1" (
 echo MSBuild tools was not found. Try to use other settings. Use key `-help` for details.
 exit /B %ERROR_FILE_NOT_FOUND%
 
-:dbgprint
-if "!hMSBuildDebug!"=="1" (
-    set msgfmt=%1
-    set msgfmt=!msgfmt:~0,-1! 
-    set msgfmt=!msgfmt:~1!
-    echo.[%TIME% ] !msgfmt!
-)
-exit /B 0
-
 :runmsbuild
+
+call :isEmptyOrWhitespace msbuildPath _isEmpty
+if [%_isEmpty%]==[1] (
+    echo Something went wrong. Use `-debug` key for details.
+    exit /B %ERROR_FILE_NOT_FOUND%
+)
+
 if defined displayOnlyPath (
     echo !msbuildPath!
     exit /B 0
@@ -414,6 +404,40 @@ if exist "!_amd!" (
 )
 
 call :dbgprint "We know that 32bit version of MSBuild.exe is important for you, but we found only this."
+exit /B 0
+
+:: =
+
+:dbgprint
+if "!hMSBuildDebug!"=="1" (
+    set msgfmt=%1
+    set msgfmt=!msgfmt:~0,-1! 
+    set msgfmt=!msgfmt:~1!
+    echo.[%TIME% ] !msgfmt!
+)
+exit /B 0
+
+:trim
+:: Usage: call :trim variable
+call :_v %%%1%%
+set %1=%_trimv%
+exit /B 0
+:_v
+set "_trimv=%*"
+exit /B 0
+
+:isEmptyOrWhitespace
+:: Usage: call :isEmptyOrWhitespace input output(1/0)
+setlocal enableDelayedExpansion
+set "_v=!%1!"
+
+if not defined _v endlocal & set /a %2=1 & exit /B 0
+ 
+set _v=%_v: =%
+set "_v= %_v%"
+if [^%_v:~1,1%]==[] endlocal & set /a %2=1 & exit /B 0
+ 
+endlocal & set /a %2=0
 exit /B 0
 
 :gntpoint
