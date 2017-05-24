@@ -47,13 +47,13 @@ goto commands
 :usage
 
 echo.
-echo :: hMSBuild - $-version-$
-echo Copyright (c) 2017  Denis Kuzmin [ entry.reg@gmail.com :: github.com/3F ]
+@echo :: hMSBuild - $-version-$
+@echo Copyright (c) 2017  Denis Kuzmin [ entry.reg@gmail.com :: github.com/3F ]
 echo Distributed under the MIT license
-echo https://github.com/3F/hMSBuild 
+@echo https://github.com/3F/hMSBuild 
 echo.
-echo.
-echo Usage: hMSBuild [args to hMSBuild] [args to msbuild.exe or GetNuTool core]
+@echo.
+@echo Usage: hMSBuild [args to hMSBuild] [args to msbuild.exe or GetNuTool core]
 echo ------
 echo.
 echo Arguments:
@@ -105,8 +105,8 @@ exit /B 0
 
 :commands
 
-call :isEmptyOrWhitespace args _isEmpty
-if [%_isEmpty%]==[1] goto action
+call :isEmptyOrWhitespace args _is
+if [%_is%]==[1] goto action
 
 set /a idx=1 & set cmdMax=12
 :loopargs
@@ -140,7 +140,7 @@ set /a idx=1 & set cmdMax=12
     if "!args:~0,16!"=="-vswhereVersion " set _OrConditionVSWVer=1
     if "!args:~0,17!"=="-vswhere-version " set _OrConditionVSWVer=1
     if defined _OrConditionVSWVer (
-        set _OrConditionVSWVer=
+        set "_OrConditionVSWVer="
         call :popars %1 & shift
         set vswVersion=%2
         echo selected new vswhere version: !vswVersion!
@@ -168,11 +168,11 @@ set /a idx=1 & set cmdMax=12
     )
     
     if "!args:~0,9!"=="-version " (
-        echo hMSBuild - $-version-$
+        @echo hMSBuild - $-version-$
         exit /B 0
     )
     
-set /a "idx=idx+1"
+set /a "idx+=1"
 if !idx! LSS %cmdMax% goto loopargs
 
 goto action
@@ -336,23 +336,11 @@ exit /B 0
 :: - - -
 :: Tools from Visual Studio - 2015, 2013, ...
 :msbvsold
-
 call :dbgprint "trying via MSBuild tools from Visual Studio - 2015, 2013, ..."
 
 for %%v in (14.0, 12.0) do (
-    call :dbgprint "checking of version: %%v"
-    
-    for /F "usebackq tokens=2* skip=2" %%a in (
-        `reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSBuild\ToolsVersions\%%v" /v MSBuildToolsPath 2^> nul`
-    ) do if exist %%b (
-        call :dbgprint "found: %%b"
-        
-        set msbuildPath=%%b
-        call :msbuildfind
-        exit /B 0
-    )
+    call :rtools %%v Y & if [!Y!]==[1] exit /B 0
 )
-
 call :dbgprint "msbvsold: unfortunately we didn't find anything."
 exit /B %ERROR_FILE_NOT_FOUND%
 
@@ -363,22 +351,26 @@ exit /B %ERROR_FILE_NOT_FOUND%
 call :dbgprint "trying via MSBuild tools from .NET Framework - .net 4.0, ..."
 
 for %%v in (4.0, 3.5, 2.0) do (
-    call :dbgprint "checking of version: %%v"
-    
-    for /F "usebackq tokens=2* skip=2" %%a in (
-        `reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSBuild\ToolsVersions\%%v" /v MSBuildToolsPath 2^> nul`
-    ) do if exist %%b (
-        call :dbgprint "found: %%b"
-        
-        set msbuildPath=%%b
-        call :msbuildfind
-        exit /B 0
-    )
+    call :rtools %%v Y & if [!Y!]==[1] exit /B 0
 )
-
 call :dbgprint "msbnetf: unfortunately we didn't find anything."
 exit /B %ERROR_FILE_NOT_FOUND%
 
+:rtools
+call :dbgprint "checking of version: %1"
+    
+for /F "usebackq tokens=2* skip=2" %%a in (
+    `reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSBuild\ToolsVersions\%1" /v MSBuildToolsPath 2^> nul`
+) do if exist %%b (
+    call :dbgprint "found: %%b"
+        
+    set msbuildPath=%%b
+    call :msbuildfind
+    set /a %2=1
+    exit /B 0
+)
+set /a %2=0
+exit /B 0
 
 :gntcall
 call :dbgprint "direct access to GetNuTool..."

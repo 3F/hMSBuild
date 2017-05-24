@@ -78,7 +78,6 @@
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
         "Type": "Script",
-        "Command": "#[$(dbin = 'bin\\\\Release\\\\')]\n#[$(odir = \"$(dbin)raw\\\\\")]\n\n#[IO delete.directory(\"$(dbin)\", true)]\n{\n    #[IO copy.directory(\"\", \"$(dbin)\", true)]\n    #[IO copy.directory(\"\", \"$(odir)\", true)]\n}\n\n#[var frontend = frontend.bat]\n#[var gntECore = \"GetNuTool\\\\bin\\\\Release\\\\raw\\\\versions\\\\01. executable\\\\gnt.bat\"]\n#[var hMSBuild = $(odir)hMSBuild.bat]\n\n#[try\n{\n    #[IO writeLine(STDOUT):\n        #[IO cmd(\"copy /Y/B $(frontend)+$(gntECore) $(hMSBuild)\")]\n     ]\n}\ncatch(err, msg)\n{\n    #[IO write(STDOUT):\n        Trying with another method... ]\n    \n    #[IO cmd(\"type $(frontend)>$(hMSBuild)\")]\n    #[IO cmd(\"type $(gntECore)>>$(hMSBuild)\")]\n    \n    #[IO writeLine(STDOUT): ok]\n\n}]\n\n\n#[\" \n    finalization\n\"]\n#[IO replace.Regex(\"$(hMSBuild)\", \"(@echo off) & echo.*?exit /B \\d+\", \"$1\")]\n\n\n#[\" \n    update version\n\"]\n#[IO replace(\"$(hMSBuild)\", \"$-version-$\", \"$(hMSBuildVersion)\")]",
         "Command__": [
           "#[$(dbin = 'bin\\\\Release\\\\')]",
           "#[$(odir = \"$(dbin)raw\\\\\")]",
@@ -122,6 +121,24 @@
           "    update version",
           "\"]",
           "#[IO replace(\"$(hMSBuild)\", \"$-version-$\", \"$(hMSBuildVersion)\")]"
+        ]
+      }
+    },
+    {
+      "Enabled": true,
+      "Name": "ActCompress",
+      "Caption": "generate light & minified versions",
+      "SupportMSBuild": true,
+      "SupportSBEScripts": true,
+      "BuildType": "Common",
+      "Confirmation": false,
+      "Mode": {
+        "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
+        "Type": "Script",
+        "Command__": [
+          "#[IO writeLine(STDOUT):",
+          "    #[IO cmd(\"compress \\\"..\\$(hMSBuild)\\\" \\\"..\\$(odir)\\\" \")]",
+          "]"
         ]
       }
     }
