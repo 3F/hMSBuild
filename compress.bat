@@ -2,8 +2,10 @@
 
 set core=%1
 set output=%2
-set netmsb=GetNuTool\netmsb
+set fMinified=hMSBuild_minified.bat
+set fLight=hMSBuild_light.bat
 
+set netmsb=GetNuTool\netmsb
 
 call :isDef core isCore
 if [%isCore%]==[0] set /P core=core=
@@ -17,10 +19,10 @@ call :print "core = '%core%'"
 call :print "output = '%output%'"
 
 call :print "Generate minified version ..."
-call %netmsb% minified/.compressor /p:core="%core%" /p:output="%output%\hMSBuild_minified.bat" /nologo /v:m /m:4 || goto err
+call %netmsb% minified/.compressor /p:core="%core%" /p:output="%output%\%fMinified%" /nologo /v:m /m:4 || goto err
 
 call :print "Generate light version ..."
-call %netmsb% light/.compressor /p:core="%core%" /p:output="%output%\hMSBuild_light.bat" /nologo /v:m /m:4 || goto err
+call %netmsb% light/.compressor /p:core="%core%" /p:output="%output%\%fLight%" /nologo /v:m /m:4 || goto err
 
 call :print "Done."
 exit /B 0

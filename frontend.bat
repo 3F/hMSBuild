@@ -106,7 +106,7 @@ exit /B 0
 :commands
 
 call :isEmptyOrWhitespace args _is
-if [%_is%]==[1] goto action
+if [!_is!]==[1] goto action
 
 set /a idx=1 & set cmdMax=12
 :loopargs
@@ -212,8 +212,8 @@ exit /B %ERROR_FILE_NOT_FOUND%
 
 :runmsbuild
 
-call :isEmptyOrWhitespace msbuildPath _isEmpty
-if [%_isEmpty%]==[1] (
+call :isEmptyOrWhitespace msbuildPath _is
+if [!_is!]==[1] (
     echo Something went wrong. Use `-debug` key for details.
     exit /B %ERROR_FILE_NOT_FOUND%
 )

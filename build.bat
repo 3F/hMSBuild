@@ -12,6 +12,8 @@ endlocal
 
 call %netmsb% "hMSBuild.sln" /l:"%cimdll%" /v:m /m:4 || goto err
 
+:: call tests || goto err
+
 exit /B 0
 
 :err

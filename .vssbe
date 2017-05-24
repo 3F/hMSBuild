@@ -146,6 +146,29 @@
   "PostBuild": [
     {
       "Enabled": true,
+      "Name": "ActTest",
+      "Caption": "Tests",
+      "SupportMSBuild": true,
+      "SupportSBEScripts": true,
+      "IgnoreIfBuildFailed": false,
+      "BuildType": "Common",
+      "Confirmation": false,
+      "Mode": {
+        "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
+        "Type": "Script",
+        "Command__": [
+          "##[IO writeLine(STDOUT):",
+          "    #[IO cmd(\"tests \\\"$(hMSBuild)\\\" \\\"$(odir)\\\" \", 600)]",
+          "]",
+          "",
+          "#[IO copy.directory(\"tests\", \"$(odir)\\tests\", true, true)]",
+          "#[IO replace.Regex(\"$(odir)\\tests\\_run.bat\", \"set\\s+core=%\\d\", \"set core=\\\"..\\hMSBuild.bat\\\"\")]",
+          "#[IO replace.Regex(\"$(odir)\\tests\\_run.bat\", \"set\\s+vdir=%\\d\", \"set vdir=\\\"..\\\\\"\")]"
+        ]
+      }
+    },
+    {
+      "Enabled": true,
       "Name": "ActBin",
       "Caption": "Binaries & Zip ...",
       "SupportMSBuild": true,
@@ -160,14 +183,16 @@
           "#[IO copy.file({",
           "                \"Readme.md\",",
           "                \"changelog.txt\",",
-          "                \"License.txt\"",
+          "                \"License.txt\",",
+          "                \".version\"",
           "               },",
           "               \"$(odir)\", true)]",
           "               ",
-          "               ",
           "#[var zipdir = $(dbin.Replace(\"\\\\\", \"/\"))]",
           "",
-          "#[7z pack.directory(\"$(zipdir)raw\", \"$(zipdir)hMSBuild_$(hMSBuildVersion.Replace(' ', '')).zip\")]"
+          "#[7z pack.directory(\"$(zipdir)raw\", \"$(zipdir)hMSBuild_#[$(hMSBuildVersion",
+          "                                                            .Replace(' ', '')",
+          "                                                            .Replace('[', '-').Replace(']', ''))].zip\")]"
         ]
       }
     }

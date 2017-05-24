@@ -205,8 +205,8 @@
 
                     /* A common rules */
 
-                    content = Regex.Replace(content, @"([\r\n]){2,}", "$1");
-                    content = Regex.Replace(content, @"([\r\n])\s*", "$1");
+                    content = Regex.Replace(content, @"(\r\n){2,}", "$1");
+                    content = Regex.Replace(content, @"(\r\n)\s*", "$1");
                     //content = Regex.Replace(content, @"(?:rem|::)\s.*[\r\n]*", "");
 
                     content = Regex.Replace(content, @"(^\s*?(?:rem|::)\s)(?'data'.*)([\r\n]*)", (Match m) =>

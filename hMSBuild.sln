@@ -9,14 +9,37 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "hMSBuild", "hMSBuild", "{D2
 		.version = .version
 		build.bat = build.bat
 		changelog.txt = changelog.txt
+		compress.bat = compress.bat
 		frontend.bat = frontend.bat
 		License.txt = License.txt
 		Readme.md = Readme.md
 		submodules.bat = submodules.bat
+		tests.bat = tests.bat
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0969DEC4-0832-4110-AB49-A4BE30677862}"
+	ProjectSection(SolutionItems) = preProject
+		tests\_run.bat = tests\_run.bat
+		tests\diffversions.bat = tests\diffversions.bat
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "minified", "minified", "{9309746A-7318-4784-95B9-3C78C437BA39}"
+	ProjectSection(SolutionItems) = preProject
+		minified\.compressor = minified\.compressor
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "light", "light", "{6C22B481-EB28-4AF3-8C81-8AB931A8D569}"
+	ProjectSection(SolutionItems) = preProject
+		light\.compressor = light\.compressor
 	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0969DEC4-0832-4110-AB49-A4BE30677862} = {D221D332-2A57-44F9-B866-F7C00C29032D}
+		{9309746A-7318-4784-95B9-3C78C437BA39} = {D221D332-2A57-44F9-B866-F7C00C29032D}
+		{6C22B481-EB28-4AF3-8C81-8AB931A8D569} = {D221D332-2A57-44F9-B866-F7C00C29032D}
 	EndGlobalSection
 EndGlobal
