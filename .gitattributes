@@ -1,0 +1,5 @@
+
+# batch files requires CRLF for correct work. Fix for appveyor CI
+
+*.bat text eol=crlf
+*.cmd text eol=crlf
