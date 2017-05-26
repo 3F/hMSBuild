@@ -1,6 +1,14 @@
 hMSBuild :: https://github.com/3F/hMSBuild
 - - - - -
 
+[v1.2.1] 2017.05.26
+
+    * FIXED: Fixed possible problem "... is not recognized as an internal or external command"
+    * FIXED: Fixed problem with double quotes for arguments to original msbuild, for example: 
+             /t:Build /p:Configuration="Any CPU"
+
+    * NEW: Light edition & minified version via new compressor
+
 [v1.2] 2017.05.19
     
     * FIXED: Fixed problem of sensitivity to whitespaces between arguments.
