@@ -228,7 +228,7 @@ echo hMSBuild: !xMSBuild!
 call :dbgprint "Arguments: !args!"
 
 !xMSBuild! !args!
-exit /B 0
+exit /B %ERRORLEVEL%
 
 :: - - -
 :: Tools from VS2017+
