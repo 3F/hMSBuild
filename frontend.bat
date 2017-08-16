@@ -320,7 +320,7 @@ if [!vsver!]==[] (
 )
 
 for /f "tokens=1,2 delims=." %%a in ("!vsver!") do (
-    set vsver=%%a.%%b
+    set vsver=%%a.0
 )
 set msbuildPath=!vspath!\MSBuild\!vsver!\Bin
 
