@@ -7,7 +7,7 @@ call submodules "GetNuTool/gnt.sln" || goto err
 
 setlocal
     cd GetNuTool
-    call build || goto err
+    call build PublicRelease || goto err
 endlocal
 
 call %netmsb% "hMSBuild.sln" /l:"%cimdll%" /v:m /m:4 || goto err

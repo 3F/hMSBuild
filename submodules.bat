@@ -31,7 +31,7 @@ exit /B 0
 if not exist ".git" (
     echo.  1>&2
     echo To restore submodules via Git scm you should have a `.git` folder, but we can't find this. 1>&2
-    echo Unfortenally you should get this manually, or try to clone initially with recursive option: `git clone --recursive ...` 1>&2
+    echo Unfortunately you should get this manually, or try to clone initially with recursive option: `git clone --recursive ...` 1>&2
     exit /B 3
 )
 

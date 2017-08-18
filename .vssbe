@@ -23,8 +23,9 @@
         "Type": "Script",
         "Command__": [
           "#[$(revDeltaBase = \"2017/04/08\")]",
-          "#[$(revDeltaMin = $([System.Math]::Pow(10, 3)))]",
-          "#[$(revDeltaMax = $([System.Math]::Pow(10, 5)))]",
+          "#[$(revDeltaMin  = $([System.Math]::Pow(10, 3)))]",
+          "##[$(revDeltaMax = $([System.Math]::Pow(10, 5)))]",
+          "#[$(revDeltaMax  = 65534)] #[\" limit of AssemblyVersion (2^16 - 2) - i.e. 65534 max allowed \"]",
           "",
           "#[var pVer = #[File get(\".version\")]]",
           "",
@@ -57,7 +58,8 @@
           "#[\" ",
           "    Checking of the git folder to define sha1, branch name, etc.",
           "\"]",
-          "#[( #[IO exists.directory(\".git\")] && #[IO exists.file(\"git.exe\", true)] )",
+          "#[var isGit = #[IO cmd(\"git rev-parse 2>&1\")]]",
+          "#[( $(isGit) == \"\" )",
           "{",
           "    #[var bSha1 = #[IO sout(\"git\", \"rev-parse --short HEAD\")]]",
           "    ",
@@ -192,7 +194,7 @@
           "",
           "#[7z pack.directory(\"$(zipdir)raw\", \"$(zipdir)hMSBuild_#[$(hMSBuildVersion",
           "                                                            .Replace(' ', '')",
-          "                                                            .Replace('[', '-').Replace(']', ''))].zip\")]"
+          "                                                            .Replace('[', '_').Replace(']', ''))].zip\")]"
         ]
       }
     }
