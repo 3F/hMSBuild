@@ -1,6 +1,23 @@
 hMSBuild :: https://github.com/3F/hMSBuild
 - - - - -
 
+[v1.2.2] 2017.08.18
+
+    * FIXED: Updated GetNuTool v1.6.1:
+             https://github.com/3F/GetNuTool/blob/master/changelog.txt
+             
+             Important fixes:
+             * FIXED: Avoids errors with possible incorrect CRC & Compressed size info.
+             * FIXED: Fixed problem "Input string was not in a correct format" when used version with release type.
+             * FIXED: Fixed problems with paths and whitespace characters for `-unpack` command.
+        
+    * FIXED: Visual Studio 2017 Update 3 compatibility. Issue #3.
+    * CHANGED: Non-zero exit code when compilation fails. Issue #4.
+    * NOTE: Now you can get the latest stable versions easily:
+            * https://3F.github.io/hMSBuild/releases/latest/minified/
+            * https://3F.github.io/hMSBuild/releases/latest/full/
+            * https://3F.github.io/hMSBuild/releases/latest/light/
+    
 [v1.2.1] 2017.05.26
 
     * FIXED: Fixed possible problem "... is not recognized as an internal or external command"
