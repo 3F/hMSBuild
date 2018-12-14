@@ -1,9 +1,12 @@
 @echo off
 
-set core=%1
-set output=%2
-set fMinified=hMSBuild_minified.bat
-set fLight=hMSBuild_light.bat
+set core=%~1
+set output=%~2
+
+set fCore=hMSBuild.bat
+set fFull=hMSBuild.full.bat
+set fMinified=hMSBuild.min.bat
+:: set fLight=hMSBuild.light.bat
 
 set netmsb=GetNuTool\netmsb
 
@@ -19,10 +22,18 @@ call :print "core = '%core%'"
 call :print "output = '%output%'"
 
 call :print "Generate minified version ..."
-call %netmsb% minified/.compressor /p:core="%core%" /p:output="%output%\%fMinified%" /nologo /v:m /m:4 || goto err
+call %netmsb% minified/.compressor /p:core="..\%core%" /p:output="..\%output%\%fMinified%" /nologo /v:m /m:4 || goto err
 
-call :print "Generate light version ..."
-call %netmsb% light/.compressor /p:core="%core%" /p:output="%output%\%fLight%" /nologo /v:m /m:4 || goto err
+:: distr
+ren  "%core%" %fFull%
+move /Y "%output%%fFull%" "%output%..\\"
+
+ren "%output%%fMinified%" %fCore%
+copy /Y/B "%output%%fCore%" "%output%..\\"
+
+:: call :print "Generate light version ..."
+:: call %netmsb% light/.compressor /p:core="%core%" /p:output="%output%\%fLight%" /nologo /v:m /m:4 || goto err
+
 
 call :print "Done."
 exit /B 0

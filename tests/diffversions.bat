@@ -2,15 +2,13 @@
 :: Tests. Part of https://github.com/3F/hMSBuild
 setlocal enableDelayedExpansion
 
-set core=%1
-set dir=%2
+set core=%~1
+set dir=%~2
 
-set core=%core:"=%
-set dir=%dir:"=%
 
 set core="%core%"
-set light="%dir%hMSBuild_light.bat"
-set minified="%dir%hMSBuild_minified.bat"
+:: set light="%dir%hMSBuild_light.bat"
+set minified="%dir%hMSBuild.bat"
 
 set /a gcount=0
 set /a failedTotal=0
@@ -18,32 +16,32 @@ set /a failedTotal=0
 :: =========== Tests ====================
 
 call :execAll "-only-path"
-call :execAll "-only-path -novswhere"
-call :execAll "-only-path -novs"
-call :execAll "-only-path -nonet"
+call :execAll "-only-path -no-vswhere"
+call :execAll "-only-path -no-vs"
+call :execAll "-only-path -no-netfx"
 call :execAll "-only-path -vswhere-version local"
-call :execAll "-only-path -vswhere-version 1.0.50"
+call :execAll "-only-path -vswhere-version 2.5.2"
 call :execAll "-only-path -vswhere-version latest"
-call :execAll "-only-path -nocachevswhere"
+call :execAll "-only-path -no-cache"
 call :execAll "-only-path -notamd64"
 call :execAll "-only-path -eng"
 
 call :execAll "-GetNuTool -unpack"
 
-call :execAll "-only-path -vswhere-version local -nocachevswhere"
-call :execAll "-only-path -vswhere-version 1.0.50 -nocachevswhere"
-call :execAll "-only-path -vswhere-version latest -nocachevswhere"
+call :execAll "-only-path -vswhere-version local -no-cache"
+call :execAll "-only-path -vswhere-version 2.5.2 -no-cache"
+call :execAll "-only-path -vswhere-version latest -no-cache"
 
-call :execAll "-novswhere -novs -only-path"
-call :execAll "-novswhere -nonet -only-path"
-call :execAll "-novswhere -novs -notamd64 -only-path"
-call :execAll "-novswhere -nonet -notamd64 -only-path"
-call :execAll "-nonet -notamd64 -only-path"
-call :execAll "-novs -notamd64 -only-path"
+call :execAll "-no-vswhere -no-vs -only-path"
+call :execAll "-no-vswhere -no-netfx -only-path"
+call :execAll "-no-vswhere -no-vs -notamd64 -only-path"
+call :execAll "-no-vswhere -no-netfx -notamd64 -only-path"
+call :execAll "-no-netfx -notamd64 -only-path"
+call :execAll "-no-vs -notamd64 -only-path"
 call :execAll "-notamd64 -vswhere-version local -only-path"
-call :execAll "-notamd64 -vswhere-version 1.0.50 -only-path"
+call :execAll "-notamd64 -vswhere-version 2.5.2 -only-path"
 call :execAll "-notamd64 -vswhere-version latest -only-path"
-call :execAll "-novswhere -novs -nonet -only-path"
+call :execAll "-no-vswhere -no-vs -no-netfx -only-path"
 
 echo.
 echo =================
@@ -64,8 +62,8 @@ echo.
 echo -----
 echo Test%gcount%: %cmd%
 echo -----
-call :execAB core light cmd & if not "!ERRORLEVEL!"=="0" goto eqFailed
-call :execAB core minified cmd & if not "!ERRORLEVEL!"=="0" goto eqFailed
+if defined light call :execAB core light cmd & if not "!ERRORLEVEL!"=="0" goto eqFailed
+if defined minified call :execAB core minified cmd & if not "!ERRORLEVEL!"=="0" goto eqFailed
 echo [Passed]
 exit /B 0
 

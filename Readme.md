@@ -1,6 +1,6 @@
 # [hMSBuild](https://github.com/3F/hMSBuild)
 
-A lightweight tool (~19 Kb compiled text-based embeddable batch-scripts that does not require powershell and dotnet-cli) - an easy helper for searching of available MSBuild tools. Supports tools from VS2017+ (does not require additional vswhere.exe), VS2015 or less, other versions from .NET Framework.
+A lightweight tool (~19 Kb compiled text-based embeddable batch-scripts that does not require powershell and dotnet-cli) - an easy helper for searching of available MSBuild tools. Supports tools from VS2017+ (does not require additional vswhere.exe [[?](https://github.com/Microsoft/vswhere/issues/41)]), VS2015 or less, and other versions from .NET Framework.
 
 
 [![Build status](https://ci.appveyor.com/api/projects/status/tusiutft7a0ei109/branch/master?svg=true)](https://ci.appveyor.com/project/3Fs/hmsbuild/branch/master) [![release-src](https://img.shields.io/github/release/3F/hMSBuild.svg)](https://github.com/3F/hMSBuild/releases/latest) [![License](https://img.shields.io/badge/License-MIT-74A5C2.svg)](https://github.com/3F/hMSBuild/blob/master/License.txt)
@@ -14,13 +14,15 @@ A lightweight tool (~19 Kb compiled text-based embeddable batch-scripts that doe
 
 *because you need simple access to msbuild tools and more...* 
 
-It based on **GetNuTool core** https://github.com/3F/GetNuTool, and initially it was a more simplified msbuild-helper as part of this tool. But with latest changes from MS we extracted this into new project for more support of all this.
+Based on **GetNuTool core** https://github.com/3F/GetNuTool, and initially it was a more simplified msbuild-helper as part of this tool. But with latest changes from MS we extracted this into new project for more support of all this.
+
+[![{Screencast - hMSBuild in action. Demo via RunIlAsm error}](https://raw.githubusercontent.com/3F/hMSBuild/master/resources/screencast_hMSBuild_in_action.jpg)](https://www.youtube.com/watch?v=zUejJ4vUPGw&t=10)
 
 ### Features
 
 **1 batch file and no anything else** for your happy build. 
 
-Combine with your other available scripts or just type `hMSBuild <args to msbuild.exe>` and have fun. Start with `hMSBuild -?`
+Combine with your other available scripts or just type `hMSBuild <args to msbuild.exe>` and have fun. Start with `hMSBuild -h`
 
 ### What supports ?
 
@@ -84,7 +86,7 @@ Possible Error Codes: ERROR_FILE_NOT_FOUND (0x2), ERROR_PATH_NOT_FOUND (0x3), ER
 The [MIT License (MIT)](https://github.com/3F/hMSBuild/blob/master/License.txt)
 
 ```
-Copyright (c) 2017  Denis Kuzmin <entry.reg@gmail.com> :: github.com/3F
+Copyright (c) 2017-2018  Denis Kuzmin <entry.reg@gmail.com> :: github.com/3F
 ```
 
-[![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=entry%2ereg%40gmail%2ecom&lc=US&item_name=3F%2dOpenSource%20%5b%20github%2ecom%2f3F&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted)
+[![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif) ☕](https://3F.github.io/Donation/) 

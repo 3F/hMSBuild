@@ -1,54 +1,85 @@
 @echo off & echo Incomplete script. Compile it first via 'build.bat' - github.com/3F/hMSBuild 1>&2 & exit /B 1
 
 :: hMSBuild - $-version-$
-:: Copyright (c) 2017  Denis Kuzmin [ entry.reg@gmail.com ]
-:: -
-:: Distributed under the MIT license
+:: Copyright (c) 2017-2018  Denis Kuzmin [ entry.reg@gmail.com ]
 :: https://github.com/3F/hMSBuild
 
+set "dp0=%~dp0"
+set args=%*
+
+:: To skip pre-processing when no arguments
+if not defined args setlocal enableDelayedExpansion & goto settings
+
+:: - - -
+:: Pre-processing
+
+:: Escaping '^' is not identical for all cases (hMSBuild ... vs call hMSBuild ...)
+if not defined __p_call set args=%args:^=^^%
+
+:: When ~ !args! and "!args!"
+:: # call hMSBuild  ^  - ^
+:: #      hMSBuild  ^  - empty
+:: # call hMSBuild  ^^ - ^^
+:: #      hMSBuild  ^^ - ^
+
+:: When ~ %args%  (disableDelayedExpansion)
+:: # call hMSBuild  ^  - ^^
+:: #      hMSBuild  ^  - ^
+:: # call hMSBuild  ^^ - ^^^^
+:: #      hMSBuild  ^^ - ^^
+
+set esc=%args:!= #__b_ECL## %
+set esc=%esc:^= #__b_CRT## %
 setlocal enableDelayedExpansion
 
+:: https://github.com/3F/hMSBuild/issues/7
+set "E_CARET=^"
+set "esc=!esc:%%=%%%%!"
+set "esc=!esc:&=%%E_CARET%%&!"
+
 
 :: - - -
-:: Settings by default
+:: Default data
+:settings
 
-set vswhereByDefault=1.0.62
+set "vswVersion=2.5.2"
 set vswhereCache=%temp%\hMSBuild_vswhere
 
-set /a notamd64=0
-set /a novs=0
-set /a nonet=0
-set /a novswhere=0
-set /a nocachevswhere=0
-set /a hMSBuildDebug=0
+set "notamd64="
+set "novs="
+set "nonet="
+set "novswhere="
+set "nocachevswhere="
+set "resetcache="
+set "hMSBuildDebug="
 set "displayOnlyPath="
-set "vswVersion="
+set "vswVersionUsr="
 
-set ERROR_SUCCESS=0
-set ERROR_FILE_NOT_FOUND=2
-set ERROR_PATH_NOT_FOUND=3
+set /a ERROR_SUCCESS=0
+set /a ERROR_FAILED=1
+set /a ERROR_FILE_NOT_FOUND=2
+set /a ERROR_PATH_NOT_FOUND=3
 
-set "args=%* "
-
+:: Current exit code for endpoint
+set /a EXIT_CODE=0
 
 :: - - -
-:: Help command
+:: Initialization of user arguments
 
-set _hl=%args:"=%
-set _hr=%_hl%
+if not defined args goto action
 
-set _hr=%_hr:-help =%
-set _hr=%_hr:-h =%
-set _hr=%_hr:-? =%
+:: /? will cause problems for the call commands below, so we just escape this via supported alternative:
+set esc=!esc:/?=/h!
 
-if not "%_hl%"=="%_hr%" goto usage
+call :initargs arg esc amax
 goto commands
 
 :usage
 
 echo.
-@echo :: hMSBuild - $-version-$
-@echo Copyright (c) 2017  Denis Kuzmin [ entry.reg@gmail.com :: github.com/3F ]
+@echo hMSBuild - $-version-$
+@echo Copyright (c) 2017-2018  Denis Kuzmin [ entry.reg@gmail.com ] :: github.com/3F
+echo.
 echo Distributed under the MIT license
 @echo https://github.com/3F/hMSBuild 
 echo.
@@ -58,30 +89,36 @@ echo ------
 echo.
 echo Arguments:
 echo ----------
-echo  -novswhere             - Do not search via vswhere.
-echo  -novs                  - Disable searching from Visual Studio.
-echo  -nonet                 - Disable searching from .NET Framework.
+echo  -no-vswhere             - Do not search via vswhere.
+echo  -no-vs                  - Disable searching from Visual Studio.
+echo  -no-netfx               - Disable searching from .NET Framework.
 echo  -vswhere-version {num} - Specific version of vswhere. Where {num}:
-echo                           * Versions: 1.0.50 ...
-echo                           * Keywords: 
-echo                             `latest` to get latest available version; 
-echo                             `local`  to use only local versions: 
-echo                                      (.bat;.exe /or from +15.2.26418.1 VS-build);
+echo    * Versions: 1.0.50 ...
+echo    * Keywords:
+echo      `latest` - To get latest remote version;
+echo      `local`  - To use only local versions;
+echo                 (.bat;.exe /or from +15.2.26418.1 VS-build)
 echo.
-echo  -nocachevswhere        - Do not cache vswhere. Use this also for reset cache.
-echo  -notamd64              - To use 32bit version of found msbuild.exe if it's possible.
-echo  -eng                   - Try to use english language for all build messages.
-echo  -GetNuTool {args}      - Access to GetNuTool core. https://github.com/3F/GetNuTool
-echo  -only-path             - Only display fullpath to found MSBuild.
-echo  -debug                 - To show additional information from hMSBuild.
-echo  -version               - Display version of hMSBuild.
-echo  -help                  - Display this help. Aliases: -help -h -?
-echo.
+echo  -no-cache         - Do not cache vswhere for this request. 
+echo  -reset-cache      - To reset all cached vswhere versions before processing.
+echo  -notamd64         - To use 32bit version of found msbuild.exe if it's possible.
+echo  -eng              - Try to use english language for all build messages.
+echo  -GetNuTool {args} - Access to GetNuTool core. https://github.com/3F/GetNuTool
+echo  -only-path        - Only display fullpath to found MSBuild.
+echo  -debug            - To show additional information from hMSBuild.
+echo  -version          - Display version of hMSBuild.
+echo  -help             - Display this help. Aliases: -help -h
+echo. 
+echo. 
+echo ------
+echo Flags:
+echo ------
+echo  __p_call - Tries to eliminate the difference for the call-type invoking %~nx0
 echo. 
 echo -------- 
 echo Samples:
 echo -------- 
-echo hMSBuild -vswhere-version 1.0.50 -notamd64 "Conari.sln" /t:Rebuild
+echo hMSBuild -notamd64 -vswhere-version 1.0.50 "Conari.sln" /t:Rebuild
 echo hMSBuild -vswhere-version latest "Conari.sln"
 echo.
 echo hMSBuild -novswhere -novs -notamd64 "Conari.sln"
@@ -91,193 +128,258 @@ echo.
 echo hMSBuild -GetNuTool -unpack
 echo hMSBuild -GetNuTool /p:ngpackages="Conari;regXwild"
 echo.
-echo "hMSBuild -novs "DllExport.sln" || goto err"
-echo.
-echo ---------------------
-echo Possible Error Codes: ERROR_FILE_NOT_FOUND (0x2), ERROR_PATH_NOT_FOUND (0x3), ERROR_SUCCESS (0x0)
-echo ---------------------
-echo.
+echo hMSBuild -novs "DllExport.sln" ^|^| goto err
 
-exit /B 0
+goto endpoint
 
 :: - - -
 :: Handler of user commands
 
 :commands
 
-call :isEmptyOrWhitespace args _is
-if [!_is!]==[1] goto action
+:: arguments to msbuild only
+set "msbargs="
 
-set /a idx=1 & set cmdMax=12
+set /a idx=0
+
 :loopargs
+set key=!arg[%idx%]!
 
-    if "!args:~0,11!"=="-GetNuTool " (
-        call :popars %1 & shift
-        goto gntcall
-    )
-    
-    if "!args:~0,11!"=="-novswhere " (
-        call :popars %1 & shift
-        set novswhere=1
-    )
-    
-    if "!args:~0,16!"=="-nocachevswhere " (
-        call :popars %1 & shift
-        set nocachevswhere=1
-    )
-    
-    if "!args:~0,6!"=="-novs " (
-        call :popars %1 & shift
-        set novs=1
-    )
-    
-    if "!args:~0,7!"=="-nonet " (
-        call :popars %1 & shift
-        set nonet=1
+    :: The help command
+
+    if [!key!]==[-help] ( goto usage ) else if [!key!]==[-h] ( goto usage ) else if [!key!]==[-?] ( goto usage )
+
+    :: Aliases
+
+    if [!key!]==[-nocachevswhere] (
+        call :obsolete -nocachevswhere -no-cache -reset-cache
+        set key=-no-cache
+    ) else if [!key!]==[-novswhere] (
+        call :obsolete -novswhere -no-vswhere
+        set key=-no-vswhere
+    ) else if [!key!]==[-novs] (
+        call :obsolete -novs -no-vs
+        set key=-no-vs
+    ) else if [!key!]==[-nonet] (
+        call :obsolete -nonet -no-netfx
+        set key=-no-netfx
     )
 
-    :: backward compatibility - version 1.1
-    if "!args:~0,16!"=="-vswhereVersion " set _OrConditionVSWVer=1
-    if "!args:~0,17!"=="-vswhere-version " set _OrConditionVSWVer=1
-    if defined _OrConditionVSWVer (
-        set "_OrConditionVSWVer="
-        call :popars %1 & shift
-        set vswVersion=%2
-        echo selected new vswhere version: !vswVersion!
-        call :popars %2 & shift
-    )
+    :: Available keys
 
-    if "!args:~0,10!"=="-notamd64 " (
-        call :popars %1 & shift
-        set notamd64=1
-    )
-    
-    if "!args:~0,5!"=="-eng " (
-        call :popars %1 & shift
-        chcp 437 >nul
-    )
+    if [!key!]==[-debug] (
 
-    if "!args:~0,11!"=="-only-path " (
-        call :popars %1 & shift
-        set displayOnlyPath=1
-    )
-
-    if "!args:~0,7!"=="-debug " (
-        call :popars %1 & shift
         set hMSBuildDebug=1
-    )
-    
-    if "!args:~0,9!"=="-version " (
-        @echo hMSBuild - $-version-$
-        exit /B 0
-    )
-    
-set /a "idx+=1"
-if !idx! LSS %cmdMax% goto loopargs
 
-goto action
+        goto continue
+    ) else if [!key!]==[-GetNuTool] ( 
 
-:popars
-set args=!!args:%1 ^=!!
-call :trim args
-set "args=!args! "
-exit /B 0
+        call :dbgprint "accessing to GetNuTool ..."
+        
+        :: invoke GetNuTool with arguments from right side
+        for /L %%p IN (0,1,8181) DO (
+            if "!escg:~%%p,10!"=="-GetNuTool" (
+
+                set found=!escg:~%%p!
+                call :gntpoint !found:~10!
+
+                set /a EXIT_CODE=%ERRORLEVEL%
+                goto endpoint
+            )
+        )
+
+        call :dbgprint "!key! is corrupted: !escg!" 
+        set /a EXIT_CODE=%ERROR_FAILED%
+        goto endpoint
+        
+    ) else if [!key!]==[-no-vswhere] ( 
+        
+        set novswhere=1
+
+        goto continue
+    ) else if [!key!]==[-no-cache] ( 
+
+        set nocachevswhere=1
+
+        goto continue
+    ) else if [!key!]==[-reset-cache] ( 
+
+        set resetcache=1
+
+        goto continue
+    ) else if [!key!]==[-no-vs] ( 
+
+        set novs=1
+
+        goto continue
+    ) else if [!key!]==[-no-netfx] ( 
+
+        set nonet=1
+
+        goto continue
+    ) else if [!key!]==[-notamd64] ( 
+
+        set notamd64=1
+
+        goto continue
+    ) else if [!key!]==[-only-path] ( 
+
+        set displayOnlyPath=1
+
+        goto continue
+    ) else if [!key!]==[-eng] ( 
+
+        chcp 437 >nul
+
+        goto continue
+    ) else if [!key!]==[-vswhere-version] ( set /a "idx+=1" & call :eval arg[!idx!] v
+        
+        set vswVersion=!v!
+        
+        call :dbgprint "selected vswhere version:" v
+        set vswVersionUsr=1
+
+        goto continue
+    ) else if [!key!]==[-version] ( 
+
+        @echo $-version-$
+        goto endpoint
+
+    ) else (
+        
+        call :dbgprint "non-handled key:" arg{%idx%}
+        set msbargs=!msbargs! !arg{%idx%}!
+    )
+
+:continue
+set /a "idx+=1" & if %idx% LSS !amax! goto loopargs
 
 :: - - -
-:: Main logic of searching
+:: Main 
 :action
 
-if "!nocachevswhere!"=="1" (
-    call :dbgprint "resetting cache of vswhere"
+if defined resetcache (
+    call :dbgprint "resetting vswhere cache"
     rmdir /S/Q "%vswhereCache%" 2>nul
 )
 
-if not "!novswhere!"=="1" if not "!novs!"=="1" (
-    call :vswhere
-    if "!ERRORLEVEL!"=="0" goto runmsbuild
+if not defined novswhere if not defined novs (
+    call :vswhere msbuildPath
+    if defined msbuildPath goto runmsbuild
 )
 
-if not "!novs!"=="1" (
-    call :msbvsold
-    if "!ERRORLEVEL!"=="0" goto runmsbuild
+if not defined novs (
+    call :msbvsold msbuildPath
+    if defined msbuildPath goto runmsbuild
 )
 
-if not "!nonet!"=="1" (
-    call :msbnetf
-    if "!ERRORLEVEL!"=="0" goto runmsbuild
+if not defined nonet (
+    call :msbnetf msbuildPath
+    if defined msbuildPath goto runmsbuild
 )
 
-echo MSBuild tools was not found. Try to use other settings. Use key `-help` for details.
-exit /B %ERROR_FILE_NOT_FOUND%
+echo MSBuild tools was not found. Use `-debug` key for details.
+set /a EXIT_CODE=%ERROR_FILE_NOT_FOUND%
+goto endpoint
 
 :runmsbuild
 
-call :isEmptyOrWhitespace msbuildPath _is
-if [!_is!]==[1] (
-    echo Something went wrong. Use `-debug` key for details.
-    exit /B %ERROR_FILE_NOT_FOUND%
-)
-
 if defined displayOnlyPath (
     echo !msbuildPath!
-    exit /B 0
+    goto endpoint
 )
+
 set xMSBuild="!msbuildPath!"
-
 echo hMSBuild: !xMSBuild! 
-call :dbgprint "Arguments: !args!"
 
-!xMSBuild! !args!
-exit /B %ERRORLEVEL%
+:: Do not place below data inside (...) block because of delayed eval, e.g. `if defined msbargs ( ...`
+if not defined msbargs goto _msbargs
+
+:: We don't need double quotes (e.g. set "msbargs=...") because this should already 
+:: contain special symbols inside "..." (e.g. /p:prop="...").
+set msbargs=%msbargs: #__b_CRT## =^%
+set msbargs=%msbargs: #__b_ECL## =^!%
+set msbargs=!msbargs: #__b_EQ## ==!
+
+:_msbargs
+call :dbgprint "Arguments: " msbargs
+
+!xMSBuild! !msbargs!
+
+set /a EXIT_CODE=%ERRORLEVEL%
+goto endpoint
+
+
+:: - - -
+:: Post-actions
+:endpoint
+
+exit /B !EXIT_CODE!
+
+
+:: Functions
+:: ::
 
 :: - - -
 :: Tools from VS2017+
-:vswhere
-
+:vswhere {out:toolset}
 call :dbgprint "trying via vswhere..."
 
-if defined vswVersion (
-    if not "!vswVersion!"=="local" (
-        call :vswhereRemote
-        call :vswhereBin
-        exit /B !ERRORLEVEL!
-    )
+if defined vswVersionUsr if not "!vswVersion!"=="local" (
+
+    call :vswhereRemote vswbin vswdir
+    call :vswhereBin vswbin _msbf vswdir
+
+    set %1=!_msbf!
+    exit /B 0
 )
 
-call :vswhereLocal
-if "!ERRORLEVEL!"=="%ERROR_PATH_NOT_FOUND%" (
+call :vswhereLocal vswbin
+set "vswdir="
+
+if not defined vswbin (
     if "!vswVersion!"=="local" (
-        exit /B %ERROR_PATH_NOT_FOUND%
+        exit /B %ERROR_FILE_NOT_FOUND%
     )
-    call :vswhereRemote
+    call :vswhereRemote vswbin vswdir
 )
-call :vswhereBin
-exit /B !ERRORLEVEL!
+call :vswhereBin vswbin _msbf vswdir
 
-:vswhereLocal
+set %1=!_msbf!
+exit /B 0
+
+:vswhereLocal {out:vswbin}
+
+set vswfile=!dp0!vswhere
+call :batOrExe vswfile xfile
+
+if defined xfile set "%1=!vswfile!" & exit /B 0
 
 :: Only with +15.2.26418.1 VS-build
 :: https://github.com/3F/hMSBuild/issues/1
 
-if exist "%~dp0vswhere.bat" set vswbin="%~dp0vswhere" & exit /B 0
-if exist "%~dp0vswhere.exe" set vswbin="%~dp0vswhere" & exit /B 0
-
 set rlocalp=Microsoft Visual Studio\Installer
-if exist "%ProgramFiles(x86)%\!rlocalp!" set vswbin="%ProgramFiles(x86)%\!rlocalp!\vswhere" & exit /B 0
-if exist "%ProgramFiles%\!rlocalp!" set vswbin="%ProgramFiles%\!rlocalp!\vswhere" & exit /B 0
+if exist "%ProgramFiles(x86)%\!rlocalp!" set "%1=%ProgramFiles(x86)%\!rlocalp!\vswhere" & exit /B 0
+if exist "%ProgramFiles%\!rlocalp!" set "%1=%ProgramFiles%\!rlocalp!\vswhere" & exit /B 0
 
 call :dbgprint "local vswhere is not found."
 exit /B %ERROR_PATH_NOT_FOUND%
 
-:vswhereRemote
+:vswhereRemote {out:vswbin} {out:vswdir}
+:: 1{vswbin} - relative path from {vswdir} to executable file; 
+:: 2{vswdir} - path to used directory with vswhere;
 
-if "!nocachevswhere!"=="1" (
-    set tvswhere=%temp%\%random%%random%vswhere
+if defined nocachevswhere (
+    set tvswhere=!vswhereCache!\_mta\%random%%random%vswhere
 ) else (
-    set tvswhere=%vswhereCache%
+    set tvswhere=!vswhereCache!
+    
+    if defined vswVersion (
+        set tvswhere=!tvswhere!\!vswVersion!
+    )
 )
 
-call :dbgprint "tvswhere: !tvswhere!"
+call :dbgprint "tvswhere: " tvswhere
 
 if "!vswVersion!"=="latest" (
     set vswpkg=vswhere
@@ -285,152 +387,219 @@ if "!vswVersion!"=="latest" (
     set vswpkg=vswhere/!vswVersion!
 )
 
-call :dbgprint "vswpkg: !vswpkg!"
+set _gntC=/p:ngpackages="!vswpkg!:vswhere" /p:ngpath="!tvswhere!"
+call :dbgprint "GetNuTool call: " _gntC
 
-if "!hMSBuildDebug!"=="1" (
-    call :gntpoint /p:ngpackages="!vswpkg!:vswhere" /p:ngpath="!tvswhere!"
-) else (
-    call :gntpoint /p:ngpackages="!vswpkg!:vswhere" /p:ngpath="!tvswhere!" >nul
-)
-set vswbin="!tvswhere!\vswhere\tools\vswhere"
+setlocal
+set __p_call=1
 
+    if defined hMSBuildDebug (
+        call :gntpoint !_gntC!
+    ) else (
+        call :gntpoint !_gntC! >nul
+    )
+
+endlocal
+
+set "%1=!tvswhere!\vswhere\tools\vswhere"
+set "%2=!tvswhere!"
 exit /B 0
 
-:vswhereBin
-call :dbgprint "vswbin: "!vswbin!""
+:vswhereBin {in:vswbin} {out:toolset} {optin:vswcache}
+:: 1{vswbin}    - Full path to vswhere tool; 
+:: 2{toolset}   - Returns found toolset;
+:: 3{vswcache}  - (Optional) To manage the cache if used;
 
-for /f "usebackq tokens=1* delims=: " %%a in (`!vswbin! -latest -requires Microsoft.Component.MSBuild`) do (
-    if /i "%%a"=="installationPath" set vspath=%%b
-    if /i "%%a"=="installationVersion" set vsver=%%b
+set "vswbin=!%1!"
+set "vswcache=!%3!"
+
+call :batOrExe vswbin vswbin
+if not defined vswbin (
+    call :dbgprint "vswhere tool does not exist"
+    exit /B %ERROR_FAILED%
+)
+call :dbgprint "vswbin: " vswbin
+
+for /F "usebackq tokens=1* delims=: " %%a in (`"!vswbin!" -nologo -latest -requires Microsoft.Component.MSBuild`) do (
+    if /I "%%~a"=="installationPath" set vspath=%%~b
+    if /I "%%~a"=="installationVersion" set vsver=%%~b
 )
 
-call :dbgprint "vspath: !vspath!"
-call :dbgprint "vsver: !vsver!"
+call :dbgprint "vspath: " vspath
+call :dbgprint "vsver: " vsver
 
-if defined tvswhere (
-    if "!nocachevswhere!"=="1" (
-        call :dbgprint "reset vswhere"
-        rmdir /S/Q "!tvswhere!"
-    )
+if defined vswcache if defined nocachevswhere (
+    call :dbgprint "reset vswhere " vswcache
+    rmdir /S/Q "!vswcache!"
 )
 
-if [!vsver!]==[] (
+if not defined vsver (
     call :dbgprint "VS2017+ was not found via vswhere"
     exit /B %ERROR_PATH_NOT_FOUND%
 )
 
-for /f "tokens=1,2 delims=." %%a in ("!vsver!") do (
-    set vsver=%%a.0
+for /F "tokens=1,2 delims=." %%a in ("!vsver!") do (
+    rem https://github.com/3F/hMSBuild/issues/3
+    set vsver=%%~a.0
 )
-set msbuildPath=!vspath!\MSBuild\!vsver!\Bin
+set _msbp=!vspath!\MSBuild\!vsver!\Bin
 
-call :dbgprint "found path to msbuild: !msbuildPath!"
+call :dbgprint "found path via vswhere: " _msbp
 
-if exist "!msbuildPath!\amd64" (
+if exist "!_msbp!\amd64" (
     call :dbgprint "found /amd64"
-    set msbuildPath=!msbuildPath!\amd64
+    set _msbp=!_msbp!\amd64
 )
-call :msbuildfind 
+call :msbfound _msbp _msbf
+
+set %1=!_msbf!
 exit /B 0
 
 :: - - -
 :: Tools from Visual Studio - 2015, 2013, ...
-:msbvsold
-call :dbgprint "trying via MSBuild tools from Visual Studio - 2015, 2013, ..."
+:msbvsold  {out:toolset}
+call :dbgprint "Searching from Visual Studio - 2015, 2013, ..."
 
 for %%v in (14.0, 12.0) do (
-    call :rtools %%v Y & if [!Y!]==[1] exit /B 0
+    call :rtools %%v Y & if defined Y ( 
+        set %1=!Y!
+        exit /B 0 
+    )
 )
-call :dbgprint "msbvsold: unfortunately we didn't find anything."
-exit /B %ERROR_FILE_NOT_FOUND%
+call :dbgprint "msbvsold: not found."
+exit /B 0
 
 :: - - -
 :: Tools from .NET Framework - .net 4.0, ...
-:msbnetf
-
-call :dbgprint "trying via MSBuild tools from .NET Framework - .net 4.0, ..."
+:msbnetf {out:toolset}
+call :dbgprint "Searching from .NET Framework - .NET 4.0, ..."
 
 for %%v in (4.0, 3.5, 2.0) do (
-    call :rtools %%v Y & if [!Y!]==[1] exit /B 0
+    call :rtools %%v Y & if defined Y ( 
+        set %1=!Y!
+        exit /B 0 
+    )
 )
-call :dbgprint "msbnetf: unfortunately we didn't find anything."
-exit /B %ERROR_FILE_NOT_FOUND%
+call :dbgprint "msbnetf: not found."
+exit /B 0
+:: :msbnetf
 
-:rtools
+:rtools {in:version} {out:found}
 call :dbgprint "checking of version: %1"
     
 for /F "usebackq tokens=2* skip=2" %%a in (
     `reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSBuild\ToolsVersions\%1" /v MSBuildToolsPath 2^> nul`
 ) do if exist %%b (
-    call :dbgprint "found: %%b"
-        
-    set msbuildPath=%%b
-    call :msbuildfind
-    set /a %2=1
+    
+    set _msbp=%%~b
+    call :dbgprint ":msbfound " _msbp
+
+    call :msbfound _msbp _msbf
+
+    set %2=!_msbf!
     exit /B 0
 )
-set /a %2=0
 exit /B 0
+:: :rtools
 
-:gntcall
-call :dbgprint "direct access to GetNuTool..."
-call :gntpoint !args!
-exit /B 0
+:msbfound {in:path} {out:fullpath}
+set _msbp=!%~1!\MSBuild.exe
 
-:msbuildfind
-
-set msbuildPath=!msbuildPath!\MSBuild.exe
-
-if not "!notamd64!" == "1" (
+if not defined notamd64 (
+    set %2=!_msbp!
     exit /B 0
 )
 
 :: 7z & amd64\msbuild - https://github.com/3F/vsSolutionBuildEvent/issues/38
-set _amd=!msbuildPath:Framework64=Framework!
+set _amd=!_msbp:Framework64=Framework!
 set _amd=!_amd:amd64=!
 
 if exist "!_amd!" (
-    call :dbgprint "Return 32bit version of MSBuild.exe because you wanted this via -notamd64"
-    set msbuildPath=!_amd!
+    call :dbgprint "Return 32bit version because of -notamd64 key."
+    set %2=!_amd!
     exit /B 0
 )
 
-call :dbgprint "We know that 32bit version of MSBuild.exe is important for you, but we found only this."
+call :dbgprint "We know that 32bit version is needed, but we found only 64bit."
 exit /B 0
+:: :msbfound
 
-:: =
+:batOrExe {in:fname} {out:fullname}
+:: 1 - Variable with path to file without extension; 
+:: 2 - Returns found file (.bat/.exe) or empty.
 
-:dbgprint
-if "!hMSBuildDebug!"=="1" (
+call :dbgprint "bat/exe: " %1
+
+if exist "!%1!.bat" set %2="!%1!.bat" & exit /B 0
+if exist "!%1!.exe" set %2="!%1!.exe" & exit /B 0
+
+exit /B 0
+:: :batOrExe
+
+:obsolete {in:old} {in:new} [{in:new2}]
+echo   [*] WARN: '%~1' is obsolete. Use alternative: %~2 %~3
+exit /B 0
+:: :obsolete
+
+:dbgprint {in:str} [{in:uneval1}, [{in:uneval2}]]
+if defined hMSBuildDebug (
     set msgfmt=%1
     set msgfmt=!msgfmt:~0,-1! 
     set msgfmt=!msgfmt:~1!
-    echo.[%TIME% ] !msgfmt!
+    echo.[%TIME% ] !msgfmt! !%2! !%3!
 )
 exit /B 0
+:: :dbgprint
 
-:trim
-:: Usage: call :trim variable
-call :_v %%%1%%
-set %1=%_trimv%
-exit /B 0
-:_v
-set "_trimv=%*"
-exit /B 0
+:initargs {in:vname} {in:arguments} {out:index}
+:: Usage: 1- the name for variable; 2- input arguments; 3- max index
 
-:isEmptyOrWhitespace
-:: Usage: call :isEmptyOrWhitespace input output(1/0)
-setlocal enableDelayedExpansion
-set "_v=!%1!"
+set _ieqargs=!%2!
 
-if not defined _v endlocal & set /a %2=1 & exit /B 0
- 
-set _v=%_v: =%
-set "_v= %_v%"
-if [^%_v:~1,1%]==[] endlocal & set /a %2=1 & exit /B 0
- 
-endlocal & set /a %2=0
+:: unfortunately, we also need to protect the equal sign '='
+:_eqp
+for /F "tokens=1* delims==" %%a in ("!_ieqargs!") do (
+    if "%%~b"=="" (
+        call :nqa %1 !_ieqargs! %3
+        exit /B 0
+    )
+    set _ieqargs=%%a #__b_EQ## %%b
+)
+goto _eqp
+:nqa
+
+set "vname=%~1"
+set /a idx=-1
+
+:_initargs
+:: - 
+set /a idx+=1
+set %vname%[!idx!]=%~2
+set %vname%{!idx!}=%2
+
+:: - 
+shift & if not "%~3"=="" goto _initargs
+set /a idx-=1
+
+set %1=!idx!
 exit /B 0
+:: :initargs
+
+:eval {in:unevaluated} {out:evaluated}
+:: Usage: 1- input; 2- evaluated output
+
+:: delayed evaluation
+set _vl=!%1!
+
+:: data from %..% below should not contain double quotes, thus we need to protect this:
+set "_vl=%_vl: #__b_CRT## =^%"
+set "_vl=%_vl: #__b_ECL## =^!%"
+set _vl=!_vl: #__b_EQ## ==!
+
+set %2=!_vl!
+
+exit /B 0
+:: :eval
 
 :gntpoint
 setlocal disableDelayedExpansion 

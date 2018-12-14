@@ -53,7 +53,7 @@
           "                   )]",
           "]",
           "",
-          "#[$(hMSBuildVersion = \"v$(pVer).$(revBuild)\")]",
+          "#[$(hMSBuildVersion = \"$(pVer).$(revBuild)\")]",
           "",
           "#[\" ",
           "    Checking of the git folder to define sha1, branch name, etc.",
@@ -139,7 +139,7 @@
         "Type": "Script",
         "Command__": [
           "#[IO writeLine(STDOUT):",
-          "    #[IO cmd(\"compress \\\"..\\$(hMSBuild)\\\" \\\"..\\$(odir)\\\" \")]",
+          "    #[IO cmd(\"compress \\\"$(hMSBuild)\\\" \\\"$(odir)\\\" \")]",
           "]"
         ]
       }
