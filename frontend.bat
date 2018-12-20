@@ -55,6 +55,7 @@ set "hMSBuildDebug="
 set "displayOnlyPath="
 set "vswVersionUsr="
 set "vswPriority="
+set "kStable="
 
 set /a ERROR_SUCCESS=0
 set /a ERROR_FAILED=1
@@ -107,6 +108,7 @@ echo.
 echo  -no-cache         - Do not cache vswhere for this request. 
 echo  -reset-cache      - To reset all cached vswhere versions before processing.
 echo  -notamd64         - To use 32bit version of found msbuild.exe if it's possible.
+echo  -stable           - It will ignore possible beta releases in last attempts.
 echo  -eng              - Try to use english language for all build messages.
 echo  -GetNuTool {args} - Access to GetNuTool core. https://github.com/3F/GetNuTool
 echo  -only-path        - Only display fullpath to found MSBuild.
@@ -256,6 +258,11 @@ set key=!arg[%idx%]!
     ) else if [!key!]==[-vsw-priority] ( set /a "idx+=1" & call :eval arg[!idx!] v
         
         set vswPriority=!v!
+
+        goto continue
+    ) else if [!key!]==[-stable] ( 
+
+        set kStable=1
 
         goto continue
     ) else (
@@ -437,15 +444,17 @@ if not defined vswbin (
 )
 call :dbgprint "vswbin: " vswbin
 
-rem :: https://github.com/3F/hMSBuild/issues/8
-set vswfilter=!vswPriority!
+set "vswPreRel="
 set "msbf="
 
+rem :: https://github.com/3F/hMSBuild/issues/8
+set vswfilter=!vswPriority!
+
 :_vswAttempt
-call :dbgprint "attempts with filter: " vswfilter 
+call :dbgprint "attempts with filter: " vswfilter vswPreRel
 
 set "vspath=" & set "vsver="
-for /F "usebackq tokens=1* delims=: " %%a in (`"!vswbin!" -nologo -requires !vswfilter! Microsoft.Component.MSBuild`) do (
+for /F "usebackq tokens=1* delims=: " %%a in (`"!vswbin!" -nologo !vswPreRel! -requires !vswfilter! Microsoft.Component.MSBuild`) do (
     if /I "%%~a"=="installationPath" set vspath=%%~b
     if /I "%%~a"=="installationVersion" set vsver=%%~b
 
@@ -457,10 +466,17 @@ for /F "usebackq tokens=1* delims=: " %%a in (`"!vswbin!" -nologo -requires !vsw
     )
 )
 
-if defined vswfilter (
-    set "vswfilter="
+if not defined kStable if not defined vswPreRel (
+    set vswPreRel=-prerelease
     goto _vswAttempt
 )
+
+if defined vswfilter (
+    set "vswfilter="
+    set "vswPreRel="
+    goto _vswAttempt
+)
+
 
 :_vswbinReturn
 
