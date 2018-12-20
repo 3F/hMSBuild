@@ -56,6 +56,7 @@ set "displayOnlyPath="
 set "vswVersionUsr="
 set "vswPriority="
 set "kStable="
+set "kForce="
 
 set /a ERROR_SUCCESS=0
 set /a ERROR_FAILED=1
@@ -112,6 +113,7 @@ echo  -stable           - It will ignore possible beta releases in last attempts
 echo  -eng              - Try to use english language for all build messages.
 echo  -GetNuTool {args} - Access to GetNuTool core. https://github.com/3F/GetNuTool
 echo  -only-path        - Only display fullpath to found MSBuild.
+echo  -force            - Aggressive behavior for -vsw-priority, -notamd64, etc.
 echo  -debug            - To show additional information from hMSBuild.
 echo  -version          - Display version of hMSBuild.
 echo  -help             - Display this help. Aliases: -help -h
@@ -263,6 +265,11 @@ set key=!arg[%idx%]!
     ) else if [!key!]==[-stable] ( 
 
         set kStable=1
+
+        goto continue
+    ) else if [!key!]==[-force] ( 
+
+        set kForce=1
 
         goto continue
     ) else (
@@ -472,8 +479,15 @@ if not defined kStable if not defined vswPreRel (
 )
 
 if defined vswfilter (
-    set "vswfilter="
-    set "vswPreRel="
+    set _msgPrio=Tools was not found for: !vswfilter!
+
+    if defined kForce (
+        call :dbgprint "Ignored via -force. !_msgPrio!"
+        set "msbf=" & goto _vswbinReturn
+    )
+    
+    call :warn "!_msgPrio!"
+    set "vswfilter=" & set "vswPreRel="
     goto _vswAttempt
 )
 
@@ -599,7 +613,12 @@ if exist "!_noamd!" (
     exit /B 0
 )
 
-call :dbgprint "Return 64bit version. Found only this."
+if defined kForce (
+    call :dbgprint "Ignored via -force. Only 64bit version was found for -notamd64"
+    set "%2=" & exit /B 0
+)
+
+call :warn "Return 64bit version. Found only this."
 exit /B 0
 :: :msbfound
 
@@ -617,9 +636,13 @@ exit /B 0
 :: :batOrExe
 
 :obsolete {in:old} {in:new} [{in:new2}]
-echo   [*] WARN: '%~1' is obsolete. Use alternative: %~2 %~3
+call :warn "'%~1' is obsolete. Use alternative: %~2 %~3"
 exit /B 0
 :: :obsolete
+
+:warn {in:msg}
+echo   [*] WARN: %~1
+exit /B 0
 
 :dbgprint {in:str} [{in:uneval1}, [{in:uneval2}]]
 if defined hMSBuildDebug (
