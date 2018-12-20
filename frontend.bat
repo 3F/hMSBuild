@@ -54,6 +54,7 @@ set "resetcache="
 set "hMSBuildDebug="
 set "displayOnlyPath="
 set "vswVersionUsr="
+set "vswPriority="
 
 set /a ERROR_SUCCESS=0
 set /a ERROR_FAILED=1
@@ -89,15 +90,19 @@ echo ------
 echo.
 echo Arguments:
 echo ----------
-echo  -no-vswhere             - Do not search via vswhere.
-echo  -no-vs                  - Disable searching from Visual Studio.
-echo  -no-netfx               - Disable searching from .NET Framework.
-echo  -vswhere-version {num} - Specific version of vswhere. Where {num}:
-echo    * Versions: 1.0.50 ...
-echo    * Keywords:
-echo      `latest` - To get latest remote version;
-echo      `local`  - To use only local versions;
-echo                 (.bat;.exe /or from +15.2.26418.1 VS-build)
+echo  -no-vs        - Disable searching from Visual Studio.
+echo  -no-netfx     - Disable searching from .NET Framework.
+echo  -no-vswhere   - Do not search via vswhere.
+echo.
+echo  -vsw-priority {IDs} - Non-strict components preference: C++ etc.
+echo                        Separated by space: https://aka.ms/vs/workloads
+echo.
+echo  -vsw-version {arg}  - Specific version of vswhere. Where {arg}:
+echo      * 1.0.50 ...
+echo      * Keywords:
+echo        `latest` - To get latest remote version;
+echo        `local`  - To use only local versions;
+echo                   (.bat;.exe /or from +15.2.26418.1 VS-build)
 echo.
 echo  -no-cache         - Do not cache vswhere for this request. 
 echo  -reset-cache      - To reset all cached vswhere versions before processing.
@@ -118,17 +123,17 @@ echo.
 echo -------- 
 echo Samples:
 echo -------- 
-echo hMSBuild -notamd64 -vswhere-version 1.0.50 "Conari.sln" /t:Rebuild
-echo hMSBuild -vswhere-version latest "Conari.sln"
+echo hMSBuild -notamd64 -vsw-version 1.0.50 "Conari.sln" /t:Rebuild
+echo hMSBuild -vsw-version latest "Conari.sln"
 echo.
-echo hMSBuild -novswhere -novs -notamd64 "Conari.sln"
-echo hMSBuild -novs "DllExport.sln"
+echo hMSBuild -no-vswhere -no-vs -notamd64 "Conari.sln"
+echo hMSBuild -no-vs "DllExport.sln"
 echo hMSBuild vsSolutionBuildEvent.sln
 echo.
 echo hMSBuild -GetNuTool -unpack
 echo hMSBuild -GetNuTool /p:ngpackages="Conari;regXwild"
 echo.
-echo hMSBuild -novs "DllExport.sln" ^|^| goto err
+echo hMSBuild -no-vs "DllExport.sln" ^|^| goto err
 
 goto endpoint
 
@@ -163,6 +168,9 @@ set key=!arg[%idx%]!
     ) else if [!key!]==[-nonet] (
         call :obsolete -nonet -no-netfx
         set key=-no-netfx
+    ) else if [!key!]==[-vswhere-version] (
+        call :obsolete -vswhere-version -vsw-version
+        set key=-vsw-version
     )
 
     :: Available keys
@@ -232,10 +240,10 @@ set key=!arg[%idx%]!
         chcp 437 >nul
 
         goto continue
-    ) else if [!key!]==[-vswhere-version] ( set /a "idx+=1" & call :eval arg[!idx!] v
+    ) else if [!key!]==[-vsw-version] ( set /a "idx+=1" & call :eval arg[!idx!] v
         
         set vswVersion=!v!
-        
+
         call :dbgprint "selected vswhere version:" v
         set vswVersionUsr=1
 
@@ -245,6 +253,11 @@ set key=!arg[%idx%]!
         @echo $-version-$
         goto endpoint
 
+    ) else if [!key!]==[-vsw-priority] ( set /a "idx+=1" & call :eval arg[!idx!] v
+        
+        set vswPriority=!v!
+
+        goto continue
     ) else (
         
         call :dbgprint "non-handled key:" arg{%idx%}
@@ -339,7 +352,7 @@ set "vswdir="
 
 if not defined vswbin (
     if "!vswVersion!"=="local" (
-        exit /B %ERROR_FILE_NOT_FOUND%
+        set "%1=" & exit /B %ERROR_FILE_NOT_FOUND%
     )
     call :vswhereRemote vswbin vswdir
 )
@@ -347,6 +360,7 @@ call :vswhereBin vswbin _msbf vswdir
 
 set %1=!_msbf!
 exit /B 0
+:: :vswhere
 
 :vswhereLocal {out:vswbin}
 
@@ -363,7 +377,9 @@ if exist "%ProgramFiles(x86)%\!rlocalp!" set "%1=%ProgramFiles(x86)%\!rlocalp!\v
 if exist "%ProgramFiles%\!rlocalp!" set "%1=%ProgramFiles%\!rlocalp!\vswhere" & exit /B 0
 
 call :dbgprint "local vswhere is not found."
+set "%1="
 exit /B %ERROR_PATH_NOT_FOUND%
+:: :vswhereLocal
 
 :vswhereRemote {out:vswbin} {out:vswdir}
 :: 1{vswbin} - relative path from {vswdir} to executable file; 
@@ -404,6 +420,7 @@ endlocal
 set "%1=!tvswhere!\vswhere\tools\vswhere"
 set "%2=!tvswhere!"
 exit /B 0
+:: :vswhereRemote
 
 :vswhereBin {in:vswbin} {out:toolset} {optin:vswcache}
 :: 1{vswbin}    - Full path to vswhere tool; 
@@ -416,26 +433,60 @@ set "vswcache=!%3!"
 call :batOrExe vswbin vswbin
 if not defined vswbin (
     call :dbgprint "vswhere tool does not exist"
-    exit /B %ERROR_FAILED%
+    set "%2=" & exit /B %ERROR_FAILED%
 )
 call :dbgprint "vswbin: " vswbin
 
-for /F "usebackq tokens=1* delims=: " %%a in (`"!vswbin!" -nologo -latest -requires Microsoft.Component.MSBuild`) do (
+rem :: https://github.com/3F/hMSBuild/issues/8
+set vswfilter=!vswPriority!
+set "msbf="
+
+:_vswAttempt
+call :dbgprint "attempts with filter: " vswfilter 
+
+set "vspath=" & set "vsver="
+for /F "usebackq tokens=1* delims=: " %%a in (`"!vswbin!" -nologo -requires !vswfilter! Microsoft.Component.MSBuild`) do (
     if /I "%%~a"=="installationPath" set vspath=%%~b
     if /I "%%~a"=="installationVersion" set vsver=%%~b
+
+    if defined vspath if defined vsver (
+        call :vswmsb vspath vsver msbf
+        if defined msbf goto _vswbinReturn
+
+        set "vspath=" & set "vsver="
+    )
 )
 
-call :dbgprint "vspath: " vspath
-call :dbgprint "vsver: " vsver
+if defined vswfilter (
+    set "vswfilter="
+    goto _vswAttempt
+)
+
+:_vswbinReturn
 
 if defined vswcache if defined nocachevswhere (
     call :dbgprint "reset vswhere " vswcache
     rmdir /S/Q "!vswcache!"
 )
 
+set %2=!msbf!
+exit /B 0
+:: :vswhereBin
+
+:vswmsb {in:vspath} {in:vsver} {out:msbfile}
+:: 1{vspath}   - installationPath
+:: 2{in:vsver} - installationVersion
+:: 3{msbfile}  - Returns full path to msbuild file.
+
+set vspath=!%1!
+set vsver=!%2!
+
+call :dbgprint "vspath: " vspath
+call :dbgprint "vsver: " vsver
+
 if not defined vsver (
-    call :dbgprint "VS2017+ was not found via vswhere"
-    exit /B %ERROR_PATH_NOT_FOUND%
+    call :dbgprint "nothing to see via vswhere"
+    set "%3=" & exit /B %ERROR_PATH_NOT_FOUND%
 )
 
 for /F "tokens=1,2 delims=." %%a in ("!vsver!") do (
@@ -450,10 +501,11 @@ if exist "!_msbp!\amd64" (
     call :dbgprint "found /amd64"
     set _msbp=!_msbp!\amd64
 )
-call :msbfound _msbp _msbf
+call :msbfound _msbp _msbp
 
-set %1=!_msbf!
+set %3=!_msbp!
 exit /B 0
+:: :vswmsb
 
 :: - - -
 :: Tools from Visual Studio - 2015, 2013, ...
@@ -466,8 +518,10 @@ for %%v in (14.0, 12.0) do (
         exit /B 0 
     )
 )
-call :dbgprint "msbvsold: not found."
+call :dbgprint "-vs: not found"
+set "%1="
 exit /B 0
+:: :msbvsold
 
 :: - - -
 :: Tools from .NET Framework - .net 4.0, ...
@@ -480,12 +534,14 @@ for %%v in (4.0, 3.5, 2.0) do (
         exit /B 0 
     )
 )
-call :dbgprint "msbnetf: not found."
+
+call :dbgprint "-netfx: not found"
+set "%1="
 exit /B 0
 :: :msbnetf
 
 :rtools {in:version} {out:found}
-call :dbgprint "checking of version: %1"
+call :dbgprint "check %1"
     
 for /F "usebackq tokens=2* skip=2" %%a in (
     `reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSBuild\ToolsVersions\%1" /v MSBuildToolsPath 2^> nul`
@@ -499,28 +555,35 @@ for /F "usebackq tokens=2* skip=2" %%a in (
     set %2=!_msbf!
     exit /B 0
 )
+
+set "%2="
 exit /B 0
 :: :rtools
 
 :msbfound {in:path} {out:fullpath}
+
 set _msbp=!%~1!\MSBuild.exe
 
+set %2=!_msbp!
+
 if not defined notamd64 (
-    set %2=!_msbp!
+    rem :: it may be x32 or x64, but this does not matter
     exit /B 0
 )
+
+:: -notamd64 checks
 
 :: 7z & amd64\msbuild - https://github.com/3F/vsSolutionBuildEvent/issues/38
-set _amd=!_msbp:Framework64=Framework!
-set _amd=!_amd:amd64=!
+set _noamd=!_msbp:Framework64=Framework!
+set _noamd=!_noamd:amd64=!
 
-if exist "!_amd!" (
+if exist "!_noamd!" (
     call :dbgprint "Return 32bit version because of -notamd64 key."
-    set %2=!_amd!
+    set %2=!_noamd!
     exit /B 0
 )
 
-call :dbgprint "We know that 32bit version is needed, but we found only 64bit."
+call :dbgprint "Return 64bit version. Found only this."
 exit /B 0
 :: :msbfound
 
@@ -533,6 +596,7 @@ call :dbgprint "bat/exe: " %1
 if exist "!%1!.bat" set %2="!%1!.bat" & exit /B 0
 if exist "!%1!.exe" set %2="!%1!.exe" & exit /B 0
 
+set "%2="
 exit /B 0
 :: :batOrExe
 
