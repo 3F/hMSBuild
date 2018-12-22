@@ -4,7 +4,7 @@ Compiled text-based embeddable pure batch-scripts (no powershell or dotnet-cli) 
 
 
 [![Build status](https://ci.appveyor.com/api/projects/status/tusiutft7a0ei109/branch/master?svg=true)](https://ci.appveyor.com/project/3Fs/hmsbuild/branch/master) [![release-src](https://img.shields.io/github/release/3F/hMSBuild.svg)](https://github.com/3F/hMSBuild/releases/latest) [![License](https://img.shields.io/badge/License-MIT-74A5C2.svg)](https://github.com/3F/hMSBuild/blob/master/License.txt)
-[![GetNuTool core](https://img.shields.io/badge/GetNuTool-v1.6.1-93C10B.svg)](https://github.com/3F/GetNuTool)
+[![GetNuTool core](https://img.shields.io/badge/GetNuTool-v1.7-93C10B.svg)](https://github.com/3F/GetNuTool)
 
 **Download:** Latest stable batch-script [ [hMSBuild](https://3F.github.io/hMSBuild/releases/latest/) ]
 * [/releases](https://github.com/3F/hMSBuild/releases) [ [latest](https://github.com/3F/hMSBuild/releases/latest) ]
