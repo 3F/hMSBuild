@@ -58,51 +58,65 @@ Start with `hMSBuild -h`
 
 Usage is same as it would be same for msbuild. But you also have an additional keys to configure hMSBuild and to access to GetNuTool.
 
-v1.x
 ```
+hMSBuild - 2.0.0 
+Copyright (c) 2017-2018  Denis Kuzmin [ entry.reg@gmail.com ] :: github.com/3F
+
+Distributed under the MIT license
+https://github.com/3F/hMSBuild
+
+
 Usage: hMSBuild [args to hMSBuild] [args to msbuild.exe or GetNuTool core]
 ------
 
 Arguments:
 ----------
- -novswhere             - Do not search via vswhere.
- -novs                  - Disable searching from Visual Studio.
- -nonet                 - Disable searching from .NET Framework.
- -vswhere-version {num} - Specific version of vswhere. Where {num}:
-                          * Versions: 1.0.50 ...
-                          * Keywords:
-                            `latest` to get latest available version;
-                            `local`  to use only local versions:
-                                     (.bat;.exe /or from +15.2.26418.1 VS-build);
+ -no-vs        - Disable searching from Visual Studio.
+ -no-netfx     - Disable searching from .NET Framework.
+ -no-vswhere   - Do not search via vswhere.
 
- -nocachevswhere        - Do not cache vswhere. Use this also for reset cache.
- -notamd64              - To use 32bit version of found msbuild.exe if it's possible.
- -eng                   - Try to use english language for all build messages.
- -GetNuTool {args}      - Access to GetNuTool core. https://github.com/3F/GetNuTool
- -only-path             - Only display fullpath to found MSBuild.
- -debug                 - To show additional information from hMSBuild.
- -version               - Display version of hMSBuild.
- -help                  - Display this help. Aliases: -help -h -?
+ -vsw-priority {IDs} - Non-strict components preference: C++ etc.
+                       Separated by space: https://aka.ms/vs/workloads
 
+ -vsw-version {arg}  - Specific version of vswhere. Where {arg}:
+     * 1.0.50 ...
+     * Keywords:
+       `latest` - To get latest remote version;
+       `local`  - To use only local versions;
+                  (.bat;.exe /or from +15.2.26418.1 VS-build)
+
+ -no-cache         - Do not cache vswhere for this request.
+ -reset-cache      - To reset all cached vswhere versions before processing.
+ -notamd64         - To use 32bit version of found msbuild.exe if it's possible.
+ -stable           - It will ignore possible beta releases in last attempts.
+ -eng              - Try to use english language for all build messages.
+ -GetNuTool {args} - Access to GetNuTool core. https://github.com/3F/GetNuTool
+ -only-path        - Only display fullpath to found MSBuild.
+ -force            - Aggressive behavior for -vsw-priority, -notamd64, etc.
+ -debug            - To show additional information from hMSBuild.
+ -version          - Display version of hMSBuild.
+ -help             - Display this help. Aliases: -help -h
+
+
+------
+Flags:
+------
+ __p_call - Tries to eliminate the difference for the call-type invoking hMSBuild.bat
 
 --------
 Samples:
 --------
-hMSBuild -vswhere-version 1.0.50 -notamd64 "Conari.sln" /t:Rebuild
-hMSBuild -vswhere-version latest "Conari.sln"
+hMSBuild -notamd64 -vsw-version 1.0.50 "Conari.sln" /t:Rebuild
+hMSBuild -vsw-version latest "Conari.sln"
 
-hMSBuild -novswhere -novs -notamd64 "Conari.sln"
-hMSBuild -novs "DllExport.sln"
+hMSBuild -no-vswhere -no-vs -notamd64 "Conari.sln"
+hMSBuild -no-vs "DllExport.sln"
 hMSBuild vsSolutionBuildEvent.sln
 
 hMSBuild -GetNuTool -unpack
 hMSBuild -GetNuTool /p:ngpackages="Conari;regXwild"
 
-"hMSBuild -novs "DllExport.sln" || goto err"
-
----------------------
-Possible Error Codes: ERROR_FILE_NOT_FOUND (0x2), ERROR_PATH_NOT_FOUND (0x3), ERROR_SUCCESS (0x0)
----------------------
+hMSBuild -no-vs "DllExport.sln" || goto bx
 ```
 
 ## License

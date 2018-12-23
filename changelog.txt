@@ -1,6 +1,66 @@
 hMSBuild :: https://github.com/3F/hMSBuild
 - - - - -
 
+[v2.0] 2018.12.23
+
+    * NEW: Full support of the following special characters for MSBuild args. Issue #7.
+           ```
+            ' &!~`@#$^(+)_=%-;
+           ```
+           Compatible way for both 1.x and 2.0: 
+           https://github.com/3F/hMSBuild/issues/7#issuecomment-447507797
+           
+    * NEW: Added `-vsw-priority` feature. Issue #8.
+            ```
+             -vsw-priority {IDs} - Non-strict components preference: C++ etc.
+                                   Separated by space: https://aka.ms/vs/workloads
+            ```
+           
+    * NEW: Added `-stable` key. To ignore possible beta releases in last attempts.
+    
+    * NEW: Additional `-reset-cache` key. To reset all cached vswhere versions before processing.
+    
+    * NEW: Optional aggressive behavior for `-vsw-priority`, `-notamd64` through `-force` key.
+    
+    * FIXED: Fixed receiving of remote vswhere version specified by default (when no `-vswhere-version`).
+    
+    * FIXED: Fixes usage of changed vswhere version specified via `-vswhere-version` when it was already cached.
+    
+    * CHANGED: Algorithm of searching:
+
+        * Versions: 
+          * VS2017+ ➟ VS2015, VS2013, ... ➟ .netfx
+          
+        * Architectures (configure via `-notamd64` key): 
+          * x64 ➟ x32
+          
+        * Priorities (configure via `-vsw-priority` and `-stable` keys). 
+          Specific workload components in more priority than pre-release products. See Issue #8
+
+          1. Stable releases with selected workload components (C++ etc) ➟ Same via beta releases if allowed.
+          2. Stable releases with any available components ➟ Same via beta releases if allowed.
+          
+    * CHANGED: Updated keys: `-no-vswhere`, `-no-vs`, `-no-netfx`, `-vsw-version`, `-no-cache`. 
+               Old keys still are activated, but it will cause a warnings (stdout).
+               
+    * CHANGED: Optional `__p_call` flag if you plan to use the call-type to invoke hMSBuild inside your scripts etc.
+               
+    * CHANGED: Fully updated compression. Now only minified version will be distributed by default.
+               Also, do not search the light versions: New compiling will not generate this at all.
+               https://github.com/3F/hMSBuild/issues/7#issuecomment-447505688
+               
+    * CHANGED: New URL for official latest stable batch-scripts: 
+               https://3F.github.io/hMSBuild/releases/latest/
+               
+               Other releases: https://github.com/3F/hMSBuild/releases
+               
+    * CHANGED: Default remote vswhere is 2.5.2.
+               
+    * CHANGED: Updated GetNuTool v1.7
+               Release note: https://github.com/3F/GetNuTool/releases/tag/v1.7
+               
+           
+    
 [v1.2.2] 2017.08.18
 
     * FIXED: Updated GetNuTool v1.6.1:
