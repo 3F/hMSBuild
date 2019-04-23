@@ -524,6 +524,11 @@ for /F "tokens=1,2 delims=." %%a in ("!vsver!") do (
     rem https://github.com/3F/hMSBuild/issues/3
     set vsver=%%~a.0
 )
+REM VS2019 changed path
+if !vsver! geq 16 set vsver=Current
+
+if not exist "!vspath!\MSBuild\!vsver!\Bin" set "%3=" & exit /B %ERROR_PATH_NOT_FOUND%
+
 set _msbp=!vspath!\MSBuild\!vsver!\Bin
 
 call :dbgprint "found path via vswhere: " _msbp
@@ -606,7 +611,7 @@ if not defined notamd64 (
 
 :: 7z & amd64\msbuild - https://github.com/3F/vsSolutionBuildEvent/issues/38
 set _noamd=!_msbp:Framework64=Framework!
-set _noamd=!_noamd:amd64=!
+set _noamd=!_noamd:\amd64=!
 
 if exist "!_noamd!" (
     call :dbgprint "Return 32bit version because of -notamd64 key."
