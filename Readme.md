@@ -6,11 +6,11 @@ Compiled text-based embeddable pure batch-scripts (no powershell or dotnet-cli) 
 [![Build status](https://ci.appveyor.com/api/projects/status/tusiutft7a0ei109/branch/master?svg=true)](https://ci.appveyor.com/project/3Fs/hmsbuild/branch/master) [![release-src](https://img.shields.io/github/release/3F/hMSBuild.svg)](https://github.com/3F/hMSBuild/releases/latest) [![License](https://img.shields.io/badge/License-MIT-74A5C2.svg)](https://github.com/3F/hMSBuild/blob/master/License.txt)
 [![GetNuTool core](https://img.shields.io/badge/GetNuTool-v1.7-93C10B.svg)](https://github.com/3F/GetNuTool)
 
+[![Build history](https://buildstats.info/appveyor/chart/3Fs/hmsbuild?buildCount=20&includeBuildsFromPullRequest=true&showStats=true)](https://ci.appveyor.com/project/3Fs/hmsbuild/history)
+
 **Download:** Latest stable batch-script [ [hMSBuild](https://3F.github.io/hMSBuild/releases/latest/) ]
-* [/releases](https://github.com/3F/hMSBuild/releases) [ [latest](https://github.com/3F/hMSBuild/releases/latest) ]
-* [nightly builds](https://ci.appveyor.com/project/3Fs/hmsbuild/history) (`/artifacts` page)
-But remember: It can be unstable or not work at all. Use this for tests of latest changes.
-  * Artifacts [older than 6 months](https://www.appveyor.com/docs/packaging-artifacts/#artifacts-retention-policy) you can also find as `Pre-release` with mark `🎲 Nightly build` on [GitHub Releases](https://github.com/3F/hMSBuild/releases) page.
+* Stable: [/releases](https://github.com/3F/hMSBuild/releases) [ [latest](https://github.com/3F/hMSBuild/releases/latest) ]
+* CI builds: [`/artifacts` page](https://ci.appveyor.com/project/3Fs/hmsbuild/history) or find as `Pre-release` with mark `🎲 Nightly build` on [GitHub Releases](https://github.com/3F/hMSBuild/releases) page.
 
 
 ## Why hMSBuild ?
@@ -24,6 +24,18 @@ Based on **GetNuTool core** https://github.com/3F/GetNuTool
 Today's [hMSBuild](https://github.com/3F/hMSBuild) provides flexible way to access to msbuild tools for any type of your projects. Just specify what you need in different environments. Look at *#Algorithm of searching* below.
 
 [![{Screencast - hMSBuild in action. Demo via RunIlAsm error}](https://raw.githubusercontent.com/3F/hMSBuild/master/resources/screencast_hMSBuild_in_action.jpg)](https://www.youtube.com/watch?v=zUejJ4vUPGw&t=10)
+
+## License
+
+Licensed under the [MIT License (MIT)](https://github.com/3F/hMSBuild/blob/master/License.txt)
+
+```
+Copyright (c) 2017-2019  Denis Kuzmin < entry.reg@gmail.com > GitHub/3F
+```
+And the hMSBuild contributors: https://github.com/3F/hMSBuild/graphs/contributors
+
+[ [ ☕ Donate ](https://3F.github.com/Donation/) ]
+
 
 ### Features
 
@@ -59,7 +71,7 @@ Start with `hMSBuild -h`
 Usage is same as it would be same for msbuild. But you also have an additional keys to configure hMSBuild and to access to GetNuTool.
 
 ```
-hMSBuild - 2.0.0 
+hMSBuild - 2.0.0.61507 [ a40c6ac ]
 Copyright (c) 2017-2018  Denis Kuzmin [ entry.reg@gmail.com ] :: github.com/3F
 
 Distributed under the MIT license
@@ -119,12 +131,20 @@ hMSBuild -GetNuTool /p:ngpackages="Conari;regXwild"
 hMSBuild -no-vs "DllExport.sln" || goto bx
 ```
 
-## License
+## Build & Tests
 
-The [MIT License (MIT)](https://github.com/3F/hMSBuild/blob/master/License.txt)
+Our build was based on [vssbe](https://github.com/3F/vsSolutionBuildEvent) scripts. 
 
+You don't need to do anything else, just navigate to root directory of this project, and:
+
+```bat
+.\build
 ```
-Copyright (c) 2017-2018  Denis Kuzmin <entry.reg@gmail.com> :: github.com/3F
+
+Available tests can be raised by command:
+
+```bat
+.\tests
 ```
 
-[![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif) ☕](https://3F.github.io/Donation/) 
+We're waiting for your amazing contributions!

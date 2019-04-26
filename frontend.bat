@@ -1,8 +1,8 @@
 @echo off & echo Incomplete script. Compile it first via 'build.bat' - github.com/3F/hMSBuild 1>&2 & exit /B 1
 
 :: hMSBuild - $-version-$
-:: Copyright (c) 2017-2018  Denis Kuzmin [ entry.reg@gmail.com ]
-:: https://github.com/3F/hMSBuild
+:: Copyright (c) 2017-2019  Denis Kuzmin [ entry.reg@gmail.com ] GitHub/3F
+:: Copyright (c) the hMSBuild contributors
 
 set "dp0=%~dp0"
 set args=%*
@@ -81,9 +81,10 @@ goto commands
 
 echo.
 @echo hMSBuild - $-version-$
-@echo Copyright (c) 2017-2018  Denis Kuzmin [ entry.reg@gmail.com ] :: github.com/3F
+@echo Copyright (c) 2017-2019  Denis Kuzmin [ entry.reg@gmail.com ] GitHub/3F
+@echo Copyright (c) the hMSBuild contributors
 echo.
-echo Distributed under the MIT license
+echo Licensed under the MIT License
 @echo https://github.com/3F/hMSBuild 
 echo.
 @echo.
