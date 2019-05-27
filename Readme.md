@@ -1,12 +1,12 @@
 # [hMSBuild](https://github.com/3F/hMSBuild)
 
-Compiled text-based embeddable pure batch-scripts (no powershell or dotnet-cli) for searching of available MSBuild tools. VS2017+ (does not require local vswhere.exe [[?](https://github.com/Microsoft/vswhere/issues/41)]), VS2015, VS2013, VS2010, other versions from .NET Framework. Contains [gnt.core](https://github.com/3F/GetNuTool) for work with NuGet packages and more...
+Compiled text-based embeddable pure batch-scripts (no powershell, no dotnet-cli) for searching of available MSBuild tools. VS2019+, VS2017 (it does not require local vswhere.exe [[?](https://github.com/Microsoft/vswhere/issues/41)]), VS2015, VS2013, VS2012, VS2010, other versions from .NET Framework. Contains [gnt.core](https://github.com/3F/GetNuTool) for work with NuGet packages and more...
 
 
 [![Build status](https://ci.appveyor.com/api/projects/status/tusiutft7a0ei109/branch/master?svg=true)](https://ci.appveyor.com/project/3Fs/hmsbuild/branch/master) [![release-src](https://img.shields.io/github/release/3F/hMSBuild.svg)](https://github.com/3F/hMSBuild/releases/latest) [![License](https://img.shields.io/badge/License-MIT-74A5C2.svg)](https://github.com/3F/hMSBuild/blob/master/License.txt)
 [![GetNuTool core](https://img.shields.io/badge/GetNuTool-v1.7-93C10B.svg)](https://github.com/3F/GetNuTool)
 
-[![Build history](https://buildstats.info/appveyor/chart/3Fs/hmsbuild?buildCount=20&includeBuildsFromPullRequest=true&showStats=true)](https://ci.appveyor.com/project/3Fs/hmsbuild/history)
+[![Build history](https://buildstats.info/appveyor/chart/3Fs/hmsbuild?buildCount=15&includeBuildsFromPullRequest=true&showStats=true)](https://ci.appveyor.com/project/3Fs/hmsbuild/history)
 
 **Download:** Latest stable batch-script [ [hMSBuild](https://3F.github.io/hMSBuild/releases/latest/) ]
 * Stable: [/releases](https://github.com/3F/hMSBuild/releases) [ [latest](https://github.com/3F/hMSBuild/releases/latest) ]
@@ -47,10 +47,10 @@ Start with `hMSBuild -h`
 
 ### What supports ?
 
-* Versions from VS2017+ 
+* Versions from VS2019+, VS2017 
     * Full support even if you still have no any [local `vswhere.exe`](https://github.com/Microsoft/vswhere/issues/41) [[?](https://github.com/Microsoft/vswhere/issues/41)]
     
-* Versions from VS2015, VS2013
+* Versions from VS2015, VS2013, VS2012
 * Versions from .NET Framework, including for VS2010
 
 ### Algorithm of searching
@@ -58,7 +58,7 @@ Start with `hMSBuild -h`
 **v2.0+**
 
 * Versions: 
-  * VS2017+ ➟ VS2015, VS2013, ... ➟ .netfx
+  * VS2019+, VS2017 ➟ VS2015, VS2013, ... ➟ .netfx
 * Architectures (configure via `-notamd64` key): 
   * x64 ➟ x32
 * Priorities (configure via `-vsw-priority` and `-stable` keys). *Specific workload components in more priority than pre-release products. See [Issue #8](https://github.com/3F/hMSBuild/issues/8)*
@@ -131,6 +131,29 @@ hMSBuild -GetNuTool /p:ngpackages="Conari;regXwild"
 hMSBuild -no-vs "DllExport.sln" || goto bx
 ```
 
+## Integration with other scripts
+
+### batch
+
+hMSBuild is a pure batch script. Therefore, you can combine this even inside your other batch scripts. Or simply invoke this externally as you need:
+
+~
+
+```bat
+set msbuild=hMSBuild -notamd64
+...
+%msbuild% Conari.sln /m:4 /t:Rebuild
+```
+
+```bat
+for /F "tokens=*" %%i in ('hMSBuild -only-path -notamd64') do set msbuild="%%i"
+...
+%msbuild% /version
+```
+
+...
+
+
 ## Build & Tests
 
 Our build was based on [vssbe](https://github.com/3F/vsSolutionBuildEvent) scripts. 
@@ -147,4 +170,4 @@ Available tests can be raised by command:
 .\tests
 ```
 
-We're waiting for your amazing contributions!
+We're waiting for your awesome contributions!

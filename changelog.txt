@@ -1,6 +1,18 @@
 hMSBuild :: https://github.com/3F/hMSBuild
 - - - - -
 
+[v2.1] 2019.05.27
+
+    * NEW: Support for VS2019 msbuild (Thanks @gerhardol)
+
+    * CHANGED: Removed possible last extra slash `\` from path, ie. ~ `..\Bin\\MSBuild.exe` 
+               When x32 for searching from Visual Studio with `-notamd64` key.
+               Part of PR #11
+
+    * CHANGED: Default remote vswhere is 2.6.7.
+               https://github.com/microsoft/vswhere/releases/tag/2.6.7
+
+
 [v2.0] 2018.12.23
 
     * NEW: Full support of the following special characters for MSBuild args. Issue #7.
