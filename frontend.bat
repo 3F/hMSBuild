@@ -42,7 +42,7 @@ set "esc=!esc:&=%%E_CARET%%&!"
 :: Default data
 :settings
 
-set "vswVersion=2.5.2"
+set "vswVersion=2.6.7"
 set vswhereCache=%temp%\hMSBuild_vswhere
 
 set "notamd64="
@@ -101,7 +101,7 @@ echo  -vsw-priority {IDs} - Non-strict components preference: C++ etc.
 echo                        Separated by space: https://aka.ms/vs/workloads
 echo.
 echo  -vsw-version {arg}  - Specific version of vswhere. Where {arg}:
-echo      * 1.0.50 ...
+echo      * 2.5.2 ...
 echo      * Keywords:
 echo        `latest` - To get latest remote version;
 echo        `local`  - To use only local versions;
@@ -128,7 +128,7 @@ echo.
 echo -------- 
 echo Samples:
 echo -------- 
-echo hMSBuild -notamd64 -vsw-version 1.0.50 "Conari.sln" /t:Rebuild
+echo hMSBuild -notamd64 -vsw-version 2.5.2 "Conari.sln" /t:Rebuild
 echo hMSBuild -vsw-version latest "Conari.sln"
 echo.
 echo hMSBuild -no-vswhere -no-vs -notamd64 "Conari.sln"
