@@ -462,7 +462,7 @@ set vswfilter=!vswPriority!
 call :dbgprint "attempts with filter: " vswfilter vswPreRel
 
 set "vspath=" & set "vsver="
-for /F "usebackq tokens=1* delims=: " %%a in (`"!vswbin!" -nologo !vswPreRel! -requires !vswfilter! Microsoft.Component.MSBuild`) do (
+for /F "usebackq tokens=1* delims=: " %%a in (`"!vswbin!" -nologo !vswPreRel! -products * -requires !vswfilter! Microsoft.Component.MSBuild`) do (
     if /I "%%~a"=="installationPath" set vspath=%%~b
     if /I "%%~a"=="installationVersion" set vsver=%%~b
 
