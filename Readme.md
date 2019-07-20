@@ -32,7 +32,7 @@ Licensed under the [MIT License (MIT)](https://github.com/3F/hMSBuild/blob/maste
 ```
 Copyright (c) 2017-2019  Denis Kuzmin < entry.reg@gmail.com > GitHub/3F
 ```
-And the hMSBuild contributors: https://github.com/3F/hMSBuild/graphs/contributors
+hMSBuild contributors: https://github.com/3F/hMSBuild/graphs/contributors
 
 [ [ ☕ Donate ](https://3F.github.com/Donation/) ]
 

@@ -1,6 +1,16 @@
 hMSBuild :: https://github.com/3F/hMSBuild
 - - - - -
 
+[v2.2] 2019.07.20
+
+    * FIXED: Fixed searching from MS BuildTools products. Issue #12 (Thanks @odalet).
+    
+    * CHANGED: [VS2017+] hMSBuild will search now in ANY available products. PR #13 (Thanks @odalet).
+    
+    * NOTE: In addition to changes above, please use `-vsw-priority` and `-force` keys to use only what is needed. 
+            Issues: #8, #14.
+
+
 [v2.1] 2019.05.27
 
     * NEW: Support for VS2019 msbuild (Thanks @gerhardol)

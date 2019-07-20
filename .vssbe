@@ -63,7 +63,7 @@
           "{",
           "    #[var bSha1 = #[IO sout(\"git\", \"rev-parse --short HEAD\")]]",
           "    ",
-          "    #[$(hMSBuildVersion = \"$(hMSBuildVersion) [ $(bSha1) ]\")]",
+          "    #[$(hMSBuildVersion = \"$(hMSBuildVersion)+$(bSha1)\")]",
           "}]",
           ""
         ]
