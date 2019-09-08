@@ -142,13 +142,13 @@ hMSBuild is a pure batch script. Therefore, you can combine this even inside you
 ```bat
 set msbuild=hMSBuild -notamd64
 ...
-%msbuild% Conari.sln /m:4 /t:Rebuild
+call %msbuild% Conari.sln /m:4 /t:Rebuild
 ```
 
 ```bat
 for /F "tokens=*" %%i in ('hMSBuild -only-path -notamd64') do set msbuild="%%i"
 ...
-%msbuild% /version
+call %msbuild% /version
 ```
 
 ...
