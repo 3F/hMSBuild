@@ -1,16 +1,15 @@
 @echo off
 
-set cimdll=GetNuTool\packages\vsSBE.CI.MSBuild\bin\CI.MSBuild.dll
-set netmsb=GetNuTool\netmsb
-
-call submodules "GetNuTool/gnt.sln" || goto err
+if not exist GetNuTool/gnt.sln (
+    git submodule update --init --recursive GetNuTool || goto err
+)
 
 setlocal
     cd GetNuTool
     call build PublicRelease || goto err
 endlocal
 
-call %netmsb% "hMSBuild.sln" /l:"%cimdll%" /v:m /m:4 || goto err
+call GetNuTool\packages\vsSolutionBuildEvent\cim.cmd "hMSBuild.sln" /v:m /m:4 || goto err
 
 :: call tests || goto err
 

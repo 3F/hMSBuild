@@ -87,7 +87,7 @@
           "}",
           "",
           "#[var frontend = frontend.bat]",
-          "#[var gntECore = \"GetNuTool\\\\bin\\\\Release\\\\raw\\\\versions\\\\01. executable\\\\gnt.bat\"]",
+          "#[var gntECore = \"GetNuTool\\\\bin\\\\Release\\\\raw\\\\executables\\\\batch\\\\gnt.bat\"]",
           "#[var hMSBuild = $(odir)hMSBuild.bat]",
           "",
           "#[try",
@@ -182,15 +182,20 @@
           "                \"Readme.md\",",
           "                \"changelog.txt\",",
           "                \"License.txt\",",
+          "                \".gitattributes\",",
           "                \".version\"",
           "               },",
           "               \"$(odir)\", true)]",
-          "               ",
-          "#[var zipdir = $(dbin.Replace(\"\\\\\", \"/\"))]",
           "",
-          "#[7z pack.directory(\"$(zipdir)raw\", \"$(zipdir)hMSBuild_#[$(hMSBuildVersion",
-          "                                                            .Replace(' ', '')",
-          "                                                            .Replace('[', '_').Replace(']', ''))].zip\")]"
+          "#[IO copy.file(\"$(dbin)hMSBuild.full.bat\", \"$(dbin)raw/compiled.full/hMSBuild.bat\", true)]",
+          "#[IO delete.files({\"$(dbin)hMSBuild.full.bat\"})]",
+          "",
+          "#[var zipdir = $(dbin.Replace(\"\\\\\", \"/\"))]",
+          "#[7z pack.directory",
+          "(",
+          "    \"$(zipdir)raw\", ",
+          "    \"$(zipdir)hMSBuild.$(hMSBuildVersion).zip\"    ",
+          ")]"
         ]
       }
     }
