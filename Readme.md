@@ -30,7 +30,7 @@ Today's [hMSBuild](https://github.com/3F/hMSBuild) provides flexible way to acce
 Licensed under the [MIT License (MIT)](https://github.com/3F/hMSBuild/blob/master/License.txt)
 
 ```
-Copyright (c) 2017-2019  Denis Kuzmin < entry.reg@gmail.com > GitHub/3F
+Copyright (c) 2017-2020  Denis Kuzmin < x-3F@outlook.com > GitHub/3F
 ```
 hMSBuild contributors: https://github.com/3F/hMSBuild/graphs/contributors
 
