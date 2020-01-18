@@ -2,14 +2,12 @@
 :: Tests. Part of https://github.com/3F/hMSBuild
 setlocal enableDelayedExpansion
 
-set core=%~1 & set wdir=%~2
+set /a gcount=!%~1! & set /a failedTotal=!%~2!
+set core=%~3 & set wdir=%~4
 
 set core="%core%"
 set vswhelper="%wdir%vswhere.bat"
 set vswlog="%wdir%vswas.log"
-
-set /a gcount=0
-set /a failedTotal=0
 
 echo echo %%*^> %vswlog% > %vswhelper%
 
@@ -36,18 +34,9 @@ call :Vrfy base "-products * -latest -requiresAny -version [15.0,16.0) -requires
 del /Q/F %vswhelper%
 del /Q/F %vswlog%
 
-
-echo.
-echo =================
-echo [Failed] = !failedTotal!
-set /a "gcount-=failedTotal"
-echo [Passed] = !gcount!
-echo =================
-echo.
+endlocal & set /a %1=%gcount% & set /a %2=%failedTotal%
 if "!failedTotal!"=="0" exit /B 0
 exit /B 1
-
-:: ============
 
 :Vrfy
 :: (1) - Expected base line

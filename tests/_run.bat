@@ -21,19 +21,30 @@ echo Testing
 echo -------
 echo.
 
-call :print "Tests - 'vswas'"
-call .\vswas %core% %rdir% || goto err
+set /a gcount=0
+set /a failedTotal=0
 
-call :print "Tests - 'diffversions'"
-call .\diffversions %core% %rdir% %cfull% || goto err
+echo. & call :print "Tests - 'vswas'"
+call .\vswas gcount failedTotal %core% %rdir%
 
+echo. & call :print "Tests - 'diffversions'"
+call .\diffversions gcount failedTotal %core% %rdir% %cfull%
 
+echo.
+echo =================
+echo [Failed] = !failedTotal!
+set /a "gcount-=failedTotal"
+echo [Passed] = !gcount!
+echo =================
+echo.
+
+if !failedTotal! GTR 0 goto failed
 echo.
 call :print "All Passed."
 exit /B 0
 
 
-:err
+:failed
 echo.
 echo. Tests failed. 1>&2
 exit /B 1

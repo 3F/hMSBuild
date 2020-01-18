@@ -2,17 +2,16 @@
 :: Tests. Part of https://github.com/3F/hMSBuild
 setlocal enableDelayedExpansion
 
-set core=%~1 & set wdir=%~2 & set cfull=%~3
+set /a gcount=!%~1! & set /a failedTotal=!%~2!
+set core=%~3 & set wdir=%~4 & set cfull=%~5
 
 set core="%core%"
 set cfull="%cfull%"
 :: set light="%wdir%hMSBuild_light.bat"
 :: set minified="%wdir%hMSBuild.bat"
 
-set /a gcount=0
-set /a failedTotal=0
-
 :: =========== Tests ====================
+
 
 call :execAll "-only-path"
 call :execAll "-only-path -no-vswhere"
@@ -42,16 +41,12 @@ call :execAll "-notamd64 -vsw-version 2.8.4 -only-path"
 call :execAll "-notamd64 -vsw-version latest -only-path"
 call :execAll "-no-vswhere -no-vs -no-netfx -only-path"
 
-echo.
-echo =================
-echo [Failed] = !failedTotal!
-set /a "gcount-=failedTotal"
-echo [Passed] = !gcount!
-echo =================
-echo.
+
+:: =========== /Tests ====================
+
+endlocal & set /a %1=%gcount% & set /a %2=%failedTotal%
 if "!failedTotal!"=="0" exit /B 0
 exit /B 1
-:: ======================================
 
 :execAll
 set cmd=%~1
