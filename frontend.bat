@@ -42,7 +42,7 @@ set "esc=!esc:&=%%E_CARET%%&!"
 :: Default data
 :settings
 
-set "vswVersion=2.6.7"
+set "vswVersion=2.8.4"
 set vswhereCache=%temp%\hMSBuild_vswhere
 
 set "notamd64="
@@ -55,6 +55,7 @@ set "hMSBuildDebug="
 set "displayOnlyPath="
 set "vswVersionUsr="
 set "vswPriority="
+set "vswAs="
 set "kStable="
 set "kForce="
 
@@ -101,7 +102,7 @@ echo  -vsw-priority {IDs} - Non-strict components preference: C++ etc.
 echo                        Separated by space: https://aka.ms/vs/workloads
 echo.
 echo  -vsw-version {arg}  - Specific version of vswhere. Where {arg}:
-echo      * 2.5.2 ...
+echo      * 2.6.7 ...
 echo      * Keywords:
 echo        `latest` - To get latest remote version;
 echo        `local`  - To use only local versions;
@@ -115,6 +116,7 @@ echo  -eng              - Try to use english language for all build messages.
 echo  -GetNuTool {args} - Access to GetNuTool core. https://github.com/3F/GetNuTool
 echo  -only-path        - Only display fullpath to found MSBuild.
 echo  -force            - Aggressive behavior for -vsw-priority, -notamd64, etc.
+echo  -vsw-as "args..." - Reassign default commands to vswhere if used.
 echo  -debug            - To show additional information from hMSBuild.
 echo  -version          - Display version of hMSBuild.
 echo  -help             - Display this help. Aliases: -help -h
@@ -128,7 +130,7 @@ echo.
 echo -------- 
 echo Samples:
 echo -------- 
-echo hMSBuild -notamd64 -vsw-version 2.5.2 "Conari.sln" /t:Rebuild
+echo hMSBuild -notamd64 -vsw-version 2.6.7 "Conari.sln" /t:Rebuild
 echo hMSBuild -vsw-version latest "Conari.sln"
 echo.
 echo hMSBuild -no-vswhere -no-vs -notamd64 "Conari.sln"
@@ -261,6 +263,11 @@ set key=!arg[%idx%]!
     ) else if [!key!]==[-vsw-priority] ( set /a "idx+=1" & call :eval arg[!idx!] v
         
         set vswPriority=!v!
+
+        goto continue
+    ) else if [!key!]==[-vsw-as] ( set /a "idx+=1" & call :eval arg[!idx!] v
+        
+        set vswAs=!v!
 
         goto continue
     ) else if [!key!]==[-stable] ( 
@@ -458,11 +465,14 @@ set "msbf="
 rem :: https://github.com/3F/hMSBuild/issues/8
 set vswfilter=!vswPriority!
 
+if not defined vswAs set vswAs=-products * -latest
+call :dbgprint "assign command: " vswAs
+
 :_vswAttempt
 call :dbgprint "attempts with filter: " vswfilter vswPreRel
 
 set "vspath=" & set "vsver="
-for /F "usebackq tokens=1* delims=: " %%a in (`"!vswbin!" -nologo !vswPreRel! -products * -requires !vswfilter! Microsoft.Component.MSBuild`) do (
+for /F "usebackq tokens=1* delims=: " %%a in (`"!vswbin!" -nologo !vswPreRel! -requires !vswfilter! Microsoft.Component.MSBuild !vswAs!`) do (
     if /I "%%~a"=="installationPath" set vspath=%%~b
     if /I "%%~a"=="installationVersion" set vsver=%%~b
 
