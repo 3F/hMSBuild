@@ -2,13 +2,12 @@
 :: Tests. Part of https://github.com/3F/hMSBuild
 setlocal enableDelayedExpansion
 
-set core=%~1
-set dir=%~2
-
+set core=%~1 & set wdir=%~2 & set cfull=%~3
 
 set core="%core%"
-:: set light="%dir%hMSBuild_light.bat"
-set minified="%dir%hMSBuild.bat"
+set cfull="%cfull%"
+:: set light="%wdir%hMSBuild_light.bat"
+:: set minified="%wdir%hMSBuild.bat"
 
 set /a gcount=0
 set /a failedTotal=0
@@ -61,6 +60,7 @@ echo.
 echo -----
 echo Test%gcount%: %cmd%
 echo -----
+if defined cfull call :execAB core cfull cmd & if not "!ERRORLEVEL!"=="0" goto eqFailed
 if defined light call :execAB core light cmd & if not "!ERRORLEVEL!"=="0" goto eqFailed
 if defined minified call :execAB core minified cmd & if not "!ERRORLEVEL!"=="0" goto eqFailed
 echo [Passed]

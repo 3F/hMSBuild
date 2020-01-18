@@ -2,11 +2,18 @@
 :: Tests. Part of https://github.com/3F/hMSBuild
 setlocal enableDelayedExpansion
 
+:: path to core
 set core=%1
-set vdir=%2
+
+:: path to directory where release
+set rdir=%2
+
+:: path to compiled full version
+set cfull=%~3
 
 call :isEmptyOrWhitespace core _is & if [!_is!]==[1] goto errargs
-call :isEmptyOrWhitespace vdir _is & if [!_is!]==[1] goto errargs
+call :isEmptyOrWhitespace rdir _is & if [!_is!]==[1] goto errargs
+call :isEmptyOrWhitespace cfull _is & if [!_is!]==[1] goto errargs
 
 echo.
 echo ------------
@@ -14,8 +21,12 @@ echo Testing
 echo -------
 echo.
 
+call :print "Tests - 'vswas'"
+call .\vswas %core% %rdir% || goto err
+
 call :print "Tests - 'diffversions'"
-call diffversions %core% %vdir% || goto err
+call .\diffversions %core% %rdir% %cfull% || goto err
+
 
 echo.
 call :print "All Passed."
