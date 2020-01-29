@@ -71,10 +71,11 @@ Start with `hMSBuild -h`
 Usage is same as it would be same for msbuild. But you also have an additional keys to configure hMSBuild and to access to GetNuTool.
 
 ```
-hMSBuild - 2.0.0.61507 [ a40c6ac ]
-Copyright (c) 2017-2018  Denis Kuzmin [ entry.reg@gmail.com ] :: github.com/3F
+hMSBuild 2.3.0
+Copyright (c) 2017-2020  Denis Kuzmin [ x-3F@outlook.com ] GitHub/3F
+Copyright (c) hMSBuild contributors
 
-Distributed under the MIT license
+Licensed under the MIT License
 https://github.com/3F/hMSBuild
 
 
@@ -91,7 +92,7 @@ Arguments:
                        Separated by space: https://aka.ms/vs/workloads
 
  -vsw-version {arg}  - Specific version of vswhere. Where {arg}:
-     * 1.0.50 ...
+     * 2.6.7 ...
      * Keywords:
        `latest` - To get latest remote version;
        `local`  - To use only local versions;
@@ -105,6 +106,7 @@ Arguments:
  -GetNuTool {args} - Access to GetNuTool core. https://github.com/3F/GetNuTool
  -only-path        - Only display fullpath to found MSBuild.
  -force            - Aggressive behavior for -vsw-priority, -notamd64, etc.
+ -vsw-as "args..." - Reassign default commands to vswhere if used.
  -debug            - To show additional information from hMSBuild.
  -version          - Display version of hMSBuild.
  -help             - Display this help. Aliases: -help -h
@@ -118,7 +120,7 @@ Flags:
 --------
 Samples:
 --------
-hMSBuild -notamd64 -vsw-version 1.0.50 "Conari.sln" /t:Rebuild
+hMSBuild -notamd64 -vsw-version 2.6.7 "Conari.sln" /t:Rebuild
 hMSBuild -vsw-version latest "Conari.sln"
 
 hMSBuild -no-vswhere -no-vs -notamd64 "Conari.sln"
@@ -128,7 +130,7 @@ hMSBuild vsSolutionBuildEvent.sln
 hMSBuild -GetNuTool -unpack
 hMSBuild -GetNuTool /p:ngpackages="Conari;regXwild"
 
-hMSBuild -no-vs "DllExport.sln" || goto bx
+hMSBuild -no-vs "DllExport.sln" || goto by
 ```
 
 ## Integration with other scripts

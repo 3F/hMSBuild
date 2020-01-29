@@ -1,5 +1,35 @@
-hMSBuild :: https://github.com/3F/hMSBuild
-- - - - -
+- - - - - - - - - - - - - - - - - - - - -  
+hMSBuild - https://github.com/3F/hMSBuild
+- - - - - - - - - - - - - - - - - - - - -  
+
+[v2.3] 2020.01.29
+
+    * NEW: Implemented `-vsw-as "args..."`
+           Reassigns default commands to vswhere if used.
+           
+           For example:
+           ```
+           hMSBuild -only-path -vsw-as "-products Microsoft.VisualStudio.Product.BuildTools"
+           ```
+           Related Issues: #12, #14, #8,
+           
+    * CHANGED: VS2017+. Using the most modern instance by default.
+               You can also specify `-vsw-priority` and `-force` keys to use only what is needed. 
+               Related Issues: #14, #8.
+               
+    * CHANGED: Updated wswhere to 2.8.4 by default.
+
+    * CHANGED: Updated GetNuTool 1.8
+               https://github.com/3F/GetNuTool/releases/tag/1.8
+               
+               Most important fix for hMSBuild:
+               "The remote server returned an error: (407) Proxy Authentication Required."
+               Related issue: https://github.com/3F/DllExport/issues/133
+               
+    * NOTE: An compiled.full version now will be distributed together with official hMSBuild releases.
+               https://twitter.com/GitHub3F/status/1218224792970715136
+               (zip packages) https://github.com/3F/hMSBuild/releases
+
 
 [v2.2] 2019.07.20
 
