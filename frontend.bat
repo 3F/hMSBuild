@@ -193,9 +193,9 @@ set key=!arg[%idx%]!
         
         :: invoke GetNuTool with arguments from right side
         for /L %%p IN (0,1,8181) DO (
-            if "!escg:~%%p,10!"=="-GetNuTool" (
+            if "!esc:~%%p,10!"=="-GetNuTool" (
 
-                set found=!escg:~%%p!
+                set found=!esc:~%%p!
                 call :gntpoint !found:~10!
 
                 set /a EXIT_CODE=%ERRORLEVEL%
@@ -203,7 +203,7 @@ set key=!arg[%idx%]!
             )
         )
 
-        call :dbgprint "!key! is corrupted: !escg!" 
+        call :dbgprint "!key! is corrupted: " esc
         set /a EXIT_CODE=%ERROR_FAILED%
         goto endpoint
         
