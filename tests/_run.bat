@@ -4,14 +4,14 @@
 
 setlocal enableDelayedExpansion
 
-:: path to core
-set core=%1
-
 :: path to the directory where the release is located
-set rdir=%2
+set "rdir=%~1"
+
+:: path to core
+set "core=%~2"
 
 :: path to other compiled version
-set appB=%~3
+set "appB=%~3"
 
 call a isNotEmptyOrWhitespaceOrFail core || exit /B1
 call a isNotEmptyOrWhitespaceOrFail rdir || exit /B1
@@ -29,11 +29,17 @@ set /a gcount=0 & set /a failedTotal=0
 :: Tests
 
     echo. & call a print "Tests - 'VswasTests'"
-    call .\VswasTests gcount failedTotal %core% %rdir%
+    call .\VswasTests gcount failedTotal "%core%" "%rdir%"
+
+    echo. & call a print "Tests - 'VswStreamTests'"
+    call .\VswStreamTests gcount failedTotal "%core%" "%rdir%"
 
     echo. & call a print "Tests - 'DiffVTests'"
-    call .\DiffVTests gcount failedTotal %core% %rdir% dbg2.3.0+204d1a0b
-    call .\DiffVTests gcount failedTotal %core% %rdir% %appB%
+    call .\DiffVTests gcount failedTotal "%rdir%%core%" "%rdir%" dbg2.3.0+204d1a0b
+    call .\DiffVTests gcount failedTotal "%rdir%%core%" "%rdir%" "%rdir%%appB%"
+
+    echo. & call a print "Tests - 'DiffVswStreamTests'"
+    call .\DiffVswStreamTests gcount failedTotal "%rdir%%core%" "%rdir%" "%rdir%%appB%"
 
 ::::::::::::::::::
 ::

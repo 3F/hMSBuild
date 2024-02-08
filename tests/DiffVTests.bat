@@ -3,7 +3,7 @@
 :: Tests. Part of https://github.com/3F/hMSBuild
 
 setlocal enableDelayedExpansion
-call a isNotEmptyOrWhitespaceOrFail %~1 || exit /B1
+call a isStrNotEmptyOrWhitespaceOrFail %~1 || exit /B1
 
 set /a gcount=!%~1! & set /a failedTotal=!%~2!
 set "appA=%~3" & set "wdir=%~4" & set "appB=%~5"

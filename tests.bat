@@ -14,7 +14,7 @@ setlocal
     ) else goto buildError
 
     cd tests
-    call _run "%rdir%hMSBuild.bat" %rdir% "%rdir%hMSBuild.full.bat"
+    call _run %rdir% "hMSBuild.bat" "hMSBuild.full.bat"
 endlocal
 exit /B 0
 

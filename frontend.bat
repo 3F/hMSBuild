@@ -358,7 +358,7 @@ exit /B !EXIT_CODE!
 :: - - -
 :: Tools from VS2017+
 :vswhere {out:toolset}
-    call :dbgprint "trying via vswhere..."
+    call :dbgprint "try vswhere..."
 
     if defined vswVersionUsr if not "!vswVersion!"=="local" (
 
@@ -465,10 +465,10 @@ exit /B 0
     set vswfilter=!vswPriority!
 
     if not defined vswAs set vswAs=-products * -latest
-    call :dbgprint "assign command: " vswAs
+    call :dbgprint "assign command: `!vswAs!`"
 
     :_vswAttempt
-        call :dbgprint "attempts with filter: " vswfilter vswPreRel
+        call :dbgprint "attempts with filter: !vswfilter!; `!vswPreRel!`"
 
         set "vspath=" & set "vsver="
         for /F "usebackq tokens=1* delims=: " %%a in (`"!vswbin!" -nologo !vswPreRel! -requires !vswfilter! Microsoft.Component.MSBuild !vswAs!`) do (
