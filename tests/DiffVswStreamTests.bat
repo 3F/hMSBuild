@@ -3,7 +3,7 @@
 :: Tests. Part of https://github.com/3F/hMSBuild
 
 setlocal enableDelayedExpansion
-call a isStrNotEmptyOrWhitespaceOrFail %~1 || exit /B1
+call a isNotEmptyOrWhitespaceOrFail %~1 || exit /B1
 
 set /a gcount=!%~1! & set /a failedTotal=!%~2!
 set "pA=%~3" & set "wdir=%~4" & set "pB=%~5"
@@ -15,6 +15,7 @@ set "emptyProj=%cd%\empty.proj"
 :: Tests
 
 call :init
+
 
     call a abStreamTest "-only-path" %pA% %pB% || goto x
     call a abStreamTest "-only-path -no-vswhere" %pA% %pB% || goto x

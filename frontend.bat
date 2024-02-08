@@ -198,7 +198,7 @@ set key=!arg[%idx%]!
                 set found=!esc:~%%p!
                 call :gntpoint !found:~10!
 
-                set /a EXIT_CODE=%ERRORLEVEL%
+                set /a EXIT_CODE=!ERRORLEVEL!
                 goto endpoint
             )
         )

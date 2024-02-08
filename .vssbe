@@ -713,6 +713,7 @@
           ")]",
           "",
           "#[IO copy.file({ \"tests/*.bat\" }, \"$(odir)/tests/\", true)]",
+          "#[IO copy.file({ \"GetNuTool/tests/*.bat\" }, \"$(odir)/tests/GetNuTool/\", true)]",
           "",
           "#[IO copy.file(\"$(odir)hMSBuild.full.bat.map\", \"$(odir)maps/hMSBuild.bat.map\", true)]",
           "#[IO copy.file(\"$(odir)hMSBuild.full.bat.map.targets\", \"$(odir)maps/hMSBuild.bat.map.targets\", true)]",

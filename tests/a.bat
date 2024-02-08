@@ -6,7 +6,8 @@ if "%~1"=="" echo Empty function name & exit /B 1
 call :%~1 %2 %3 %4 %5 %6 %7 %8 %9 & exit /B !ERRORLEVEL!
 
 :initAppVersion
-    for /F "tokens=*" %%i in (..\.version) do set appversion=%%i
+    :: [1] - Optional postfix.
+    for /F "tokens=*" %%i in (..\.version) do set "appversion%~1=%%i"
 exit /B
 
 :invoke
@@ -162,21 +163,28 @@ goto _logicExTestEnd
 :: :startVFTest
 
 :completeTest
-    echo [Passed]
+    call :cprint 27 [Passed]
 exit /B 0
 
 :failTest
+    :: [1] - Optional message string.
+
     set /a "failedTotal+=1"
+
+    if not "%~1"=="" echo %~1
     call :printStream failed
+    echo. & call :cprint 47 [Failed]
 exit /B 0
 
 :printStream
+    if "!msgIdx!"=="" exit /B 1
     for /L %%i in (0,1,!msgIdx!) do echo (%%i) *%~1: !msg[%%i]!
 exit /B 0
 
 :printStreamAB
     :: &(1) - Stream name to print together with origin.
 
+    if "!msgIdx!"=="" exit /B 1
     for /L %%i in (0,1,!msgIdx!) do (
         echo `!_streamA[%%i]!` & echo `!msg[%%i]!`  & echo --
     )
@@ -191,18 +199,21 @@ exit /B 0
 exit /B 0
 
 :contains
-    :: &(1) - input string via variable
-    ::  (2) - substring to check
-    :: &(3) - result, 1 if found.
+    :: &(1) - Input string via variable
+    ::  (2) - Substring to check. Use ` instead of " and do NOT use =(equal sign) since it's not protected.
+    :: &(3) - Result, 1 if found.
+
+    :: TODO: L-39 protect from `=` like the main module does; or compare in parts using `#`
 
     set "input=!%~1!"
 
     if "%~2"=="" if "!input!"=="" set /a %3=1 & exit /B 0
     if "!input!"=="" if not "%~2"=="" set /a %3=0 & exit /B 0
 
+    set "input=!input:"=`!"
     set "cmp=!input:%~2=!"
 
-    if .!cmp! NEQ .!input! ( set /a %3=1 ) else set /a %3=0
+    if "!cmp!" NEQ "!input!" ( set /a %3=1 ) else set /a %3=0
 exit /B 0
 
 :getMsgAt
@@ -225,7 +236,7 @@ exit /B 0
     set /a %3=0
     call :getMsgAt %~1 _msgstr || exit /B 0
 
-    call :contains _msgstr "%~2" n & set /a %3=!n!
+    call :contains _msgstr "%~2" _n & set /a %3=!_n!
 exit /B 0
 
 :msgOrFailAt
@@ -233,7 +244,7 @@ exit /B 0
     ::  (2) - substring to check
     :: !!1  - Error code 1 if the message is not found at the specified index.
 
-    call :msgAt %~1 "%~2" n & if .!n! NEQ .1 call :failTest & exit /B 1
+    call :msgAt %~1 "%~2" _n & if .!_n! NEQ .1 call :failTest & exit /B 1
 exit /B 0
 
 :checkFs
@@ -303,7 +314,7 @@ exit /B 0
     :: !!1  - Error code 1 if failed.
     :: !!3  - Error code 3 if not found.
 
-    if "%~2"=="" (set "_sidx=0") else set "_sidx=%~2"
+    if "%~2"=="" (set /a _sidx=0) else set /a _sidx=%~2
     if %_sidx% LSS 0 exit /B 1
     if %msgIdx% LSS %_sidx% exit /B 1
 
@@ -329,13 +340,39 @@ exit /B 0
     ::  (1) - substring to check
     :: !!1  - Error code 1 if the input (1) was not found.
 
-    call :findInStream "%~1" || ( call :failTest & exit /B 1 )
+    call :findInStream "%~1" n & if .!n! EQU .1 ( call :failTest & exit /B 1 )
 exit /B 0
 
 :print
     :: (1) - Input string.
 
-    echo.[ %TIME% ] %~1
+    :: NOTE: delayed `dmsg` because symbols like `)`, `(` ... requires protection after expansion. L-32
+    set "dmsg=%~1" & echo [ %TIME% ] !dmsg!
+exit /B 0
+
+:cprint
+    :: (1) - color attribute via :color call
+    :: (2) - Input string.
+
+    call :color %~1 "%~2" & echo.
+exit /B 0
+
+:color
+    :: (1) - color attribute, {background} | {foreground}
+            :: 0 = Black       8 = Gray
+            :: 1 = Blue        9 = Light Blue
+            :: 2 = Green       A = Light Green
+            :: 3 = Aqua        B = Light Aqua
+            :: 4 = Red         C = Light Red
+            :: 5 = Purple      D = Light Purple
+            :: 6 = Yellow      E = Light Yellow
+            :: 7 = White       F = Bright White
+
+    :: (2) - Input string.
+
+    <nul set/P= >"%~2"
+    findstr /a:%~1  "%~2" nul
+    del "%~2">nul
 exit /B 0
 
 :isNotEmptyOrWhitespace
@@ -404,4 +441,9 @@ exit /B 0
     call :eqOriginStreamWith %~1 _r & if !_r! EQU 0 (
         call :failStreamsTest %~1 %~2 & exit /B 1
     )
+exit /B 0
+
+:disableAppVersion
+    :: [1] - Optional postfix.
+    set "appversion%~1=off"
 exit /B 0

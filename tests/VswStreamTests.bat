@@ -3,13 +3,16 @@
 :: Tests. Part of https://github.com/3F/hMSBuild
 
 setlocal enableDelayedExpansion
-call a isStrNotEmptyOrWhitespaceOrFail %~1 || exit /B1
+call a isNotEmptyOrWhitespaceOrFail %~1 || exit /B1
 
 set /a gcount=!%~1! & set /a failedTotal=!%~2!
 set "exec=%~3" & set "wdir=%~4"
 
 :::::::::::::::::: :::::::::::::: :::::::::::::::::::::::::
 :: Tests
+
+    :: NOTE: :startTest will use ` as "
+    :: It helps to use double quotes inside double quotes " ... `args` ... "
 
 
     ::_______ ------ ______________________________________
@@ -40,9 +43,9 @@ set "exec=%~3" & set "wdir=%~4"
 
     ::_______ ------ ______________________________________
 
-        call a startTest "-debug -only-path -vsw-as `-version [15.0,16.0 -products * -latest`" || goto x
+        call a startTest "-debug -only-path -vsw-as `-version [15.0,16.0) -products * -latest`" || goto x
             call a findInStreamOrFail "assign command:" 4,n || goto x
-            call a msgOrFailAt !n! "-version [15.0,16.0 -products * -latest" || goto x
+            call a msgOrFailAt !n! "-version [15.0,16.0) -products * -latest" || goto x
 
             call a findInStreamOrFail "attempts with filter: ;" 5 || goto x
         call a completeTest
@@ -51,9 +54,9 @@ set "exec=%~3" & set "wdir=%~4"
 
     ::_______ ------ ______________________________________
 
-        call a startTest "-debug -only-path -vsw-as `-products * -latest -requiresAny -version [15.0,16.0 -requires Microsoft.NetCore.Component.SDK`" || goto x
+        call a startTest "-debug -only-path -vsw-as `-products * -latest -requiresAny -version [15.0,16.0) -requires Microsoft.NetCore.Component.SDK`" || goto x
             call a findInStreamOrFail "assign command:" 4,n || goto x
-            call a msgOrFailAt !n! "-products * -latest -requiresAny -version [15.0,16.0 -requires Microsoft.NetCore.Component.SDK" || goto x
+            call a msgOrFailAt !n! "-products * -latest -requiresAny -version [15.0,16.0) -requires Microsoft.NetCore.Component.SDK" || goto x
 
             call a findInStreamOrFail "attempts with filter: ;" 5 || goto x
         call a completeTest
@@ -73,9 +76,9 @@ set "exec=%~3" & set "wdir=%~4"
 
     ::_______ ------ ______________________________________
 
-        call a startTest "-debug -only-path -vsw-as `-products * -latest -requiresAny -version [15.0,16.0 -requires Microsoft.Component.MSBuild Microsoft.NetCore.Component.SDK`" || goto x
+        call a startTest "-debug -only-path -vsw-as `-products * -latest -requiresAny -version [15.0,16.0) -requires Microsoft.Component.MSBuild Microsoft.NetCore.Component.SDK`" || goto x
             call a findInStreamOrFail "assign command:" 4,n || goto x
-            call a msgOrFailAt !n! "-products * -latest -requiresAny -version [15.0,16.0 -requires Microsoft.Component.MSBuild Microsoft.NetCore.Component.SDK" || goto x
+            call a msgOrFailAt !n! "-products * -latest -requiresAny -version [15.0,16.0) -requires Microsoft.Component.MSBuild Microsoft.NetCore.Component.SDK" || goto x
 
             call a findInStreamOrFail "attempts with filter: ;" 5 || goto x
         call a completeTest

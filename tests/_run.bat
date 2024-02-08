@@ -13,20 +13,28 @@ set "core=%~2"
 :: path to other compiled version
 set "appB=%~3"
 
+:: path to GetNuTool tests
+set "tgnt=%~4"
+
 call a isNotEmptyOrWhitespaceOrFail core || exit /B1
 call a isNotEmptyOrWhitespaceOrFail rdir || exit /B1
 call a isNotEmptyOrWhitespaceOrFail appB || exit /B1
+call a isNotEmptyOrWhitespaceOrFail tgnt || exit /B1
+
+call a initAppVersion Hms
 
 echo.
-echo ------------
-echo Testing
-echo -------
+call a cprint 0E  ----------------------
+call a cprint F0  "hMSBuild .bat testing"
+call a cprint 0E  ----------------------
 echo.
 
-set /a gcount=0 & set /a failedTotal=0
+if "!gcount!" LSS "1" set /a gcount=0
+if "!failedTotal!" LSS "1" set /a failedTotal=0
 
 :::::::::::::::::: :::::::::::::: :::::::::::::::::::::::::
 :: Tests
+
 
     echo. & call a print "Tests - 'VswasTests'"
     call .\VswasTests gcount failedTotal "%core%" "%rdir%"
@@ -41,22 +49,30 @@ set /a gcount=0 & set /a failedTotal=0
     echo. & call a print "Tests - 'DiffVswStreamTests'"
     call .\DiffVswStreamTests gcount failedTotal "%rdir%%core%" "%rdir%" "%rdir%%appB%"
 
+    echo. & call a print "Tests - 'keysAndLogicTests'"
+    call .\keysAndLogicTests gcount failedTotal "%core%" "%rdir%"
+
+    call a disableAppVersion Gnt
+    echo. & call a print "Tests - '-GetNuTool keysAndLogicTests'"
+    call %tgnt%keysAndLogicTests gcount failedTotal "%rdir%%core% -GetNuTool " ""
+
+
 ::::::::::::::::::
 ::
 echo.
-echo ################
+call a cprint 0E ----------------
 echo  [Failed] = !failedTotal!
 set /a "gcount-=failedTotal"
 echo  [Passed] = !gcount!
-echo ################
+call a cprint 0E ----------------
 echo.
 
 if !failedTotal! GTR 0 goto failed
 echo.
-call a print "All Passed."
+call a cprint 0A "All Passed."
 exit /B 0
 
 :failed
     echo.
-    echo. Tests failed. >&2
+    call a cprint 0C "Tests failed." >&2
 exit /B 1

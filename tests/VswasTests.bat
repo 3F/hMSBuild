@@ -3,7 +3,7 @@
 :: Tests. Part of https://github.com/3F/hMSBuild
 
 setlocal enableDelayedExpansion
-call a isStrNotEmptyOrWhitespaceOrFail %~1 || exit /B1
+call a isNotEmptyOrWhitespaceOrFail %~1 || exit /B1
 
 set /a gcount=!%~1! & set /a failedTotal=!%~2!
 set "exec=%~3" & set "wdir=%~4"
@@ -25,13 +25,13 @@ call :Vrfy base "-products * -latest" "-only-path"
 
 call :Vrfy base "-latest -products *" "-only-path"
 
-call :Vrfy base "-version [15.0,16.0 -products * -latest" "-only-path"
+call :Vrfy base "-version [15.0,16.0) -products * -latest" "-only-path"
 
-call :Vrfy base "-products * -latest -requiresAny -version [15.0,16.0 -requires Microsoft.NetCore.Component.SDK" "-only-path"
+call :Vrfy base "-products * -latest -requiresAny -version [15.0,16.0) -requires Microsoft.NetCore.Component.SDK" "-only-path"
 
 call :Vrfy base "-products * -latest -requiresAny -version 16.0 -requires Microsoft.Component.MSBuild" "-only-path"
 
-call :Vrfy base "-products * -latest -requiresAny -version [15.0,16.0 -requires Microsoft.Component.MSBuild Microsoft.NetCore.Component.SDK" "-only-path"
+call :Vrfy base "-products * -latest -requiresAny -version [15.0,16.0) -requires Microsoft.Component.MSBuild Microsoft.NetCore.Component.SDK" "-only-path"
 
 :::::::::::::
 call :cleanup
