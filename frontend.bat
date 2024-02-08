@@ -103,7 +103,7 @@ echo  -no-less-15   - Do not include versions less than 15.0 (install-API/2017+)
 echo  -no-less-4    - Do not include versions less than 4.0 (Windows XP+)
 echo.
 echo  -vsw-priority {IDs} - Non-strict components preference: C++ etc.
-echo                        Separated by space: https://aka.ms/vs/workloads
+echo                        Separated by space "a b c" https://aka.ms/vs/workloads
 echo.
 echo  -vsw-version {arg}  - Specific version of vswhere. Where {arg}:
 echo      * 2.6.7 ...
@@ -114,6 +114,8 @@ echo                   (.bat;.exe /or from +15.2.26418.1 VS-build)
 echo.
 echo  -no-cache         - Do not cache vswhere for this request. 
 echo  -reset-cache      - To reset all cached vswhere versions before processing.
+echo  -cs               - Adds to -vsw-priority C# / VB Roslyn compilers.
+echo  -vc               - Adds to -vsw-priority VC++ toolset.
 echo  -notamd64         - To use 32bit version of found msbuild.exe if it's possible.
 echo  -stable           - It will ignore possible beta releases in last attempts.
 echo  -eng              - Try to use english language for all build messages.
@@ -277,12 +279,22 @@ set key=!arg[%idx%]!
 
     ) else if [!key!]==[-vsw-priority] ( set /a "idx+=1" & call :eval arg[!idx!] v
         
-        set vswPriority=!v!
+        set vswPriority=!v! !vswPriority!
 
         goto continue
     ) else if [!key!]==[-vsw-as] ( set /a "idx+=1" & call :eval arg[!idx!] v
         
         set vswAs=!v!
+
+        goto continue
+    ) else if [!key!]==[-cs] (
+
+        set vswPriority=Microsoft.VisualStudio.Component.Roslyn.Compiler !vswPriority!
+
+        goto continue
+    ) else if [!key!]==[-vc] (
+
+        set vswPriority=Microsoft.VisualStudio.Component.VC.Tools.x86.x64 !vswPriority!
 
         goto continue
     ) else if [!key!]==[-stable] (
