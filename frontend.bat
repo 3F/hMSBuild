@@ -1,4 +1,4 @@
-@echo off & echo Incomplete script. Compile it first via 'build.bat' - github.com/3F/hMSBuild 1>&2 & exit /B 1
+@echo off & echo Incomplete script. Compile it first via 'build.bat' - github.com/3F/hMSBuild >&2 & exit /B 1
 
 :: hMSBuild $core.version$
 :: Copyright (c) 2017-2024  Denis Kuzmin <x-3F@outlook.com> github/3F
@@ -313,7 +313,7 @@ set /a "idx+=1" & if %idx% LSS !amax! goto loopargs
         if defined msbuildPath goto runmsbuild
     )
 
-    echo MSBuild tools was not found. Use `-debug` key for details.
+    echo MSBuild tools was not found. Use `-debug` key for details.>&2
     set /a EXIT_CODE=%ERROR_FILE_NOT_FOUND%
     goto endpoint
 
@@ -608,7 +608,7 @@ exit /B 0
 
     set _msbp=!%~1!\MSBuild.exe
 
-    set %2=!_msbp!
+    if exist "!_msbp!" set "%2=!_msbp!"
 
     if not defined notamd64 (
         rem :: it may be x32 or x64, but this does not matter
@@ -632,7 +632,7 @@ exit /B 0
         set "%2=" & exit /B 0
     )
 
-    call :warn "Return 64bit version. Found only this."
+    if not "%2"=="" call :warn "Return 64bit version. Found only this."
 exit /B 0
 :: :msbfound
 
@@ -655,13 +655,14 @@ exit /B 0
 :: :obsolete
 
 :warn {in:msg}
-    echo   [*] WARN: %~1
+    echo   [*] WARN: %~1 >&2
 exit /B 0
 :: :warn
 
 :dbgprint {in:str} [{in:uneval1}, [{in:uneval2}]]
     if defined hMSBuildDebug (
-        echo.[ %TIME% ] %~1 !%2! !%3!
+        :: NOTE: delayed `dmsg` because symbols like `)`, `(` ... requires protection after expansion. L-32
+        set "dmsg=%~1" & echo [ %TIME% ] !dmsg! !%2! !%3!
     )
 exit /B 0
 :: :dbgprint
