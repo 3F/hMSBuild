@@ -90,12 +90,10 @@ echo Copyright (c) hMSBuild contributors https://github.com/3F/hMSBuild
 echo.
 echo Under the MIT License https://github.com/3F/hMSBuild
 echo.
+echo Syntax: %~n0 [keys to %~n0] [keys to MSBuild.exe or GetNuTool]
 echo.
-echo Usage: hMSBuild [args to hMSBuild] [args to msbuild.exe or GetNuTool]
-echo ~~~~~~
-echo.
-echo Arguments
-echo ~~~~~~~~~
+echo Keys
+echo ~~~~
 echo  -no-vs        - Disable searching from Visual Studio.
 echo  -no-netfx     - Disable searching from .NET Framework.
 echo  -no-vswhere   - Do not search via vswhere.
@@ -125,21 +123,23 @@ echo  -GetNuTool {args} - Access to GetNuTool core. https://github.com/3F/GetNuT
 echo  -only-path        - Only display fullpath to found MSBuild.
 echo  -force            - Aggressive behavior for -priority, -notamd64, etc.
 echo  -vsw-as "args..." - Reassign default commands to vswhere if used.
-echo  -debug            - To show additional information from hMSBuild.
-echo  -version          - Display version of hMSBuild.
-echo  -help             - Display this help. Aliases: -help -h
+echo  -debug            - To show additional information from %~n0
+echo  -version          - Display version of %~n0.
+echo  -help             - Display this help. Aliases: -? -h
 echo.
-echo Flags
-echo ~~~~~~
-echo  set __p_call=1 to eliminate the difference for the call-type invoking %~nx0
+echo.
+echo MSBuild switches
+echo ~~~~~~~~~~~~~~~~
+echo   /help or /? or /h
+echo   Use /... if %~n0 overrides some -... MSBuild switches
+echo.
 echo.
 echo Try to execute:
-echo ~~~~~~~~~~~~~~~
-echo hMSBuild -only-path -no-vs -notamd64 -no-less-4
-echo hMSBuild -debug ~x ~c Release
-echo hMSBuild -GetNuTool "Conari;regXwild;Fnv1a128"
-echo hMSBuild -GetNuTool vsSolutionBuildEvent/1.16.0:../SDK ^& SDK\GUI
-echo hMSBuild -cs -no-less-15 /t:Rebuild
+echo   %~n0 -only-path -no-vs -notamd64 -no-less-4
+echo   %~n0 -debug ~x ~c Release
+echo   %~n0 -GetNuTool "Conari;regXwild;Fnv1a128"
+echo   %~n0 -GetNuTool vsSolutionBuildEvent/1.16.0:../SDK ^& SDK\GUI
+echo   %~n0 -cs -no-less-15 /t:Rebuild
 
 goto endpoint
 
@@ -694,7 +694,7 @@ exit /B 0
 :: :batOrExe
 
 :obsolete {in:old} {in:new} [{in:new2}]
-    call :warn "'%~1' is obsolete. Use alternative: %~2 %~3"
+    call :warn "'%~1' is obsolete. Use: %~2 %~3"
 exit /B 0
 :: :obsolete
 
