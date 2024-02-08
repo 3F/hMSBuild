@@ -28,8 +28,8 @@ if not defined __p_call set args=%args:^=^^%
 :: # call hMSBuild  ^^ - ^^^^
 :: #      hMSBuild  ^^ - ^^
 
-set esc=%args:!= #__b_ECL## %
-set esc=%esc:^= #__b_CRT## %
+set esc=%args:!=L%
+set esc=%esc:^=T%
 setlocal enableDelayedExpansion
 
 :: https://github.com/3F/hMSBuild/issues/7
@@ -331,9 +331,9 @@ if not defined msbargs goto _msbargs
 
 :: We don't need double quotes (e.g. set "msbargs=...") because this should already 
 :: contain special symbols inside "..." (e.g. /p:prop="...").
-set msbargs=%msbargs: #__b_CRT## =^%
-set msbargs=%msbargs: #__b_ECL## =^!%
-set msbargs=!msbargs: #__b_EQ## ==!
+set msbargs=%msbargs:T=^%
+set msbargs=%msbargs:L=^!%
+set msbargs=!msbargs:E==!
 
 :_msbargs
 call :dbgprint "Arguments: " msbargs
@@ -681,7 +681,7 @@ for /F "tokens=1* delims==" %%a in ("!_ieqargs!") do (
         call :nqa %1 !_ieqargs! %3
         exit /B 0
     )
-    set _ieqargs=%%a #__b_EQ## %%b
+    set _ieqargs=%%aE%%b
 )
 goto _eqp
 :nqa
@@ -710,9 +710,9 @@ exit /B 0
 set _vl=!%1!
 
 :: data from %..% below should not contain double quotes, thus we need to protect this:
-set "_vl=%_vl: #__b_CRT## =^%"
-set "_vl=%_vl: #__b_ECL## =^!%"
-set _vl=!_vl: #__b_EQ## ==!
+set "_vl=%_vl:T=^%"
+set "_vl=%_vl:L=^!%"
+set _vl=!_vl:E==!
 
 set %2=!_vl!
 
