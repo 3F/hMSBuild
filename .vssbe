@@ -109,7 +109,7 @@
           "",
           "#[IO replace.Regex(\"$(batFull)\", \"(@echo off)\\s*&\\s*echo.*?exit\\s*/B\\s*\\d+\", \"$1\")]",
           "",
-          "#[IO replace(\"$(batFull)\", \"$-version-$\", \"$(hMSBuildVersion)\")]"
+          "#[IO replace(\"$(batFull)\", \"$core.version$\", \"$(hMSBuildVersion)\")]"
         ]
       }
     },

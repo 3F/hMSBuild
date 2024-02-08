@@ -1,19 +1,21 @@
 @echo off
+:: Copyright (c) 2017  Denis Kuzmin <x-3F@outlook.com> github/3F
 :: Tests. Part of https://github.com/3F/hMSBuild
+
 setlocal enableDelayedExpansion
 
 :: path to core
 set core=%1
 
-:: path to directory where release
+:: path to the directory where the release is located
 set rdir=%2
 
-:: path to compiled full version
-set cfull=%~3
+:: path to other compiled version
+set appB=%~3
 
-call :isEmptyOrWhitespace core _is & if [!_is!]==[1] goto errargs
-call :isEmptyOrWhitespace rdir _is & if [!_is!]==[1] goto errargs
-call :isEmptyOrWhitespace cfull _is & if [!_is!]==[1] goto errargs
+call a isNotEmptyOrWhitespaceOrFail core || exit /B1
+call a isNotEmptyOrWhitespaceOrFail rdir || exit /B1
+call a isNotEmptyOrWhitespaceOrFail appB || exit /B1
 
 echo.
 echo ------------
@@ -21,60 +23,34 @@ echo Testing
 echo -------
 echo.
 
-set /a gcount=0
-set /a failedTotal=0
+set /a gcount=0 & set /a failedTotal=0
 
-echo. & call :print "Tests - 'vswas'"
-call .\vswas gcount failedTotal %core% %rdir%
+:::::::::::::::::: :::::::::::::: :::::::::::::::::::::::::
+:: Tests
 
-echo. & call :print "Tests - 'diffversions'"
-call .\diffversions gcount failedTotal %core% %rdir% %cfull%
+    echo. & call a print "Tests - 'VswasTests'"
+    call .\VswasTests gcount failedTotal %core% %rdir%
 
+    echo. & call a print "Tests - 'DiffVTests'"
+    call .\DiffVTests gcount failedTotal %core% %rdir% dbg2.3.0+204d1a0b
+    call .\DiffVTests gcount failedTotal %core% %rdir% %appB%
+
+::::::::::::::::::
+::
 echo.
-echo =================
-echo [Failed] = !failedTotal!
+echo ################
+echo  [Failed] = !failedTotal!
 set /a "gcount-=failedTotal"
-echo [Passed] = !gcount!
-echo =================
+echo  [Passed] = !gcount!
+echo ################
 echo.
 
 if !failedTotal! GTR 0 goto failed
 echo.
-call :print "All Passed."
+call a print "All Passed."
 exit /B 0
-
 
 :failed
-echo.
-echo. Tests failed. 1>&2
+    echo.
+    echo. Tests failed. >&2
 exit /B 1
-
-:errargs
-echo.
-echo. Incorrect arguments to start tests. 1>&2
-exit /B 1
-
-:print
-setlocal enableDelayedExpansion
-set msgfmt=%1
-set msgfmt=!msgfmt:~0,-1! 
-set msgfmt=!msgfmt:~1!
-echo.[%TIME% ] !msgfmt!
-exit /B 0
-
-:isEmptyOrWhitespace
-:: Usage: call :isEmptyOrWhitespace input output(1/0)
-setlocal enableDelayedExpansion
-set "_v=!%1!"
-
-if not defined _v endlocal & set /a %2=1 & exit /B 0
- 
-set _v=%_v: =%
-set "_v= %_v%"
-if [^%_v:~1,1%]==[] endlocal & set /a %2=1 & exit /B 0
- 
-endlocal & set /a %2=0
-exit /B 0
-
-:gntpoint
-setlocal disableDelayedExpansion 

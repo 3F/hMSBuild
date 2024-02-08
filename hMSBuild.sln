@@ -1,48 +1,31 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29613.14
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34408.163
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "hMSBuild", "hMSBuild", "{D221D332-2A57-44F9-B866-F7C00C29032D}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "hMSBuild", "hMSBuild", "{07A13D96-67EE-4F3B-8C5C-848FD2A3B1E7}"
 	ProjectSection(SolutionItems) = preProject
-		.gitignore = .gitignore
 		.version = .version
 		build.bat = build.bat
 		changelog.txt = changelog.txt
-		compress.bat = compress.bat
 		frontend.bat = frontend.bat
-		License.txt = License.txt
-		Readme.md = Readme.md
 		tests.bat = tests.bat
+		vsSolutionBuildEvent.bat = vsSolutionBuildEvent.bat
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0969DEC4-0832-4110-AB49-A4BE30677862}"
 	ProjectSection(SolutionItems) = preProject
-		tests\_run.bat = tests\_run.bat
 		tests\diffversions.bat = tests\diffversions.bat
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "minified", "minified", "{9309746A-7318-4784-95B9-3C78C437BA39}"
-	ProjectSection(SolutionItems) = preProject
-		minified\.compressor = minified\.compressor
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "light", "light", "{6C22B481-EB28-4AF3-8C81-8AB931A8D569}"
-	ProjectSection(SolutionItems) = preProject
-		light\.compressor = light\.compressor
+		tests\vswas.bat = tests\vswas.bat
+		tests\_run.bat = tests\_run.bat
 	EndProjectSection
 EndProject
 Global
-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{0969DEC4-0832-4110-AB49-A4BE30677862} = {D221D332-2A57-44F9-B866-F7C00C29032D}
-		{9309746A-7318-4784-95B9-3C78C437BA39} = {D221D332-2A57-44F9-B866-F7C00C29032D}
-		{6C22B481-EB28-4AF3-8C81-8AB931A8D569} = {D221D332-2A57-44F9-B866-F7C00C29032D}
+		{0969DEC4-0832-4110-AB49-A4BE30677862} = {07A13D96-67EE-4F3B-8C5C-848FD2A3B1E7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {33DC928C-0601-4A0D-82B9-122956C3725E}
