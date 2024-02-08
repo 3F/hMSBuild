@@ -2,7 +2,47 @@
 hMSBuild - https://github.com/3F/hMSBuild
 - - - - - - - - - - - - - - - - - - - - -  
 
-[v2.3] 2020.01.29
+[2.4] 2024.02.08
+
+    * FIXED: -GetNuTool is corrupted.
+    
+    * FIXED: Fixed delayed return code as !ERRORLEVEL! when -GetNuTool key.
+    
+    * NEW: -no-less-4 key to not include versions less than 4.0 (Windows XP+)
+    
+    * NEW: -no-less-15 key to not include versions less than 15.0 (install-API/2017+)
+    
+    * NEW: ~c {name} Alias to p:Configuration={name}
+    
+    * NEW: ~p {name} Alias to p:Platform={name}
+    
+    * NEW: ~x Alias to m:NUMBER_OF_PROCESSORS-1 v:m
+    
+    * NEW: -vc key. Adds to -priority VC++ toolset.
+    
+    * NEW: -cs key. Adds to -priority C# / VB Roslyn compilers.
+    
+    * CHANGED: Redirected warn messages into stderr stream.
+    
+    * CHANGED: -vsw-priority renamed as `-priority`.
+                The old key still is available for backward compatibility with 2.x;
+                But marked as obsolete and not recommended to use anymore.
+    
+    * CHANGED: -vsw-version renamed as `-vwshere`.
+                The old key still is available for backward compatibility with 2.x;
+                But marked as obsolete and not recommended to use anymore.
+    
+    * CHANGED: Updated GetNuTool 1.9 embeddable package manager inside .bat
+               https://github.com/3F/GetNuTool/releases/tag/1.9
+    
+    * NOTE: hMSBuild releases are now accompanied by a .sha1 file in the official distribution;
+            At the same time, commits from which releases are published are signed with the committer's verified signature (GPG).
+            
+            Make sure you are using official, unmodified, safe versions.
+            https://github.com/3F/hMSBuild/releases/latest
+    
+
+[2.3] 2020.01.29
 
     * NEW: Implemented `-vsw-as "args..."`
            Reassigns default commands to vswhere if used.
@@ -31,7 +71,7 @@ hMSBuild - https://github.com/3F/hMSBuild
                (zip packages) https://github.com/3F/hMSBuild/releases
 
 
-[v2.2] 2019.07.20
+[2.2] 2019.07.20
 
     * FIXED: Fixed searching from MS BuildTools products. Issue #12 (Thanks @odalet).
     
@@ -41,7 +81,7 @@ hMSBuild - https://github.com/3F/hMSBuild
             Issues: #8, #14.
 
 
-[v2.1] 2019.05.27
+[2.1] 2019.05.27
 
     * NEW: Support for VS2019 msbuild (Thanks @gerhardol)
 
@@ -53,7 +93,7 @@ hMSBuild - https://github.com/3F/hMSBuild
                https://github.com/microsoft/vswhere/releases/tag/2.6.7
 
 
-[v2.0] 2018.12.23
+[2.0] 2018.12.23
 
     * NEW: Full support of the following special characters for MSBuild args. Issue #7.
            ```
@@ -113,7 +153,7 @@ hMSBuild - https://github.com/3F/hMSBuild
                
            
     
-[v1.2.2] 2017.08.18
+[1.2.2] 2017.08.18
 
     * FIXED: Updated GetNuTool v1.6.1:
              https://github.com/3F/GetNuTool/blob/master/changelog.txt
@@ -130,7 +170,7 @@ hMSBuild - https://github.com/3F/hMSBuild
             * https://3F.github.io/hMSBuild/releases/latest/full/
             * https://3F.github.io/hMSBuild/releases/latest/light/
     
-[v1.2.1] 2017.05.26
+[1.2.1] 2017.05.26
 
     * FIXED: Fixed possible problem "... is not recognized as an internal or external command"
     * FIXED: Fixed problem with double quotes for arguments to original msbuild, for example: 
@@ -138,7 +178,7 @@ hMSBuild - https://github.com/3F/hMSBuild
 
     * NEW: Light edition & minified version via new compressor
 
-[v1.2] 2017.05.19
+[1.2] 2017.05.19
     
     * FIXED: Fixed problem of sensitivity to whitespaces between arguments.
     * NEW: Added `local` keyword for `-vswhere-version` command to use only local versions - Issue #1
@@ -158,13 +198,13 @@ hMSBuild - https://github.com/3F/hMSBuild
                 
     * CHANGED: vswhere version by default now is 1.0.62
 
-[v1.1] 2017.04.10
+[1.1] 2017.04.10
 
     * FIXED: Fixed problem with finding of 32bit version from .NET Framework.
     * CHANGED: Changed logic of `-notamd64` command to find 32bit version from Visual Studio.
     * NEW: Implemented `-version` command.
 
-[v1.0] 2017.04.06
+[1.0] 2017.04.06
 
     * The first point - A lightweight tool (compiled batch file ~19 Kb that can be embedded inside any scripts or other batch files) - an easy helper for searching of available MSBuild tools. 
                         Supports tools from VS2017+ (does not require additional vswhere.exe), VS2015 or less, other versions from .NET Framework.  

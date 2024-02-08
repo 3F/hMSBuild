@@ -205,6 +205,21 @@ git clone https://github.com/3F/hMSBuild.git src
 cd src & build & bin\Release\hMSBuild -help
 ```
 
+### .sha1 official distribution
+
+*hMSBuild* releases are now accompanied by a *.sha1* file in the official distribution; At the same time, commits from which releases are published are signed with the committer's verified signature (GPG).
+
+Make sure you are using official, unmodified, safe versions.
+
+Note: *.sha1* file is a text list of published files with checksums in the format: 
+
+`40-hexadecimal-digits` `<space>` `file`
+
+```
+eead8f5c1fdff2abd4da7d799fbbe694d392c792 path\file
+...
+```
+
 ## Contributing
 
 [*hMSBuild*](https://github.com/3F/hMSBuild) is waiting for your awesome contributions!
