@@ -1,22 +1,20 @@
 @echo off
 
 if not exist GetNuTool/gnt.sln (
-    git submodule update --init --recursive GetNuTool || goto err
+    git submodule update --init GetNuTool || goto err
 )
 
 setlocal
-    cd GetNuTool
+    cd GetNuTool & if [%~1]==[#] build #
     call build PublicRelease || goto err
 endlocal
 
-call GetNuTool\packages\vsSolutionBuildEvent\cim.cmd "hMSBuild.sln" /v:m /m:4 || goto err
+call GetNuTool\packages\vsSolutionBuildEvent\cim.cmd /v:m /m:7 || goto err
 
 :: call tests || goto err
 
 exit /B 0
 
 :err
-
-echo. Build failed. 1>&2
+echo Failed >&2
 exit /B 1
-

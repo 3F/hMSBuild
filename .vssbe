@@ -87,7 +87,7 @@
           "}",
           "",
           "#[var frontend = frontend.bat]",
-          "#[var gntECore = \"GetNuTool\\\\bin\\\\Release\\\\raw\\\\executables\\\\batch\\\\gnt.bat\"]",
+          "#[var gntECore = \"GetNuTool\\\\bin\\\\Release\\\\raw\\\\shell\\\\batch\\\\gnt.bat\"]",
           "#[var hMSBuild = $(odir)hMSBuild.bat]",
           "",
           "#[try",
