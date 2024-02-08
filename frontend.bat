@@ -48,7 +48,7 @@ set vswhereCache=%temp%\hMSBuild_vswhere
 
 set "notamd64="
 set "novs="
-set "nonet="
+set "nonetfx="
 set "novswhere="
 set "nocachevswhere="
 set "resetcache="
@@ -59,6 +59,8 @@ set "vswPriority="
 set "vswAs="
 set "kStable="
 set "kForce="
+set "noless15="
+set "noless4="
 
 set /a ERROR_SUCCESS=0
 set /a ERROR_FAILED=1
@@ -97,6 +99,8 @@ echo ----------
 echo  -no-vs        - Disable searching from Visual Studio.
 echo  -no-netfx     - Disable searching from .NET Framework.
 echo  -no-vswhere   - Do not search via vswhere.
+echo  -no-less-15   - Do not include versions less than 15.0 (install-API/2017+)
+echo  -no-less-4    - Do not include versions less than 4.0 (Windows XP+)
 echo.
 echo  -vsw-priority {IDs} - Non-strict components preference: C++ etc.
 echo                        Separated by space: https://aka.ms/vs/workloads
@@ -227,9 +231,20 @@ set key=!arg[%idx%]!
         set novs=1
 
         goto continue
+    ) else if [!key!]==[-no-less-15] (
+
+        set noless15=1
+        set nonetfx=1
+
+        goto continue
+    ) else if [!key!]==[-no-less-4] (
+
+        set noless4=1
+
+        goto continue
     ) else if [!key!]==[-no-netfx] (
 
-        set nonet=1
+        set nonetfx=1
 
         goto continue
     ) else if [!key!]==[-notamd64] (
@@ -303,12 +318,12 @@ set /a "idx+=1" & if %idx% LSS !amax! goto loopargs
         if defined msbuildPath goto runmsbuild
     )
 
-    if not defined novs (
+    if not defined novs if not defined noless15 (
         call :msbvsold msbuildPath
         if defined msbuildPath goto runmsbuild
     )
 
-    if not defined nonet (
+    if not defined nonetfx (
         call :msbnetf msbuildPath
         if defined msbuildPath goto runmsbuild
     )
@@ -576,9 +591,11 @@ exit /B 0
         call :rtools %%v Y & if defined Y (
             set %1=!Y!
             exit /B 0
-        )
+
+        ) else if defined noless4 ( goto :_x_netfx )
     )
 
+    :_x_netfx
     call :dbgprint "-netfx: not found"
     set "%1="
 exit /B 0
