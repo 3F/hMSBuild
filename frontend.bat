@@ -102,19 +102,19 @@ echo  -no-vswhere   - Do not search via vswhere.
 echo  -no-less-15   - Do not include versions less than 15.0 (install-API/2017+)
 echo  -no-less-4    - Do not include versions less than 4.0 (Windows XP+)
 echo.
-echo  -vsw-priority {IDs} - Non-strict components preference: C++ etc.
-echo                        Separated by space "a b c" https://aka.ms/vs/workloads
+echo  -priority {IDs} - 15+ Non-strict components preference: C++ etc.
+echo                    Separated by space "a b c" https://aka.ms/vs/workloads
 echo.
-echo  -vsw-version {arg}  - Specific version of vswhere. Where {arg}:
-echo      * 2.6.7 ...
-echo      * latest - To get latest remote version;
-echo      * local  - To use only local versions;
-echo                 (.bat;.exe /or from +15.2.26418.1 VS-build)
+echo  -vswhere {v}
+echo   * 2.6.7 ...
+echo   * latest - To get latest remote vswhere.exe
+echo   * local  - To use only local
+echo             (.bat;.exe /or from +15.2.26418.1 VS-build)
 echo.
 echo  -no-cache         - Do not cache vswhere for this request. 
 echo  -reset-cache      - To reset all cached vswhere versions before processing.
-echo  -cs               - Adds to -vsw-priority C# / VB Roslyn compilers.
-echo  -vc               - Adds to -vsw-priority VC++ toolset.
+echo  -cs               - Adds to -priority C# / VB Roslyn compilers.
+echo  -vc               - Adds to -priority VC++ toolset.
 echo  ~c {name}         - Alias to p:Configuration={name}
 echo  ~p {name}         - Alias to p:Platform={name}
 echo  ~x                - Alias to m:NUMBER_OF_PROCESSORS-1 v:m
@@ -123,7 +123,7 @@ echo  -stable           - It will ignore possible beta releases in last attempts
 echo  -eng              - Try to use english language for all build messages.
 echo  -GetNuTool {args} - Access to GetNuTool core. https://github.com/3F/GetNuTool
 echo  -only-path        - Only display fullpath to found MSBuild.
-echo  -force            - Aggressive behavior for -vsw-priority, -notamd64, etc.
+echo  -force            - Aggressive behavior for -priority, -notamd64, etc.
 echo  -vsw-as "args..." - Reassign default commands to vswhere if used.
 echo  -debug            - To show additional information from hMSBuild.
 echo  -version          - Display version of hMSBuild.
@@ -175,8 +175,14 @@ set key=!arg[%idx%]!
         call :obsolete -nonet -no-netfx
         set key=-no-netfx
     ) else if [!key!]==[-vswhere-version] (
-        call :obsolete -vswhere-version -vsw-version
-        set key=-vsw-version
+        call :obsolete -vswhere-version -vswhere
+        set key=-vswhere
+    ) else if [!key!]==[-vsw-version] (
+        call :obsolete -vsw-version -vswhere
+        set key=-vswhere
+    ) else if [!key!]==[-vsw-priority] (
+        call :obsolete -vsw-priority -priority
+        set key=-priority
     )
 
     :: Available keys
@@ -257,7 +263,7 @@ set key=!arg[%idx%]!
         chcp 437 >nul
 
         goto continue
-    ) else if [!key!]==[-vsw-version] ( set /a "idx+=1" & call :eval arg[!idx!] v
+    ) else if [!key!]==[-vswhere] ( set /a "idx+=1" & call :eval arg[!idx!] v
         
         set vswVersion=!v!
 
@@ -270,7 +276,7 @@ set key=!arg[%idx%]!
         echo $core.version$
         goto endpoint
 
-    ) else if [!key!]==[-vsw-priority] ( set /a "idx+=1" & call :eval arg[!idx!] v
+    ) else if [!key!]==[-priority] ( set /a "idx+=1" & call :eval arg[!idx!] v
         
         set vswPriority=!v! !vswPriority!
 

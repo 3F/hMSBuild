@@ -87,7 +87,7 @@ set "exec=%~3" & set "wdir=%~4"
 
     ::_______ ------ ______________________________________
 
-        call a startTest "-debug -only-path -vsw-priority `NoComponent.SDK0`" || goto x
+        call a startTest "-debug -only-path -priority `NoComponent.SDK0`" || goto x
             call a findInStreamOrFail "assign command:" 4,n || goto x
             call a msgOrFailAt !n! "-products * -latest" || goto x
 
@@ -133,7 +133,7 @@ set "exec=%~3" & set "wdir=%~4"
 
     ::_______ ------ ______________________________________
 
-        call a startTest "-debug -only-path -vc -vsw-priority `Microsoft.VisualStudio.Component.VC.CoreIde Microsoft.VisualStudio.Component.NuGet` -cs" || goto x
+        call a startTest "-debug -only-path -vc -priority `Microsoft.VisualStudio.Component.VC.CoreIde Microsoft.VisualStudio.Component.NuGet` -cs" || goto x
             call a findInStreamOrFail "assign command:" 4,n || goto x
             call a msgOrFailAt !n! "-products * -latest" || goto x
 
@@ -144,7 +144,7 @@ set "exec=%~3" & set "wdir=%~4"
 
     ::_______ ------ ______________________________________
 
-        call a startTest "-debug -only-path -vsw-as `-products *` -vc -vsw-priority Microsoft.VisualStudio.Component.NuGet -cs" || goto x
+        call a startTest "-debug -only-path -vsw-as `-products *` -vc -priority Microsoft.VisualStudio.Component.NuGet -cs" || goto x
             call a findInStreamOrFail "assign command:" 4,n || goto x
             call a msgOrFailAt !n! "-products *" || goto x
 

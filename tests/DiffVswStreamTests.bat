@@ -29,32 +29,32 @@ call :init
     call a abStreamTest "-no-netfx /v:m" %pA% %pB% || goto x
     call a abStreamTest "-notamd64 /v:m" %pA% %pB% || goto x
 
-    call a abStreamTest "-only-path -vsw-version local" %pA% %pB% || goto x
-    call a abStreamTest "-only-path -vsw-version 2.8.4" %pA% %pB% || goto x
-    call a abStreamTest "-only-path -vsw-version latest" %pA% %pB% || goto x
+    call a abStreamTest "-only-path -vswhere local" %pA% %pB% || goto x
+    call a abStreamTest "-only-path -vswhere 2.8.4" %pA% %pB% || goto x
+    call a abStreamTest "-only-path -vswhere latest" %pA% %pB% || goto x
     call a abStreamTest "-only-path -eng" %pA% %pB% || goto x
     call a abStreamTest "-GetNuTool -unpack" %pA% %pB% || goto x
 
-    call a abStreamTest "-only-path -vsw-priority Microsoft.NetCore.Component.SDK" %pA% %pB% || goto x
-    call a abStreamTest "-only-path -vsw-priority NoComponent.NoSDK0" %pA% %pB% || goto x
-    call a abStreamTest "-vsw-priority Microsoft.NetCore.Component.SDK /v:m" %pA% %pB% || goto x
-    call a abStreamTest "-vsw-priority NoComponent.NoSDK0 /v:m" %pA% %pB% || goto x
+    call a abStreamTest "-only-path -priority Microsoft.NetCore.Component.SDK" %pA% %pB% || goto x
+    call a abStreamTest "-only-path -priority NoComponent.NoSDK0" %pA% %pB% || goto x
+    call a abStreamTest "-priority Microsoft.NetCore.Component.SDK /v:m" %pA% %pB% || goto x
+    call a abStreamTest "-priority NoComponent.NoSDK0 /v:m" %pA% %pB% || goto x
 
     :: TODO: fix -no-cache diff comparison
     @REM call a abStreamTest "-only-path -no-cache" %pA% %pB% || goto x
-    @REM call a abStreamTest "-only-path -vsw-version 2.8.4 -no-cache" %pA% %pB% || goto x
-    @REM call a abStreamTest "-only-path -vsw-version latest -no-cache" %pA% %pB% || goto x
+    @REM call a abStreamTest "-only-path -vswhere 2.8.4 -no-cache" %pA% %pB% || goto x
+    @REM call a abStreamTest "-only-path -vswhere latest -no-cache" %pA% %pB% || goto x
 
-    call a abStreamTest "-only-path -vsw-version local -no-cache" %pA% %pB% || goto x
+    call a abStreamTest "-only-path -vswhere local -no-cache" %pA% %pB% || goto x
     call a abStreamTest "-no-vswhere -no-vs -only-path" %pA% %pB% || goto x
     call a abStreamTest "-no-vswhere -no-netfx -only-path" %pA% %pB% || goto x
     call a abStreamTest "-no-vswhere -no-vs -notamd64 -only-path" %pA% %pB% || goto x
     call a abStreamTest "-no-vswhere -no-netfx -notamd64 -only-path" %pA% %pB% || goto x
     call a abStreamTest "-no-netfx -notamd64 -only-path" %pA% %pB% || goto x
     call a abStreamTest "-no-vs -notamd64 -only-path" %pA% %pB% || goto x
-    call a abStreamTest "-notamd64 -vsw-version local -only-path" %pA% %pB% || goto x
-    call a abStreamTest "-notamd64 -vsw-version 2.8.4 -only-path" %pA% %pB% || goto x
-    call a abStreamTest "-notamd64 -vsw-version latest -only-path" %pA% %pB% || goto x
+    call a abStreamTest "-notamd64 -vswhere local -only-path" %pA% %pB% || goto x
+    call a abStreamTest "-notamd64 -vswhere 2.8.4 -only-path" %pA% %pB% || goto x
+    call a abStreamTest "-notamd64 -vswhere latest -only-path" %pA% %pB% || goto x
     
     :: exit code > 0
     call a abStreamTest "-no-vswhere -no-vs -no-netfx -only-path" %pA% %pB% 2 || goto x
@@ -71,8 +71,8 @@ exit /B 1
 
 :init
     :: to cache specified versions
-    call %pA% -only-path -vsw-version 2.8.4 >nul
-    call %pA% -only-path -vsw-version latest >nul
+    call %pA% -only-path -vswhere 2.8.4 >nul
+    call %pA% -only-path -vswhere latest >nul
 
     ::create empty .proj to have a Build succeeded.
     echo ^<?xml version="1.0" encoding="utf-8"?^> > %emptyProj%
