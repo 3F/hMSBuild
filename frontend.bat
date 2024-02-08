@@ -28,8 +28,9 @@ if not defined __p_call set args=%args:^=^^%
 :: # call hMSBuild  ^^ - ^^^^
 :: #      hMSBuild  ^^ - ^^
 
-set esc=%args:!=L%
-set esc=%esc:^=T%
+:: PARSER NOTE: keep \r\n because `&` requires enableDelayedExpansion
+set esc=%args:!=L%  ::&:
+set esc=%esc:^=T%   ::&:
 setlocal enableDelayedExpansion
 
 :: https://github.com/3F/hMSBuild/issues/7
@@ -331,9 +332,9 @@ if not defined msbargs goto _msbargs
 
 :: We don't need double quotes (e.g. set "msbargs=...") because this should already 
 :: contain special symbols inside "..." (e.g. /p:prop="...").
-set msbargs=%msbargs:T=^%
-set msbargs=%msbargs:L=^!%
-set msbargs=!msbargs:E==!
+set msbargs=%msbargs:T=^%   ::&:
+set msbargs=%msbargs:L=^!%  ::&:
+set msbargs=!msbargs:E==!   ::&:
 
 :_msbargs
 call :dbgprint "Arguments: " msbargs
@@ -674,12 +675,14 @@ exit /B 0
 
 set _ieqargs=!%2!
 
-:: unfortunately, we also need to protect the equal sign '='
-:_eqp
-for /F "tokens=1* delims==" %%a in ("!_ieqargs!") do (
-    if "%%~b"=="" (
-        call :nqa %1 !_ieqargs! %3
-        exit /B 0
+    :: unfortunately, we also need to protect the equal sign '='
+    :_eqp
+    for /F "tokens=1* delims==" %%a in ("!_ieqargs!") do (
+        if "%%~b"=="" (
+
+            call :nqa %1 !_ieqargs! %3 & exit /B 0
+
+        ) else set _ieqargs=%%aE%%b
     )
     set _ieqargs=%%aE%%b
 )
@@ -695,11 +698,13 @@ set /a idx+=1
 set %vname%[!idx!]=%~2
 set %vname%{!idx!}=%2
 
-:: - 
-shift & if not "%~3"=="" goto _initargs
-set /a idx-=1
+:: NOTE1: `shift & ...` may be evaluated incorrectly without {newline} symbols;
+::         Either shift + {newline} + ... + if %~3 ...; or if %~4 ... shift & ...
 
-set %1=!idx!
+:: NOTE2: %~4 because the next %~3 is reserved for {out:index}
+if "%~4" NEQ "" shift & goto _initargs
+
+set %3=!idx!
 exit /B 0
 :: :initargs
 
@@ -707,12 +712,13 @@ exit /B 0
 :: Usage: 1- input; 2- evaluated output
 
 :: delayed evaluation
-set _vl=!%1!
+set _vl=!%1!  ::&:
 
 :: data from %..% below should not contain double quotes, thus we need to protect this:
-set "_vl=%_vl:T=^%"
-set "_vl=%_vl:L=^!%"
-set _vl=!_vl:E==!
+
+set "_vl=%_vl:T=^%"   ::&:
+set "_vl=%_vl:L=^!%"  ::&:
+set _vl=!_vl:E==!     ::&:
 
 set %2=!_vl!
 

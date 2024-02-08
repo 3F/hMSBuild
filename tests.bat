@@ -10,12 +10,11 @@ setlocal
     :: (1) - path to core ;
     :: (2) - path to directory where release ; 
     :: (3) - path to compiled full version ;
-    call _run "..\\bin\\Release\\raw\\hMSBuild.bat" "..\\bin\\Release\\raw\\" "..\\bin\\Release\\raw\\compiled.full\\hMSBuild.bat"
+    call _run "..\\bin\\Release\\raw\\hMSBuild.bat" "..\\bin\\Release\\raw\\" "..\\bin\\Release\\raw\\hMSBuild.full.bat"
 endlocal
 
 exit /B 0
 
 :buildError
-
-echo. Tests cannot be started: Check your build first. 1>&2
+echo Tests cannot be started: Check your build first >&2
 exit /B 1
