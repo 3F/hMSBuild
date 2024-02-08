@@ -216,6 +216,20 @@ exit /B 0
     if "!cmp!" NEQ "!input!" ( set /a %3=1 ) else set /a %3=0
 exit /B 0
 
+:printMsgAt
+    ::  (1) - index at msg
+    ::  [2] - color attribute via :color call
+    ::  [3] - prefixed message at the same line
+    :: !!1  - Error code 1 if &(1) is empty or not valid.
+
+    call :getMsgAt %~1 _msgstr || exit /B 1
+
+    if not "%~2"=="" (
+        call :cprint %~2 "%~3!_msgstr!"
+
+    ) else echo !_msgstr!
+exit /B 0
+
 :getMsgAt
     ::  (1) - index at msg
     :: &(2) - result string

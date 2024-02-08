@@ -51,6 +51,48 @@ set "exec=%~3" & set "wdir=%~4"
         call a completeTest
     ::_____________________________________________________
 
+
+    ::_______ ------ ______________________________________
+
+        call a startTest "-debug ~c RCI" 1 || goto x
+            call a findInStreamOrFail "Arguments:" 4,n || goto x
+            call a msgOrFailAt !n! "/p:Configuration" || goto x
+            call a msgOrFailAt !n! "`RCI`" || goto x
+        call a completeTest
+    ::_____________________________________________________
+
+
+    ::_______ ------ ______________________________________
+
+        call a startTest "-debug ~p x86" 1 || goto x
+            call a findInStreamOrFail "Arguments:" 4,n || goto x
+            call a msgOrFailAt !n! "/p:Platform" || goto x
+            call a msgOrFailAt !n! "`x86`" || goto x
+        call a completeTest
+    ::_____________________________________________________
+
+
+    ::_______ ------ ______________________________________
+
+        call a startTest "-debug ~c `Public Release` ~p `Any CPU`" 1 || goto x
+            call a findInStreamOrFail "Arguments:" 4,n || goto x
+            call a msgOrFailAt !n! "/p:Configuration" || goto x
+            call a msgOrFailAt !n! "`Public Release` /p:Platform" || goto x
+            call a msgOrFailAt !n! "`Any CPU`" || goto x
+        call a completeTest
+    ::_____________________________________________________
+
+
+    ::_______ ------ ______________________________________
+
+        call a startTest "-debug ~x ~c name" 1 || goto x
+            call a findInStreamOrFail "Arguments:" 4,n || goto x
+            set /a maxcpu=NUMBER_OF_PROCESSORS - 1
+            call a msgOrFailAt !n! "/v:m /m:!maxcpu!" || goto x
+        call a completeTest
+    ::_____________________________________________________
+
+
 :::::::::::::
 call :cleanup
 

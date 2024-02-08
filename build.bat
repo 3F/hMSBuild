@@ -11,10 +11,14 @@ endlocal
 
 call GetNuTool\packages\vsSolutionBuildEvent\cim.cmd /v:m /m:7 || goto err
 
-:: call tests || goto err
-
+setlocal enableDelayedExpansion
+    cd tests
+    call a initAppVersion Hms
+    call a execute "..\bin\Release\hMSBuild -h" & call a msgOrFailAt 1 "hMSBuild %appversionHms%" || goto err
+    call a printMsgAt 1 3F "Completed as a "
+endlocal
 exit /B 0
 
 :err
-echo Failed >&2
+    echo Failed build>&2
 exit /B 1

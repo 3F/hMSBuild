@@ -91,11 +91,11 @@ echo.
 echo Under the MIT License https://github.com/3F/hMSBuild
 echo.
 echo.
-echo Usage: hMSBuild [args to hMSBuild] [args to msbuild.exe or GetNuTool core]
-echo ------
+echo Usage: hMSBuild [args to hMSBuild] [args to msbuild.exe or GetNuTool]
+echo ~~~~~~
 echo.
-echo Arguments:
-echo ----------
+echo Arguments
+echo ~~~~~~~~~
 echo  -no-vs        - Disable searching from Visual Studio.
 echo  -no-netfx     - Disable searching from .NET Framework.
 echo  -no-vswhere   - Do not search via vswhere.
@@ -107,15 +107,17 @@ echo                        Separated by space "a b c" https://aka.ms/vs/workloa
 echo.
 echo  -vsw-version {arg}  - Specific version of vswhere. Where {arg}:
 echo      * 2.6.7 ...
-echo      * Keywords:
-echo        `latest` - To get latest remote version;
-echo        `local`  - To use only local versions;
-echo                   (.bat;.exe /or from +15.2.26418.1 VS-build)
+echo      * latest - To get latest remote version;
+echo      * local  - To use only local versions;
+echo                 (.bat;.exe /or from +15.2.26418.1 VS-build)
 echo.
 echo  -no-cache         - Do not cache vswhere for this request. 
 echo  -reset-cache      - To reset all cached vswhere versions before processing.
 echo  -cs               - Adds to -vsw-priority C# / VB Roslyn compilers.
 echo  -vc               - Adds to -vsw-priority VC++ toolset.
+echo  ~c {name}         - Alias to p:Configuration={name}
+echo  ~p {name}         - Alias to p:Platform={name}
+echo  ~x                - Alias to m:NUMBER_OF_PROCESSORS-1 v:m
 echo  -notamd64         - To use 32bit version of found msbuild.exe if it's possible.
 echo  -stable           - It will ignore possible beta releases in last attempts.
 echo  -eng              - Try to use english language for all build messages.
@@ -126,27 +128,18 @@ echo  -vsw-as "args..." - Reassign default commands to vswhere if used.
 echo  -debug            - To show additional information from hMSBuild.
 echo  -version          - Display version of hMSBuild.
 echo  -help             - Display this help. Aliases: -help -h
-echo. 
-echo. 
-echo ------
-echo Flags:
-echo ------
-echo  __p_call - Tries to eliminate the difference for the call-type invoking %~nx0
-echo. 
-echo -------- 
-echo Samples:
-echo -------- 
-echo hMSBuild -notamd64 -vsw-version 2.6.7 "Conari.sln" /t:Rebuild
-echo hMSBuild -vsw-version latest "Conari.sln"
 echo.
-echo hMSBuild -no-vswhere -no-vs -notamd64 "Conari.sln"
-echo hMSBuild -no-vs "DllExport.sln"
-echo hMSBuild vsSolutionBuildEvent.sln
+echo Flags
+echo ~~~~~~
+echo  set __p_call=1 to eliminate the difference for the call-type invoking %~nx0
 echo.
-echo hMSBuild -GetNuTool -unpack
-echo hMSBuild -GetNuTool /p:ngpackages="Conari;regXwild"
-echo.
-echo hMSBuild -no-vs "DllExport.sln" ^|^| goto err
+echo Try to execute:
+echo ~~~~~~~~~~~~~~~
+echo hMSBuild -only-path -no-vs -notamd64 -no-less-4
+echo hMSBuild -debug ~x ~c Release
+echo hMSBuild -GetNuTool "Conari;regXwild;Fnv1a128"
+echo hMSBuild -GetNuTool vsSolutionBuildEvent/1.16.0:../SDK ^& SDK\GUI
+echo hMSBuild -cs -no-less-15 /t:Rebuild
 
 goto endpoint
 
@@ -295,6 +288,22 @@ set key=!arg[%idx%]!
     ) else if [!key!]==[-vc] (
 
         set vswPriority=Microsoft.VisualStudio.Component.VC.Tools.x86.x64 !vswPriority!
+
+        goto continue
+    ) else if [!key!]==[~c] ( set /a "idx+=1" & call :eval arg[!idx!] v
+
+        set msbargs=!msbargs! /p:Configuration="!v!"
+
+        goto continue
+    ) else if [!key!]==[~p] ( set /a "idx+=1" & call :eval arg[!idx!] v
+
+        set msbargs=!msbargs! /p:Platform="!v!"
+
+        goto continue
+    ) else if [!key!]==[~x] (
+
+        set /a maxcpu=NUMBER_OF_PROCESSORS - 1
+        set msbargs=!msbargs! /v:m /m:!maxcpu!
 
         goto continue
     ) else if [!key!]==[-stable] (
