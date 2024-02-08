@@ -33,11 +33,11 @@ Today's [hMSBuild](https://github.com/3F/hMSBuild) provides flexible way to acce
 Licensed under the [MIT License (MIT)](https://github.com/3F/hMSBuild/blob/master/License.txt)
 
 ```
-Copyright (c) 2017-2020  Denis Kuzmin < x-3F@outlook.com > GitHub/3F
+Copyright (c) 2017-2024  Denis Kuzmin <x-3F@outlook.com> github/3F
 ```
-hMSBuild contributors: https://github.com/3F/hMSBuild/graphs/contributors
+hMSBuild contributors https://github.com/3F/hMSBuild/graphs/contributors
 
-[ [ ☕ Donate ](https://3F.github.com/Donation/) ]
+[ [ ☕ Donate ](https://3F.github.io/Donation/) ]
 
 
 ### Features

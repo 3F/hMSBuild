@@ -1,8 +1,8 @@
 @echo off & echo Incomplete script. Compile it first via 'build.bat' - github.com/3F/hMSBuild 1>&2 & exit /B 1
 
-:: hMSBuild - $-version-$
-:: Copyright (c) 2017-2020  Denis Kuzmin [ x-3F@outlook.com ] GitHub/3F
-:: Copyright (c) the hMSBuild contributors
+:: hMSBuild $-version-$
+:: Copyright (c) 2017-2024  Denis Kuzmin <x-3F@outlook.com> github/3F
+:: Copyright (c) hMSBuild contributors https://github.com/3F/hMSBuild
 
 set "dp0=%~dp0"
 set args=%*
@@ -81,15 +81,14 @@ goto commands
 :usage
 
 echo.
-@echo hMSBuild $-version-$
-@echo Copyright (c) 2017-2020  Denis Kuzmin [ x-3F@outlook.com ] GitHub/3F
-@echo Copyright (c) hMSBuild contributors
+echo hMSBuild $-version-$
+echo Copyright (c) 2017-2024  Denis Kuzmin ^<x-3F@outlook.com^> github/3F
+echo Copyright (c) hMSBuild contributors https://github.com/3F/hMSBuild
 echo.
-echo Licensed under the MIT License
-@echo https://github.com/3F/hMSBuild 
+echo Under the MIT License https://github.com/3F/hMSBuild
 echo.
-@echo.
-@echo Usage: hMSBuild [args to hMSBuild] [args to msbuild.exe or GetNuTool core]
+echo.
+echo Usage: hMSBuild [args to hMSBuild] [args to msbuild.exe or GetNuTool core]
 echo ------
 echo.
 echo Arguments:
