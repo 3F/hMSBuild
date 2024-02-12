@@ -29,8 +29,8 @@ if not defined __p_call set args=%args:^=^^%
 :: #      hMSBuild  ^^ - ^^
 
 :: PARSER NOTE: keep \r\n because `&` requires enableDelayedExpansion
-set esc=%args:!=L%  ::&:
-set esc=%esc:^=T%   ::&:
+set esc=%args:!= L %  ::&:
+set esc=%esc:^= T %   ::&:
 setlocal enableDelayedExpansion
 
 :: https://github.com/3F/hMSBuild/issues/7
@@ -374,9 +374,9 @@ set /a "idx+=1" & if %idx% LSS !amax! goto loopargs
 
         :: We don't need double quotes (e.g. set "msbargs=...") because this should already
         :: contain special symbols inside "..." (e.g. /p:prop="...").
-        set msbargs=%msbargs:T=^%   ::&:
-        set msbargs=%msbargs:L=^!%  ::&:
-        set msbargs=!msbargs:E==!   ::&:
+        set msbargs=%msbargs: T =^%   ::&:
+        set msbargs=%msbargs: L =^!%  ::&:
+        set msbargs=!msbargs: E ==!   ::&:
 
         :_msbargs
             call :dbgprint "Arguments: " msbargs
@@ -723,7 +723,7 @@ exit /B 0
 
             call :nqa %1 !_ieqargs! %3 & exit /B 0
 
-        ) else set _ieqargs=%%aE%%b
+        ) else set _ieqargs=%%a E %%b
     )
     goto _eqp
     :nqa
@@ -755,9 +755,9 @@ exit /B 0
 
     :: data from %..% below should not contain double quotes, thus we need to protect this:
 
-    set "_vl=%_vl:T=^%"   ::&:
-    set "_vl=%_vl:L=^!%"  ::&:
-    set _vl=!_vl:E==!     ::&:
+    set "_vl=%_vl: T =^%"   ::&:
+    set "_vl=%_vl: L =^!%"  ::&:
+    set _vl=!_vl: E ==!     ::&:
 
     set %2=!_vl!
 exit /B 0
