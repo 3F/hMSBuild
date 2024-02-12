@@ -2,6 +2,12 @@
 hMSBuild - https://github.com/3F/hMSBuild
 - - - - - - - - - - - - - - - - - - - - -  
 
+[2.4.1] 2024.02.12
+
+    * FIXED: Key handling when `=` sign;
+             Errors like: ..."" was unexpected at this time.
+    
+
 [2.4] 2024.02.08
 
     * FIXED: -GetNuTool is corrupted.
