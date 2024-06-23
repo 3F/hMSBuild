@@ -140,6 +140,16 @@ set "exec=%~3" & set "wdir=%~4"
     ::_____________________________________________________
 
 
+    ::_______ ------ ______________________________________
+
+        REM: calling built-in GetNuTool using keys with empty "", e.g. proxycfg="" etc.
+        call a startTest "-debug -GetNuTool Conari /p:proxycfg=``" 0 || goto x
+            call a findInStreamOrFail "Conari " 4,n || goto x
+            call a msgOrFailAt !n! "packages\Conari" || goto x
+        call a completeTest
+    ::_____________________________________________________
+
+
 :::::::::::::
 call :cleanup
 

@@ -715,6 +715,7 @@ exit /B 0
     :: Usage: 1- the name for variable; 2- input arguments; 3- max index
 
     set _ieqargs=!%2!
+    set _ieqargs=!_ieqargs:""=!
 
     :: unfortunately, we also need to protect the equal sign '='
     :_eqp
