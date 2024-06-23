@@ -9,7 +9,7 @@ setlocal
     call build PublicRelease || goto err
 endlocal
 
-call GetNuTool\packages\vsSolutionBuildEvent\cim.cmd /v:m /m:7 || goto err
+call GetNuTool\packages\vsSolutionBuildEvent\cim.cmd ~x || goto err
 
 setlocal enableDelayedExpansion
     cd tests
