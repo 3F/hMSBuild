@@ -78,7 +78,7 @@ if not defined args goto action
 :: /? will cause problems for the call commands below, so we just escape this via supported alternative:
 set esc=!esc:/?=/h!
 
-call :initargs arg esc amax
+call :inita arg esc amax
 goto commands
 
 :usage
@@ -393,6 +393,19 @@ goto endpoint
 
 exit /B !EXIT_CODE!
 
+
+:: - - - -
+::  API
+:: - - - -
+
+    :: (#) :inita
+
+    :: (~) :eva
+    :eva
+        call :eval %*
+    exit /B
+
+:: - - -
 
 :: Functions
 :: ::
@@ -711,7 +724,8 @@ exit /B 0
 exit /B 0
 :: :dbgprint
 
-:initargs {in:vname} {in:arguments} {out:index}
+:: initialize arguments
+:inita {in:vname} {in:arguments} {out:index}
     :: Usage: 1- the name for variable; 2- input arguments; 3- max index
 
     set _ieqargs=!%2!
@@ -732,7 +746,7 @@ exit /B 0
     set "vname=%~1"
     set /a idx=-1
 
-    :_initargs
+    :_inita
         :: -
         set /a idx+=1
         set %vname%[!idx!]=%~2
@@ -742,12 +756,13 @@ exit /B 0
         ::         Either shift + {newline} + ... + if %~3 ...; or if %~4 ... shift & ...
 
         :: NOTE2: %~4 because the next %~3 is reserved for {out:index}
-        if "%~4" NEQ "" shift & goto _initargs
+        if "%~4" NEQ "" shift & goto _inita
 
     set %3=!idx!
 exit /B 0
-:: :initargs
+:: :inita
 
+:: evaluate argument
 :eval {in:unevaluated} {out:evaluated}
     :: Usage: 1- input; 2- evaluated output
 
