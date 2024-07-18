@@ -46,7 +46,9 @@ set "exec=%~3" & set "wdir=%~4"
     ::_______ ------ ______________________________________
 
         call a startTest "-?" || goto x
-            call a msgOrFailAt 1 "hMSBuild %appversionHms%" || goto x
+            if not "%appversionHms%"=="off" (
+                call a msgOrFailAt 1 "hMSBuild %appversionHms%" || goto x
+            )
             call a msgOrFailAt 2 "github/3F" || goto x
         call a completeTest
     ::_____________________________________________________

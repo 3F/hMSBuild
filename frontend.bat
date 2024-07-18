@@ -138,7 +138,7 @@ echo Try to execute:
 echo   %~n0 -only-path -no-vs -notamd64 -no-less-4
 echo   %~n0 -debug ~x ~c Release
 echo   %~n0 -GetNuTool "Conari;regXwild;Fnv1a128"
-echo   %~n0 -GetNuTool vsSolutionBuildEvent/1.16.0:../SDK ^& SDK\GUI
+echo   %~n0 -GetNuTool vsSolutionBuildEvent/1.16.1:../SDK ^& SDK\GUI
 echo   %~n0 -cs -no-less-15 /t:Rebuild
 
 goto endpoint
@@ -467,7 +467,7 @@ exit /B 0
         set vswpkg=vswhere/!vswVersion!
     )
 
-    set _gntC=/p:ngpackages="!vswpkg!:vswhere" /p:ngpath="!tvswhere!"
+    set _gntC="!vswpkg!:vswhere" /p:ngpath="!tvswhere!"
     call :dbgprint "GetNuTool call: " _gntC
 
     setlocal

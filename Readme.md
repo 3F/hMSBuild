@@ -19,7 +19,7 @@ Copyright (c) 2017-2024  Denis Kuzmin <x-3F@outlook.com> github/3F
 hMSBuild -only-path -no-vs -notamd64 -no-less-4
 hMSBuild -debug ~x ~c Release
 hMSBuild -GetNuTool "Conari;regXwild;Fnv1a128"
-hMSBuild -GetNuTool vsSolutionBuildEvent/1.16.0:../SDK & SDK\GUI
+hMSBuild -GetNuTool vsSolutionBuildEvent/1.16.1:../SDK & SDK\GUI
 hMSBuild -cs -no-less-15 /t:Rebuild
 ```
 

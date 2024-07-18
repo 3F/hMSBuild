@@ -14,7 +14,7 @@ set "emptyProj=%cd%\empty.proj"
 :::::::::::::::::: :::::::::::::: :::::::::::::::::::::::::
 :: Tests
 
-call :init
+call :init %pA%
 
 
     call a abStreamTest "-only-path" %pA% %pB% || goto x
@@ -71,8 +71,8 @@ exit /B 1
 
 :init
     :: to cache specified versions
-    call %pA% -only-path -vswhere 2.8.4 >nul
-    call %pA% -only-path -vswhere latest >nul
+    call %~1 -only-path -vswhere 2.8.4 >nul
+    call %~1 -only-path -vswhere latest >nul
 
     ::create empty .proj to have a Build succeeded.
     echo ^<?xml version="1.0" encoding="utf-8"?^> > %emptyProj%

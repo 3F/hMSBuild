@@ -43,7 +43,7 @@ if "!failedTotal!" LSS "1" set /a failedTotal=0
     call .\VswStreamTests gcount failedTotal "%core%" "%rdir%"
 
     echo. & call a print "Tests - 'DiffVTests'"
-    call .\DiffVTests gcount failedTotal "%rdir%%core%" "%rdir%" dbg2.3.0+204d1a0b
+    call .\DiffVTests gcount failedTotal "%rdir%%core%" "%rdir%" dbg2.3.0+204d1a0b-w
     call .\DiffVTests gcount failedTotal "%rdir%%core%" "%rdir%" "%rdir%%appB%"
 
     echo. & call a print "Tests - 'DiffVswStreamTests'"

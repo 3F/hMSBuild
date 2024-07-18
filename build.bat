@@ -1,6 +1,6 @@
 @echo off
 
-if not exist GetNuTool/gnt.sln (
+if not exist GetNuTool/..sln (
     git submodule update --init GetNuTool || goto err
 )
 
