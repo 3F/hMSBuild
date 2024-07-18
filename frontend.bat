@@ -1,8 +1,8 @@
 @echo off & echo Incomplete script. Compile it first via 'build.bat' - github.com/3F/hMSBuild >&2 & exit /B 1
 
-:: hMSBuild $core.version$
-:: Copyright (c) 2017-2024  Denis Kuzmin <x-3F@outlook.com> github/3F
-:: Copyright (c) hMSBuild contributors https://github.com/3F/hMSBuild
+::! hMSBuild $core.version$
+::! Copyright (c) 2017-2024  Denis Kuzmin <x-3F@outlook.com> github/3F
+::! Copyright (c) hMSBuild contributors https://github.com/3F/hMSBuild
 
 set "dp0=%~dp0"
 set args=%*
