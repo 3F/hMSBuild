@@ -48,7 +48,6 @@ call :init %pA%
     call a abStreamTest "-only-path -vswhere local -no-cache" %pA% %pB% || goto x
     call a abStreamTest "-no-vswhere -no-vs -only-path" %pA% %pB% || goto x
     call a abStreamTest "-no-vswhere -no-vs -notamd64 -only-path" %pA% %pB% || goto x
-    call a abStreamTest "-no-vswhere -no-netfx -notamd64 -only-path" %pA% %pB% || goto x
     call a abStreamTest "-no-netfx -notamd64 -only-path" %pA% %pB% || goto x
     call a abStreamTest "-no-vs -notamd64 -only-path" %pA% %pB% || goto x
     call a abStreamTest "-notamd64 -vswhere local -only-path" %pA% %pB% || goto x
@@ -60,6 +59,7 @@ call :init %pA%
 
     :: -1 to avoid checking an exit code due to different env.  /Y-59
     call a abStreamTest "-no-vswhere -no-netfx -only-path" %pA% %pB% -1 || goto x
+    call a abStreamTest "-no-vswhere -no-netfx -notamd64 -only-path" %pA% %pB% -1 || goto x
 
 :::::::::::::::::: :::::::::::::: :::::::::::::::::::::::::
 ::
