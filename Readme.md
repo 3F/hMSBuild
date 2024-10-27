@@ -13,7 +13,6 @@ Copyright (c) 2017-2024  Denis Kuzmin <x-3F@outlook.com> github/3F
 [![release](https://img.shields.io/github/release/3F/hMSBuild.svg)](https://github.com/3F/hMSBuild/releases/latest)
 [![GetNuTool](https://img.shields.io/badge/GetNuTool-v1.9-93C10B.svg)](https://github.com/3F/GetNuTool)
 
-[![Build history](https://buildstats.info/appveyor/chart/3Fs/hmsbuild-github?buildCount=15&includeBuildsFromPullRequest=true&showStats=true)](https://ci.appveyor.com/project/3Fs/hmsbuild-github/history)
 
 ```bat
 hMSBuild -only-path -no-vs -notamd64 -no-less-4
@@ -178,7 +177,7 @@ for /F "tokens=*" %%i in ('hMSBuild -only-path -notamd64') do set msbuild="%%i"
 ```
 
 ```bat
-hmsbuild -cs -no-less-15 ~c Debug ~x || goto failed
+hmsbuild -cs -no-less-15 ~c Debug ~x || goto fallback
 ```
 
 More actual examples can be found in [tests/](tests/) folder.

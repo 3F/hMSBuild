@@ -387,7 +387,7 @@
           "",
           "                /* exit/B */",
           "",
-          "                content = Regex.Replace(content, @\"exit\\s*(?:\\/B\\s*?(?'code'\\d+)|\\/B)\\s*?\", (m) =>",
+          "                content = Regex.Replace(content, @\"exit\\s*(?:\\/B\\s*?(?'code'\\d+|(?:!|%)\" +VNAME+ @\"(?:!|%)?)|\\/B)\\s*?\", (m) =>",
           "                {",
           "                    string ret  = \"exit/B\";",
           "                    string code = m.Groups[\"code\"].Value;",

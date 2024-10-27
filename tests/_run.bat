@@ -24,9 +24,9 @@ call a isNotEmptyOrWhitespaceOrFail tgnt || exit /B1
 call a initAppVersion Hms
 
 echo.
-call a cprint 0E  ----------------------
-call a cprint F0  "hMSBuild .bat testing"
-call a cprint 0E  ----------------------
+call a cprint 0E   ---------------
+call a cprint F0  "hMSBuild .bat ~"
+call a cprint 0E   ---------------
 echo.
 
 if "!gcount!" LSS "1" set /a gcount=0

@@ -7,3 +7,4 @@ obj
 *.nupkg
 /tests/packages
 /tests/gnt.core
+/tests/a.bat.err
