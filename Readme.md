@@ -188,6 +188,51 @@ Note: for some cases, if you know what you're doing, you can also configure *__p
 set __p_call=1
 ```
 
+## API
+
+### 2.5+
+
+```bat
+:: initialize arguments
+:inita {in:vname} {in:arguments} {out:index}
+    ::   (1) - Input variable name.
+    ::  &(2) - Input arguments via a variable.
+    :: *&(3) - Returns the reached index (maximum) via a variable.
+    :: !!0
+```
+
+```bat
+:: evaluate argument
+:eva {in:unevaluated} {out:evaluated}
+    ::  &(1) - Input via a variable. Use ` sign to apply " double quotes inside "...".
+    :: *&(2) - Evaluated output via a variable.
+    :: !!0
+```
+
+Usage for example, *DllExport.bat*:
+
+[:inita](https://github.com/3F/DllExport/blob/c2d3cd1e6febe3b6f72bb59287b7239398de869a/src/DllExport/Manager/batch/Manager.bat#L121)
+
+```bat
+:: process arguments through hMSBuild
+call :inita arg esc amax
+...
+set key=!arg[%idx%]!
+...
+:continue
+set /a "idx+=1" & if %idx% LSS !amax! goto loopargs
+```
+
+[:eva](https://github.com/3F/DllExport/blob/c2d3cd1e6febe3b6f72bb59287b7239398de869a/src/DllExport/Manager/batch/Manager.bat#L529-L532)
+
+```bat
+set /a "idx+=1" & call :eval arg[!idx!] v
+...
+
+:eval
+    call :eva %*
+exit /B
+```
 
 ## Build & Tests
 

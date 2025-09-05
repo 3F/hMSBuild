@@ -27,13 +27,13 @@ call :Vrfy base "-products * -latest" "-only-path"
 
 call :Vrfy base "-latest -products *" "-only-path"
 
-call :Vrfy base "-version [15.0,16.0) -products * -latest" "-only-path"
+call :Vrfy base "-version [15.0,19.0) -products * -latest" "-only-path"
 
-call :Vrfy base "-products * -latest -requiresAny -version [15.0,16.0) -requires Microsoft.NetCore.Component.SDK" "-only-path"
+call :Vrfy base "-products * -latest -requiresAny -version [15.0,19.0) -requires Microsoft.NetCore.Component.SDK" "-only-path"
 
 call :Vrfy base "-products * -latest -requiresAny -version 16.0 -requires Microsoft.Component.MSBuild" "-only-path"
 
-call :Vrfy base "-products * -latest -requiresAny -version [15.0,16.0) -requires Microsoft.Component.MSBuild Microsoft.NetCore.Component.SDK" "-only-path"
+call :Vrfy base "-products * -latest -requiresAny -version [15.0,19.0) -requires Microsoft.Component.MSBuild Microsoft.NetCore.Component.SDK" "-only-path"
 
 :::::::::::::
 call :cleanup

@@ -8,12 +8,13 @@ if not exist GetNuTool/..sln (
     git submodule update --init GetNuTool || goto err
 )
 
+set "reltype=%~1" & if not defined reltype set reltype=Release
 setlocal
     cd GetNuTool & if [%~1]==[#] build #
-    call build PublicRelease || goto err
+    call build Release || goto err
 endlocal
 
-call GetNuTool\packages\vsSolutionBuildEvent\cim.cmd ~x || goto err
+call GetNuTool\packages\vsSolutionBuildEvent\cim.cmd ~x ~c %reltype% || goto err
 
 setlocal enableDelayedExpansion
     cd tests

@@ -32,7 +32,7 @@ call :init %pA%
     call a abStreamTest "-notamd64 /v:m" %pA% %pB% || goto x
 
     call a abStreamTest "-only-path -vswhere local" %pA% %pB% || goto x
-    call a abStreamTest "-only-path -vswhere 2.8.4" %pA% %pB% || goto x
+    call a abStreamTest "-only-path -vswhere 3.1.7" %pA% %pB% || goto x
     call a abStreamTest "-only-path -vswhere latest" %pA% %pB% || goto x
     call a abStreamTest "-only-path -eng" %pA% %pB% || goto x
     call a abStreamTest "-GetNuTool -unpack" %pA% %pB% || goto x
@@ -44,7 +44,7 @@ call :init %pA%
 
     :: TODO: fix -no-cache diff comparison
     @REM call a abStreamTest "-only-path -no-cache" %pA% %pB% || goto x
-    @REM call a abStreamTest "-only-path -vswhere 2.8.4 -no-cache" %pA% %pB% || goto x
+    @REM call a abStreamTest "-only-path -vswhere 3.1.7 -no-cache" %pA% %pB% || goto x
     @REM call a abStreamTest "-only-path -vswhere latest -no-cache" %pA% %pB% || goto x
 
     call a abStreamTest "-only-path -vswhere local -no-cache" %pA% %pB% || goto x
@@ -53,7 +53,7 @@ call :init %pA%
     call a abStreamTest "-no-netfx -notamd64 -only-path" %pA% %pB% || goto x
     call a abStreamTest "-no-vs -notamd64 -only-path" %pA% %pB% || goto x
     call a abStreamTest "-notamd64 -vswhere local -only-path" %pA% %pB% || goto x
-    call a abStreamTest "-notamd64 -vswhere 2.8.4 -only-path" %pA% %pB% || goto x
+    call a abStreamTest "-notamd64 -vswhere 3.1.7 -only-path" %pA% %pB% || goto x
     call a abStreamTest "-notamd64 -vswhere latest -only-path" %pA% %pB% || goto x
     
     :: exit code > 0
@@ -74,7 +74,7 @@ exit /B 1
 
 :init
     :: to cache specified versions
-    call %~1 -only-path -vswhere 2.8.4 >nul
+    call %~1 -only-path -vswhere 3.1.7 >nul
     call %~1 -only-path -vswhere latest >nul
 
     ::create empty .proj to have a Build succeeded.

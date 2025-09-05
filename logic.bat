@@ -46,7 +46,7 @@ set "esc=!esc:&=%%E_CARET%%&!"
 :: Default data
 :settings
 
-set "vswVersion=2.8.4"
+set "vswVersion=3.1.7"
 set vswhereCache=%temp%\hMSBuild_vswhere
 
 set "notamd64="
@@ -384,10 +384,10 @@ set /a "idx+=1" & if %idx% LSS !amax! goto loopargs
         :_msbargs
             call :dbgprint "Arguments: " msbargs
 
-            !xMSBuild! !msbargs!
+            call !xMSBuild! !msbargs!
 
-set /a EXIT_CODE=%ERRORLEVEL%
-goto endpoint
+set /a EXIT_CODE=!ERRORLEVEL!
+:: goto endpoint
 :: :action
 
 :: - - -
@@ -397,9 +397,9 @@ goto endpoint
 exit /B !EXIT_CODE!
 
 
-:: - - - -
-::  API
-:: - - - -
+:: - - - - - - -
+:: API / binding
+:: - - - - - - -
 
     :: (#) :inita
 
@@ -485,7 +485,7 @@ exit /B 0
 
     set _gntC="!vswpkg!:vswhere" /p:ngpath="!tvswhere!"
     call :dbgprint "GetNuTool call: " _gntC
-
+    ::&:
     setlocal
     set __p_call=1
 
@@ -648,7 +648,7 @@ exit /B 0
     call :dbgprint "check %1"
 
     for /F "usebackq tokens=2* skip=2" %%a in (
-        `reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSBuild\ToolsVersions\%1" /v MSBuildToolsPath 2^> nul`
+        `reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSBuild\ToolsVersions\%1" /v MSBuildToolsPath 2^>nul`
     ) do if exist %%b (
 
         set _msbp=%%~b
@@ -702,10 +702,14 @@ exit /B 0
 
     call :dbgprint "bat/exe: " %1
 
-    if exist "!%1!.bat" set %2="!%1!.bat" & exit /B 0
-    if exist "!%1!.exe" set %2="!%1!.exe" & exit /B 0
+    if exist "!%1!.bat" (
+        set %2="!%1!.bat"
 
-    set "%2="
+    ) else if exist "!%1!.exe" (
+        set %2="!%1!.exe"
+
+    ) else ( set "%2=" )
+
 exit /B 0
 :: :batOrExe
 
@@ -715,13 +719,13 @@ exit /B 0
 :: :obsolete
 
 :warn {in:msg}
-    echo   [*] WARN: %~1 >&2
+    echo   [*] WARN: %~1>&2
 exit /B 0
 :: :warn
 
 :dbgprint {in:str} [{in:uneval1}, [{in:uneval2}]]
     if defined hMSBuildDebug (
-        :: NOTE: delayed `dmsg` because symbols like `)`, `(` ... requires protection after expansion. L-32
+        :: NOTE: delayed `dmsg` because symbols like `)`, `(` ... requires protection after expansion. F-32
         set "dmsg=%~1" & echo [ %TIME% ] !dmsg! !%2! !%3!
     )
 exit /B 0
@@ -729,7 +733,10 @@ exit /B 0
 
 :: initialize arguments
 :inita {in:vname} {in:arguments} {out:index}
-    :: Usage: 1- the name for variable; 2- input arguments; 3- max index
+    ::   (1) - Input variable name.
+    ::  &(2) - Input arguments via a variable.
+    :: *&(3) - Returns the reached index (maximum) via a variable.
+    :: !!0
 
     set _ieqargs=!%2!
     set _ieqargs=!_ieqargs:""=!
@@ -767,16 +774,24 @@ exit /B 0
 
 :: evaluate argument
 :eval {in:unevaluated} {out:evaluated}
-    :: Usage: 1- input; 2- evaluated output
+    ::  &(1) - Input via a variable. Use ` sign to apply " double quotes inside "...".
+    :: *&(2) - Evaluated output via a variable.
+    :: !!0
 
     :: delayed evaluation
     set _vl=!%1!  ::&:
 
     :: data from %..% below should not contain double quotes, thus we need to protect this:
+    (if "!_vl!" NEQ "" (
 
-    set "_vl=%_vl: T =^%"   ::&:
-    set "_vl=%_vl: L =^!%"  ::&:
-    set _vl=!_vl: E ==!     ::&:
+
+        set "_vl=%_vl: T =^%"   ::&:
+        set "_vl=%_vl: L =^!%"  ::&:
+        set _vl=!_vl: E ==!     ::&:
+
+        :: to support extra quotes
+        set _vl=!_vl:`="!         ::&:
+    ))
 
     set %2=!_vl!
 exit /B 0

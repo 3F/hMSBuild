@@ -45,9 +45,9 @@ set "exec=%~3" & set "wdir=%~4"
 
     ::_______ ------ ______________________________________
 
-        call a startTest "-debug -only-path -vsw-as `-version [15.0,16.0) -products * -latest`" || goto x
+        call a startTest "-debug -only-path -vsw-as `-version [15.0,19.0) -products * -latest`" || goto x
             call a findInStreamOrFail "assign command:" 4,n || goto x
-            call a msgOrFailAt !n! "-version [15.0,16.0) -products * -latest" || goto x
+            call a msgOrFailAt !n! "-version [15.0,19.0) -products * -latest" || goto x
 
             call a findInStreamOrFail "attempts with filter: ;" 5 || goto x
         call a completeTest
@@ -56,9 +56,9 @@ set "exec=%~3" & set "wdir=%~4"
 
     ::_______ ------ ______________________________________
 
-        call a startTest "-debug -only-path -vsw-as `-products * -latest -requiresAny -version [15.0,16.0) -requires Microsoft.NetCore.Component.SDK`" || goto x
+        call a startTest "-debug -only-path -vsw-as `-products * -latest -requiresAny -version [15.0,19.0) -requires Microsoft.NetCore.Component.SDK`" || goto x
             call a findInStreamOrFail "assign command:" 4,n || goto x
-            call a msgOrFailAt !n! "-products * -latest -requiresAny -version [15.0,16.0) -requires Microsoft.NetCore.Component.SDK" || goto x
+            call a msgOrFailAt !n! "-products * -latest -requiresAny -version [15.0,19.0) -requires Microsoft.NetCore.Component.SDK" || goto x
 
             call a findInStreamOrFail "attempts with filter: ;" 5 || goto x
         call a completeTest
@@ -78,9 +78,9 @@ set "exec=%~3" & set "wdir=%~4"
 
     ::_______ ------ ______________________________________
 
-        call a startTest "-debug -only-path -vsw-as `-products * -latest -requiresAny -version [15.0,16.0) -requires Microsoft.Component.MSBuild Microsoft.NetCore.Component.SDK`" || goto x
+        call a startTest "-debug -only-path -vsw-as `-products * -latest -requiresAny -version [15.0,19.0) -requires Microsoft.Component.MSBuild Microsoft.NetCore.Component.SDK`" || goto x
             call a findInStreamOrFail "assign command:" 4,n || goto x
-            call a msgOrFailAt !n! "-products * -latest -requiresAny -version [15.0,16.0) -requires Microsoft.Component.MSBuild Microsoft.NetCore.Component.SDK" || goto x
+            call a msgOrFailAt !n! "-products * -latest -requiresAny -version [15.0,19.0) -requires Microsoft.Component.MSBuild Microsoft.NetCore.Component.SDK" || goto x
 
             call a findInStreamOrFail "attempts with filter: ;" 5 || goto x
         call a completeTest

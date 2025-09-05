@@ -510,7 +510,7 @@ del /Q/F %bj%
 exit/B %bn%
 :cn
 set bj="%cd%\%bi%"
-echo Generating a %bi% at %cd%\...
+echo +%bi% %cd%\
 :ct
 <nul set /P ="">%bj%
 set a=PropertyGroup&set b=Condition&set c=ngpackages&set d=Target&set e=DependsOnTargets&set f=TaskCoreDllPath&set g=MSBuildToolsPath&set h=UsingTask&set i=CodeTaskFactory&set j=ParameterGroup&set k=Reference&set l=Include&set m=System&set n=Using&set o=Namespace&set p=IsNullOrEmpty&set q=return&set r=string&set s=delegate&set t=foreach&set u=WriteLine&set v=Combine&set w=Console.WriteLine&set x=Directory&set y=GetNuTool&set z=StringComparison&set _=EXT_NUSPEC
