@@ -142,9 +142,10 @@ echo   %~n0 -only-path -no-vs -notamd64 -no-less-4
 echo   %~n0 -debug ~x ~c Release
 echo   %~n0 -GetNuTool "Conari;regXwild;Fnv1a128"
 echo   %~n0 -GetNuTool vsSolutionBuildEvent/1.16.1:../SDK ^& SDK\GUI
+echo   %~n0 -GetNuTool ~^& svc.gnt
 echo   %~n0 -cs -no-less-15 /t:Rebuild
 
-goto endpoint
+goto H
 
 :: - - -
 :: Handler of user commands
@@ -207,13 +208,13 @@ set key=!arg[%idx%]!
                 call :gntpoint !found:~10!
 
                 set /a EXIT_CODE=!ERRORLEVEL!
-                goto endpoint
+                goto H
             )
         )
 
         call :dbgprint "!key! is corrupted: " esc
         set /a EXIT_CODE=%ERROR_FAILED%
-        goto endpoint
+        goto H
         
     ) else if [!key!]==[-no-vswhere] (
         
@@ -277,7 +278,7 @@ set key=!arg[%idx%]!
     ) else if [!key!]==[-version] (
 
         echo $core.version$
-        goto endpoint
+        goto H
 
     ) else if [!key!]==[-priority] ( set /a "idx+=1" & call :eval arg[!idx!] v
         
@@ -360,13 +361,13 @@ set /a "idx+=1" & if %idx% LSS !amax! goto loopargs
 
     echo MSBuild tools was not found. Use `-debug` key for details.>&2
     set /a EXIT_CODE=%ERROR_FILE_NOT_FOUND%
-    goto endpoint
+    goto H
 
     :runmsbuild
 
         if defined displayOnlyPath (
             echo !msbuildPath!
-            goto endpoint
+            goto H
         )
 
         set xMSBuild="!msbuildPath!"
@@ -387,12 +388,13 @@ set /a "idx+=1" & if %idx% LSS !amax! goto loopargs
             call !xMSBuild! !msbargs!
 
 set /a EXIT_CODE=!ERRORLEVEL!
-:: goto endpoint
+:: goto H
 :: :action
 
 :: - - -
 :: Post-actions
-:endpoint
+:: General Exit for hMSBuild. /F-74
+:H
 
 exit /B !EXIT_CODE!
 
@@ -783,7 +785,6 @@ exit /B 0
 
     :: data from %..% below should not contain double quotes, thus we need to protect this:
     (if "!_vl!" NEQ "" (
-
 
         set "_vl=%_vl: T =^%"   ::&:
         set "_vl=%_vl: L =^!%"  ::&:

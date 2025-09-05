@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>hMSBuild</id>
+    <version>$-version-$</version>
+    <title>hMSBuild</title>
+    <authors>github.com/3F/hMSBuild</authors>
+    <license type="file">License.txt</license>
+    <owners>reg</owners>
+    <licenseUrl>https://aka.ms/deprecateLicenseUrl</licenseUrl>
+    <projectUrl>https://github.com/3F/hMSBuild</projectUrl>
+    <repository type="git" url="https://github.com/3F/hMSBuild" />
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Batch (.bat) scripts with full Package Manager inside for searching and wrapping MSBuild tools.
+        (Does NOT require powershell or dotnet-cli or even local vswhere.exe)
+        Powered by GetNuTool.
+
+        Open source https://github.com/3F/hMSBuild
+
+        All Visual Studio and .NET Framework versions:
+          * VS2022+, VS2019, VS2017, VS2015, VS2013, VS2012, VS2010
+          * 4.0 (2010), 3.5, 2.0
+
+        ```
+        gnt *hMSBuild/$-version-$
+        ```
+
+        Self updating:
+        ```
+        hMSBuild -GetNuTool ~hMSBuild/$-version-$
+        ```
+
+        {build_info}</description>
+    <summary>Batch (.bat) scripts with full Package Manager inside for searching and wrapping MSBuild tools. (no powershell no dotnet-cli). All Visual Studio and netfx versions.</summary>
+    <tags>MSBuild MSBuild-path VisualStudio package manager GetNuTool client packages bat batch PackageManager downloader distributing archiver Package-Manager nugetclient hMSBuild tools</tags>
+    <releaseNotes> changelog: https://github.com/3F/hMSBuild/blob/master/changelog.txt </releaseNotes>
+    <copyright>Copyright (c) 2017-2025  Denis Kuzmin &lt;x-3F@outlook.com&gt; github/3F </copyright>
+  </metadata>
+</package>

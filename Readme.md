@@ -1,8 +1,8 @@
 # [hMSBuild](https://github.com/3F/hMSBuild)
 
-*.bat* scripts with full [Package Manager](https://github.com/3F/GetNuTool) inside for searching and wrapping MSBuild tools. All *Visual Studio* and *.NET Framework* versions.
+Batch (*.bat*) scripts with full [Package Manager](https://github.com/3F/GetNuTool) inside for searching and wrapping MSBuild tools. All *Visual Studio* and *.NET Framework* versions.
 
-You do NOT need *powershell* or *dotnet-cli* or local [*vswhere.exe* [?]](https://github.com/Microsoft/vswhere/issues/41)
+Does NOT require *powershell* or *dotnet-cli* or even local [*vswhere.exe* [?]](https://github.com/Microsoft/vswhere/issues/41). Powered by [![GetNuTool](https://img.shields.io/badge/GetNuTool-1.10-93C10B.svg)](https://github.com/3F/GetNuTool)
 
 ```r
 Copyright (c) 2017-2025  Denis Kuzmin <x-3F@outlook.com> github/3F
@@ -11,20 +11,21 @@ Copyright (c) 2017-2025  Denis Kuzmin <x-3F@outlook.com> github/3F
 [ 「 ❤ 」 ](https://3F.github.io/fund) [![License](https://img.shields.io/badge/License-MIT-74A5C2.svg)](https://github.com/3F/hMSBuild/blob/master/License.txt)
 [![Build status](https://ci.appveyor.com/api/projects/status/8ac1021k385eyubm/branch/master?svg=true)](https://ci.appveyor.com/project/3Fs/hmsbuild-github/branch/master)
 [![release](https://img.shields.io/github/release/3F/hMSBuild.svg)](https://github.com/3F/hMSBuild/releases/latest)
-[![GetNuTool](https://img.shields.io/badge/GetNuTool-v1.9-93C10B.svg)](https://github.com/3F/GetNuTool)
 
+[`gnt`](https://3F.github.io/GetNuTool/releases/latest/gnt/)`~hMSBuild` | [`gnt`](https://3F.github.io/GetNuTool/releases/latest/gnt/)`*hMSBuild` | Self updating: `hMSBuild -GetNuTool ~hMSBuild/2.5`
 
 ```bat
 hMSBuild -only-path -no-vs -notamd64 -no-less-4
 hMSBuild -debug ~x ~c Release
 hMSBuild -GetNuTool "Conari;regXwild;Fnv1a128"
 hMSBuild -GetNuTool vsSolutionBuildEvent/1.16.1:../SDK & SDK\GUI
+hMSBuild -GetNuTool ~& svc.gnt
 hMSBuild -cs -no-less-15 /t:Rebuild
 ```
 
 **[Download](https://github.com/3F/hMSBuild/releases)** all editions: *Full, Minified, ...*
 
-Official Direct Links:
+Direct Links to the latest stable:
 
 * (Windows) Latest stable compiled batch-script [ [hMSBuild.bat](https://3F.github.io/hMSBuild/releases/latest/) ] `https://3F.github.io/hMSBuild/releases/latest/`
 
@@ -91,10 +92,11 @@ In order to use [package manager](https://github.com/3F/GetNuTool),
 > hMSBuild **-GetNuTool** keys to it ...
 
 * Get latest packages: `hmsbuild -GetNuTool "Conari;regXwild;Fnv1a128"`
-* Activate GUI script editor: `hMSBuild -GetNuTool vsSolutionBuildEvent/1.16.0:../SDK & SDK\GUI`
+* Activate GUI script editor: `hMSBuild -GetNuTool vsSolutionBuildEvent/1.16.1:../SDK & SDK\GUI`
 * Create new package: `hmsbuild -GetNuTool /t:pack /p:ngin=packages/Fnv1a128`
+* Use X mode in modern core: `hmsbuild -GetNuTool *DllExport` ([[?]](https://github.com/3F/GetNuTool?tab=readme-ov-file#touch--install--run) `*` install and run; `+` just install, `~` touch mode)
 
-### -... or /...
+### Key format `-...` or `/...`
 
 MSBuild Tools supports both key format */...* and *-...*; hMSBuild, in turn, can override some of *-...*; in this case you need to use */...* for example,
 
@@ -114,7 +116,7 @@ hmsbuild ~p "Any CPU"
 For the most up-to-date information, use `hMSBuild -h`
 
 ```
-hMSBuild 2.4.0
+hMSBuild 2.4.1.54329+caba551
 Copyright (c) 2017-2024  Denis Kuzmin <x-3F@outlook.com> github/3F
 Copyright (c) hMSBuild contributors https://github.com/3F/hMSBuild
 
@@ -260,9 +262,25 @@ Note: *.sha1* file is a text list of published files with checksums in the forma
 `40-hexadecimal-digits` `<space>` `file`
 
 ```
-eead8f5c1fdff2abd4da7d799fbbe694d392c792 path\file
+e9e533b0da8e5546eff821a40fbf7ca20ab9cf7e path\file
 ...
 ```
+
+#### hMSBuild.bat self validation
+
+It is important to note the following: this is not a specialized protection of *hMSBuild.bat*, this is only part of its capabilities which can also be used to check itself too.
+
+For example, to validate itself:
+
+> hMSBuild -GetNuTool ~& svc.gnt -sha1-cmp hMSBuild.bat sha1 -package-as-path
+
+Where *sha1* is the checksum from the [official distribution](https://github.com/3F/hMSBuild). Also, the official [package](https://www.nuget.org/packages/hMSBuild/) (`gnt +hMSBuild`) provides *validate.hMSBuild.bat*; this is wrapper of the command above.
+
+How safe is it?
+
+Since the testing logic is part of the GetNuTool's core feature (read [here](https://github.com/3F/GetNuTool?tab=readme-ov-file#gntbat-self-validation)), it is located inside *hMSBuild.bat*. This way improves control over unexpected changes, however, it still cannot fully guarantee automatic protection against third party interference directly into the *hMSBuild.bat*.
+
+Same for env protected properties (n. GetNuTool 1.10+); this improves control over unexpected modification in environment when processing at runtime, but this of course cannot stop direct modifications of the code. Keep this in mind.
 
 ## Contributing
 

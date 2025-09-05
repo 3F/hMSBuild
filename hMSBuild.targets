@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?><!-- https://github.com/3F/hMSBuild -->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <hMSBuildRootPkg>$(MSBuildThisFileDirectory)..\..\</hMSBuildRootPkg> <!-- dotnet and native: [root]\build\*\hMSBuild.targets -->
+
+    <hMSBuildBat>$(hMSBuildRootPkg)hMSBuild.bat</hMSBuildBat>
+    <hMSBuildFullBat>$(hMSBuildRootPkg)hMSBuild.full.bat</hMSBuildFullBat>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <hMSBuildCopyToOutput Condition="'$(hMSBuildCopyToOutput)'==''">true</hMSBuildCopyToOutput>
+    <hMSBuildResolvePublish Condition="'$(hMSBuildResolvePublish)'==''">$(hMSBuildCopyToOutput)</hMSBuildResolvePublish>
+  </PropertyGroup>
+
+  <ItemGroup>
+      <hMSBuildDistFiles Include="$(hMSBuildBat)" Condition="Exists('$(hMSBuildBat)')" />
+  </ItemGroup>
+
+  <Target Condition="'$(hMSBuildCopyToOutput)'=='true'"
+          Name="hMSBuildAfterBuild" AfterTargets="AfterBuild">
+
+      <Copy SourceFiles="@(hMSBuildDistFiles)"
+                    DestinationFolder="$(TargetDir)\"
+                    SkipUnchangedFiles="true"
+                    OverwriteReadOnlyFiles="true" />
+  </Target>
+
+  <ItemGroup Condition="'$(hMSBuildResolvePublish)'=='true'">
+    <ResolvedFileToPublish Include="@(hMSBuildDistFiles)" RelativePath="%(Filename)%(Extension)"/>
+  </ItemGroup>
+
+</Project>
