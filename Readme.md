@@ -5,7 +5,7 @@
 You do NOT need *powershell* or *dotnet-cli* or local [*vswhere.exe* [?]](https://github.com/Microsoft/vswhere/issues/41)
 
 ```r
-Copyright (c) 2017-2024  Denis Kuzmin <x-3F@outlook.com> github/3F
+Copyright (c) 2017-2025  Denis Kuzmin <x-3F@outlook.com> github/3F
 ```
 
 [ 「 ❤ 」 ](https://3F.github.io/fund) [![License](https://img.shields.io/badge/License-MIT-74A5C2.svg)](https://github.com/3F/hMSBuild/blob/master/License.txt)

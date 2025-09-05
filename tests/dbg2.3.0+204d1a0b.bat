@@ -1,7 +1,7 @@
 @echo off
-:: hMSBuild - 2.3.0-dbg+204d1a0b
-:: Copyright (c) 2017-2020  Denis Kuzmin [ x-3F@outlook.com ] GitHub/3F
-:: Copyright (c) the hMSBuild contributors
+:: hMSBuild 2.3.0-dbg+204d1a0b
+:: Copyright (c) 2017-2020  Denis Kuzmin <x-3F@outlook.com> github/3F
+:: Copyright (c) hMSBuild contributors https://github.com/3F/hMSBuild/graphs/contributors
 set "aa=%~dp0"
 set ab=%*
 if not defined ab setlocal enableDelayedExpansion & goto bt

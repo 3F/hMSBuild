@@ -8,15 +8,20 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "hMSBuild", "hMSBuild", "{07
 		.version = .version
 		build.bat = build.bat
 		changelog.txt = changelog.txt
-		frontend.bat = frontend.bat
+		logic.bat = logic.bat
 		tests.bat = tests.bat
 		vsSolutionBuildEvent.bat = vsSolutionBuildEvent.bat
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0969DEC4-0832-4110-AB49-A4BE30677862}"
 	ProjectSection(SolutionItems) = preProject
-		tests\diffversions.bat = tests\diffversions.bat
-		tests\vswas.bat = tests\vswas.bat
+		tests\a.bat = tests\a.bat
+		tests\dbg2.3.0+204d1a0b-w.bat = tests\dbg2.3.0+204d1a0b-w.bat
+		tests\DiffVswStreamTests.bat = tests\DiffVswStreamTests.bat
+		tests\DiffVTests.bat = tests\DiffVTests.bat
+		tests\keysAndLogicTests.bat = tests\keysAndLogicTests.bat
+		tests\VswasTests.bat = tests\VswasTests.bat
+		tests\VswStreamTests.bat = tests\VswStreamTests.bat
 		tests\_run.bat = tests\_run.bat
 	EndProjectSection
 EndProject
