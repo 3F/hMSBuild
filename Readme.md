@@ -46,7 +46,7 @@ Today's [hMSBuild](https://github.com/3F/hMSBuild) provides the most flexible wa
 
 * Single *.bat file, no less, no more.
 * Manage all versions, including before install-API/2017+
-* *Visual Studio* versions support: VS2022+, VS2019, VS2017, VS2015, VS2013, VS2012, VS2010
+* *Visual Studio* versions support: VS2026+, VS2022, VS2019, VS2017, VS2015, VS2013, VS2012, VS2010
 * *.NET Framework* versions support: 4.0 (2010), 3.5, 2.0
 * Lightweight and text-based, about ~8 KB + ~11 KB
 * Does not require *powershell* or *dotnet-cli* or even local [*vswhere.exe* [?]](https://github.com/Microsoft/vswhere/issues/41)
@@ -65,7 +65,7 @@ The basic process is to provide the most suitable instance by explicitly elimina
 **2.0+**
 
 * Versions: 
-  * VS2022, ..., VS2017 ➟ VS2015, VS2013, ... ➟ .netfx
+  * VS2026+, VS2022, ..., VS2017 ➟ VS2015, VS2013, ... ➟ .netfx
 * Instance Architecture (configure via `-notamd64` key): 
   * x64 ➟ x32
 
@@ -111,14 +111,24 @@ Any value for specific key must be protected inside `"..."` if contains either w
 hmsbuild ~p "Any CPU"
 ```
 
+### LF / CRLF
+
+Starting with 2.5, *hMSBuild.bat* edition now fully supports LF and uses this by default instead of CRLF.
+
+It means *.gitattributes* control for CRLF in *hMSBuild.bat* is not necessary anymore in cases when *core.autocrlf=input* etc.
+See related: https://github.com/3F/hMSBuild/issues/2
+
+However, this will not affect users who used the full edition *hMSBuild.full.bat*
+(related https://github.com/3F/hMSBuild/pull/11)
+which is still not protected due to incorrect shiftings in cmd processor when switching to LF.
+
 ### -help
 
 For the most up-to-date information, use `hMSBuild -h`
 
-```
-hMSBuild 2.4.1.54329+caba551
-Copyright (c) 2017-2024  Denis Kuzmin <x-3F@outlook.com> github/3F
-Copyright (c) hMSBuild contributors https://github.com/3F/hMSBuild
+```java
+Copyright (c) 2017-2025  Denis Kuzmin <x-3F@outlook.com> github/3F
+Copyright (c) hMSBuild contributors
 
 Under the MIT License https://github.com/3F/hMSBuild
 
@@ -148,10 +158,14 @@ Keys
  ~c {name}         - Alias to p:Configuration={name}
  ~p {name}         - Alias to p:Platform={name}
  ~x                - Alias to m:NUMBER_OF_PROCESSORS-1 v:m
- -notamd64         - To use 32bit version of found msbuild.exe if it's possible.
+ -notamd64         - Prefer 32-bit instead of 64-bit MSBuild.exe.
  -stable           - It will ignore possible beta releases in last attempts.
  -eng              - Try to use english language for all build messages.
- -GetNuTool {args} - Access to GetNuTool core. https://github.com/3F/GetNuTool
+
+ -GetNuTool {args} - Access to GetNuTool (built-in) https://github.com/3F/GetNuTool
+                     hMSBuild -GetNuTool -help
+                     hMSBuild -GetNuTool ~/p:use=documentation
+
  -only-path        - Only display fullpath to found MSBuild.
  -force            - Aggressive behavior for -priority, -notamd64, etc.
  -vsw-as "args..." - Reassign default commands to vswhere if used.
@@ -205,9 +219,10 @@ set __p_call=1
 
 ```bat
 :: evaluate argument
-:eva {in:unevaluated} {out:evaluated}
-    ::  &(1) - Input via a variable. Use ` sign to apply " double quotes inside "...".
+:eva {in:unevaluated} {out:evaluated} {in:option}
+    ::  &(1) - Input via a variable. Use ` to apply " quotes inside "..." if [3]==1.
     :: *&(2) - Evaluated output via a variable.
+    ::   [3] - Option to enable support for extra quotes. Values: 1 == ` as "
     :: !!0
 ```
 
@@ -235,6 +250,23 @@ set /a "idx+=1" & call :eval arg[!idx!] v
     call :eva %*
 exit /B
 ```
+
+## Full hMSBuild edition
+
+In case you need the full edition (related https://github.com/3F/hMSBuild/pull/11)
+
+Access using built-in core:
+
+```bat
+hMSBuild -GetNuTool ~hMSBuild /p:use=full
+```
+
+or:
+
+```bat
+gnt ~hMSBuild /p:use=full
+```
+note: `hMSBuild -GetNuTool ~` (`hMSBuild -GetNuTool ~& gnt ...`) or visit https://github.com/3F/GetNuTool
 
 ## Build & Tests
 
