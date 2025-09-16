@@ -11,11 +11,14 @@ setlocal
 
         set "rdir=..\"
         set "tgntPath=GetNuTool\"
+        call srv.create >nul
+        set "hmsLocalServer=..\\"
 
     ) else if exist "bin\Release\raw\" (
 
         set "rdir=..\bin\Release\raw\"
         set "tgntPath=..\GetNuTool\tests\"
+        set "hmsLocalServer=..\bin\Release\\"
 
     ) else goto buildError
 

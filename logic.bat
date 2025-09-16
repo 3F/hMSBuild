@@ -65,6 +65,8 @@ set "kForce="
 set "noless15="
 set "noless4="
 
+set "rkey=HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSBuild\ToolsVersions\"
+
 set /a ERROR_SUCCESS=0
 set /a ERROR_FAILED=1
 set /a ERROR_FILE_NOT_FOUND=2
@@ -88,8 +90,8 @@ goto commands
 
 echo.
 echo hMSBuild $core.version$
-echo Copyright (c) 2017-2024  Denis Kuzmin ^<x-3F@outlook.com^> github/3F
-echo Copyright (c) hMSBuild contributors https://github.com/3F/hMSBuild
+echo Copyright (c) 2017-2025  Denis Kuzmin ^<x-3F@outlook.com^> github/3F
+echo Copyright (c) hMSBuild contributors
 echo.
 echo Under the MIT License https://github.com/3F/hMSBuild
 echo.
@@ -119,10 +121,14 @@ echo  -vc               - Adds to -priority VC++ toolset.
 echo  ~c {name}         - Alias to p:Configuration={name}
 echo  ~p {name}         - Alias to p:Platform={name}
 echo  ~x                - Alias to m:NUMBER_OF_PROCESSORS-1 v:m
-echo  -notamd64         - To use 32bit version of found msbuild.exe if it's possible.
+echo  -notamd64         - Prefer 32-bit instead of 64-bit MSBuild.exe.
 echo  -stable           - It will ignore possible beta releases in last attempts.
 echo  -eng              - Try to use english language for all build messages.
-echo  -GetNuTool {args} - Access to GetNuTool core. https://github.com/3F/GetNuTool
+echo.
+echo  -GetNuTool {args} - Access to GetNuTool (built-in) https://github.com/3F/GetNuTool
+echo                      %~n0 -GetNuTool -help
+echo                      %~n0 -GetNuTool ~/p:use=documentation
+echo.
 echo  -only-path        - Only display fullpath to found MSBuild.
 echo  -force            - Aggressive behavior for -priority, -notamd64, etc.
 echo  -vsw-as "args..." - Reassign default commands to vswhere if used.
@@ -131,13 +137,13 @@ echo  -version          - Display version of %~n0.
 echo  -help             - Display this help. Aliases: -? -h
 echo.
 echo.
-echo MSBuild switches
+echo Original MSBuild
 echo ~~~~~~~~~~~~~~~~
 echo   /help or /? or /h
-echo   Use /... if %~n0 overrides some -... MSBuild switches
+echo   Use /... if %~n0 overrides -...
 echo.
 echo.
-echo Try to execute:
+echo Examples:
 echo   %~n0 -only-path -no-vs -notamd64 -no-less-4
 echo   %~n0 -debug ~x ~c Release
 echo   %~n0 -GetNuTool "Conari;regXwild;Fnv1a128"
@@ -198,7 +204,7 @@ set key=!arg[%idx%]!
         goto continue
     ) else if [!key!]==[-GetNuTool] (
 
-        call :dbgprint "accessing to GetNuTool ..."
+        call :dbgprint "accessing built-in GetNuTool ..."
         
         :: invoke GetNuTool with arguments from right side
         for /L %%p IN (0,1,8181) DO (
@@ -429,6 +435,7 @@ exit /B !EXIT_CODE!
         exit /B 0
     )
 
+    ::&:
     call :vswhereLocal vswbin
     set "vswdir="
 
@@ -531,7 +538,7 @@ exit /B 0
         call :dbgprint "attempts with filter: !vswfilter!; `!vswPreRel!`"
 
         set "vspath=" & set "vsver="
-        for /F "usebackq tokens=1* delims=: " %%a in (`"!vswbin!" -nologo !vswPreRel! -requires !vswfilter! Microsoft.Component.MSBuild !vswAs!`) do (
+        for /F "usebackq tokens=1* delims=: " %%a in (`!vswbin! -nologo !vswPreRel! -requires !vswfilter! Microsoft.Component.MSBuild !vswAs!`) do (
             if /I "%%~a"=="installationPath" set vspath=%%~b
             if /I "%%~a"=="installationVersion" set vsver=%%~b
 
@@ -650,7 +657,7 @@ exit /B 0
     call :dbgprint "check %1"
 
     for /F "usebackq tokens=2* skip=2" %%a in (
-        `reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSBuild\ToolsVersions\%1" /v MSBuildToolsPath 2^>nul`
+        `reg query "%rkey%%1" /v MSBuildToolsPath 2^>nul`
     ) do if exist %%b (
 
         set _msbp=%%~b
@@ -775,24 +782,25 @@ exit /B 0
 :: :inita
 
 :: evaluate argument
-:eval {in:unevaluated} {out:evaluated}
-    ::  &(1) - Input via a variable. Use ` sign to apply " double quotes inside "...".
+:eval {in:unevaluated} {out:evaluated} {in:option}
+    ::  &(1) - Input via a variable. Use ` to apply " quotes inside "..." if [3]==1.
     :: *&(2) - Evaluated output via a variable.
+    ::   [3] - Option to enable support for extra quotes. Values: 1 == ` as "
     :: !!0
 
     :: delayed evaluation
     set _vl=!%1!  ::&:
+    if not defined _vl set %2=&exit/B0
 
     :: data from %..% below should not contain double quotes, thus we need to protect this:
-    (if "!_vl!" NEQ "" (
+    :: NOTE: DO NOT enclose in square brackets () because of delayed expansion
 
         set "_vl=%_vl: T =^%"   ::&:
         set "_vl=%_vl: L =^!%"  ::&:
         set _vl=!_vl: E ==!     ::&:
 
-        :: to support extra quotes
-        set _vl=!_vl:`="!         ::&:
-    ))
+        :: extra quotes
+        if "%~3" EQU "1" set _vl=!_vl:`="! ::&:
 
     set %2=!_vl!
 exit /B 0

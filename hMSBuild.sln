@@ -5,11 +5,15 @@ VisualStudioVersion = 17.8.34408.163
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "hMSBuild", "hMSBuild", "{07A13D96-67EE-4F3B-8C5C-848FD2A3B1E7}"
 	ProjectSection(SolutionItems) = preProject
+		.pkg.install.bat = .pkg.install.bat
 		.version = .version
 		build.bat = build.bat
 		changelog.txt = changelog.txt
+		hMSBuild.nuspec = hMSBuild.nuspec
 		logic.bat = logic.bat
+		srv.create.bat = srv.create.bat
 		tests.bat = tests.bat
+		validate.hMSBuild.bat = validate.hMSBuild.bat
 		vsSolutionBuildEvent.bat = vsSolutionBuildEvent.bat
 	EndProjectSection
 EndProject
@@ -20,6 +24,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0969DEC4
 		tests\DiffVswStreamTests.bat = tests\DiffVswStreamTests.bat
 		tests\DiffVTests.bat = tests\DiffVTests.bat
 		tests\keysAndLogicTests.bat = tests\keysAndLogicTests.bat
+		tests\PkgTests.bat = tests\PkgTests.bat
 		tests\VswasTests.bat = tests\VswasTests.bat
 		tests\VswStreamTests.bat = tests\VswStreamTests.bat
 		tests\_run.bat = tests\_run.bat

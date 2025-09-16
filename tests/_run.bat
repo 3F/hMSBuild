@@ -54,6 +54,9 @@ if "!failedTotal!" LSS "1" set /a failedTotal=0
     echo. & call a print "Tests - 'keysAndLogicTests'"
     call .\keysAndLogicTests gcount failedTotal "%core%" "%rdir%"
 
+    echo. & call a print "Tests - 'PkgTests'"
+    call .\PkgTests gcount failedTotal "%core%" "%rdir%"
+
     call a disableAppVersion Gnt
     echo. & call a print "Tests - '-GetNuTool keysAndLogicTests'"
     call %tgnt%keysAndLogicTests gcount failedTotal "%rdir%%core% -GetNuTool " ""
