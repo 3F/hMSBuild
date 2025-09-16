@@ -2,6 +2,92 @@
 hMSBuild - https://github.com/3F/hMSBuild
 - - - - - - - - - - - - - - - - - - - - -  
 
+[2.5] 2025.09.16
+
+    * FIXED: Possible infinite self-call recursion due to built-in GetNuTool 1.9+ and hMSBuild invoking itself.
+             Affected all versions with built-in GetNuTool 1.9 (hMSBuild 2.4 and 2.4.1)
+    
+    * FIXED: Calling built-in GetNuTool using keys with empty ""
+             e.g. proxycfg="" etc.
+    
+    * NEW: Improved security via env protected properties (GetNuTool 1.10+) when using remote vswhere.
+           (without a key -no-vswhere)
+           More about: https://github.com/3F/GetNuTool?tab=readme-ov-file#tmodes-and-commands
+           Or command: hMSBuild -GetNuTool ~/p:use=documentation
+    
+    * NEW: hMSBuild.bat edition now fully supports LF and uses this by default instead of CRLF.
+               LF/CRLF of course affects the checksums, hMSBuild -GetNuTool +hMSBuild/2.5
+               * LF (actual): hMSBuild.bat.sha1
+               * CRLF (possible): hMSBuild.bat.crlf.sha1
+               
+               It means .gitattributes control for CRLF in hMSBuild.bat is not necessary anymore in cases when core.autocrlf=input etc.
+               See related: https://github.com/3F/hMSBuild/issues/2
+               
+               However, this will not affect users who used the full edition hMSBuild.full.bat
+               (related https://github.com/3F/hMSBuild/pull/11)
+               which is still not protected due to incorrect shiftings in cmd processor when switching to LF.
+    
+    * NEW: Full hMSBuild edition access:
+           ```
+           gnt ~hMSBuild /p:use=full
+           ```
+           ```
+           hMSBuild -GetNuTool ~hMSBuild /p:use=full
+           ```
+    
+    * NEW: API. +:eva {in:unevaluated} {out:evaluated} {in:option}
+            evaluate argument
+            ```
+            ::  &(1) - Input via a variable. Use ` to apply " quotes inside "..." if [3]==1.
+            :: *&(2) - Evaluated output via a variable.
+            ::   [3] - Option to enable support for extra quotes. Values: 1 == ` as "
+            :: !!0
+            ```
+    
+    * NEW: API. +:inita {in:vname} {in:arguments} {out:index}
+            initialize arguments
+            ```
+            ::   (1) - Input variable name.
+            ::  &(2) - Input arguments via a variable.
+            :: *&(3) - Returns the reached index (maximum) via a variable.
+            :: !!0
+            ```
+    
+    * NEW: +.pkg.install.bat v1 support in hMSBuild nuget packages.
+           ```
+           gnt ~hMSBuild
+           ```
+           ```
+           gnt *hMSBuild/2.5
+           ```
+           Syntax and relevant documentation:
+               hMSBuild -GetNuTool -help
+               hMSBuild -GetNuTool ~/p:use=documentation
+           Or visit https://github.com/3F/GetNuTool
+    
+    * NEW: Self updating support: hMSBuild -GetNuTool ~hMSBuild/2.5
+    
+    * NEW: Added validate.hMSBuild.bat helper to validate core itself.
+    
+    * NEW: Added srv.create.bat to prepare local server access.
+    
+    * NEW: Official nuget package, hMSBuild:
+           https://www.nuget.org/packages/hMSBuild/
+    
+    * CHANGED: Default remote vswhere is 3.1.7
+    
+    * CHANGED: Updated built-in GetNuTool 1.10.
+               Anniversary (10 years) update GetNuTool 1.10 //github.com/3F
+               adds new modes (install, run, touch, get, grab, pack); custom scripts;
+               improves security; and became even more compact for .bat edition (now 7.87 KB); and ...
+               https://github.com/3F/GetNuTool/releases/tag/1.10
+    
+    * NOTE: Self validation via command:
+            ```
+            hMSBuild -GetNuTool ~& svc.gnt -sha1-cmp hMSBuild.bat sha1 -package-as-path
+            ```
+
+
 [2.4.1] 2024.02.12
 
     * FIXED: Key handling when `=` sign;
