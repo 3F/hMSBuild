@@ -1,1 +1,5 @@
 GetNuTool
+.vs/
+bin/
+obj/
+tests/
